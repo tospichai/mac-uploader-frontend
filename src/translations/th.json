@@ -1,0 +1,30 @@
+{
+  "tabs": {
+    "gallery": "แกลลอรี่",
+    "search": "ค้นหา",
+    "favorites": "ถูกใจ",
+    "language": "ภาษา"
+  },
+  "gallery": {
+    "title": "แกลลอรี่รูปภาพ",
+    "event": "งาน",
+    "photographer": "ช่างภาพ",
+    "newPhoto": "มีรูปใหม่!",
+    "previous": "ก่อนหน้า",
+    "next": "ถัดไป",
+    "downloadError": "ไม่สามารถดาวน์โหลดไฟล์ได้",
+    "tryAgain": "ลองใหม่",
+    "error": "ข้อผิดพลาด"
+  },
+  "languageModal": {
+    "title": "เลือกภาษา",
+    "thai": "ไทย",
+    "english": "English",
+    "chinese": "中文",
+    "vietnamese": "Tiếng Việt"
+  },
+  "common": {
+    "photoGallery": "แกลลอรี่รูปภาพ",
+    "loading": "กำลังโหลด..."
+  }
+}

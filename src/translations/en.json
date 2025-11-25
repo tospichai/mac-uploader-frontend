@@ -1,0 +1,30 @@
+{
+  "tabs": {
+    "gallery": "Gallery",
+    "search": "Search",
+    "favorites": "Favorites",
+    "language": "Language"
+  },
+  "gallery": {
+    "title": "Photo Gallery",
+    "event": "Event",
+    "photographer": "Photographer",
+    "newPhoto": "New photo available!",
+    "previous": "Previous",
+    "next": "Next",
+    "downloadError": "Cannot download file",
+    "tryAgain": "Try Again",
+    "error": "Error"
+  },
+  "languageModal": {
+    "title": "Select Language",
+    "thai": "ไทย",
+    "english": "English",
+    "chinese": "中文",
+    "vietnamese": "Tiếng Việt"
+  },
+  "common": {
+    "photoGallery": "Photo Gallery",
+    "loading": "Loading..."
+  }
+}

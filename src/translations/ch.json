@@ -1,0 +1,30 @@
+{
+  "tabs": {
+    "gallery": "画廊",
+    "search": "搜索",
+    "favorites": "收藏",
+    "language": "语言"
+  },
+  "gallery": {
+    "title": "照片画廊",
+    "event": "活动",
+    "photographer": "摄影师",
+    "newPhoto": "有新照片！",
+    "previous": "上一页",
+    "next": "下一页",
+    "downloadError": "无法下载文件",
+    "tryAgain": "重试",
+    "error": "错误"
+  },
+  "languageModal": {
+    "title": "选择语言",
+    "thai": "ไทย",
+    "english": "English",
+    "chinese": "中文",
+    "vietnamese": "Tiếng Việt"
+  },
+  "common": {
+    "photoGallery": "照片画廊",
+    "loading": "加载中..."
+  }
+}

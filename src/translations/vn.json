@@ -1,0 +1,30 @@
+{
+  "tabs": {
+    "gallery": "Thư viện",
+    "search": "Tìm kiếm",
+    "favorites": "Yêu thích",
+    "language": "Ngôn ngữ"
+  },
+  "gallery": {
+    "title": "Thư viện Ảnh",
+    "event": "Sự kiện",
+    "photographer": "Nhiếp ảnh gia",
+    "newPhoto": "Có ảnh mới!",
+    "previous": "Trước",
+    "next": "Tiếp theo",
+    "downloadError": "Không thể tải tệp",
+    "tryAgain": "Thử lại",
+    "error": "Lỗi"
+  },
+  "languageModal": {
+    "title": "Chọn Ngôn ngữ",
+    "thai": "ไทย",
+    "english": "English",
+    "chinese": "中文",
+    "vietnamese": "Tiếng Việt"
+  },
+  "common": {
+    "photoGallery": "Thư viện Ảnh",
+    "loading": "Đang tải..."
+  }
+}

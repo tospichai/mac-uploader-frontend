@@ -1,0 +1,199 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import GalleryPage from "@/components/GalleryPage";
+import TabMenu from "@/components/TabMenu";
+import { Photo, EventInfo, Pagination } from "@/types";
+import apiClient from "@/lib/api/client";
+import { createSSEClient } from "@/lib/api/sse";
+import { useTranslation } from "@/hooks/useTranslation";
+
+export default function GalleryRoute() {
+  const params = useParams();
+  const slug = params.slug as string;
+
+  // Parse slug to extract photographer and event
+  // Format: photographer_event
+  const parts = String(slug || "").split("_");
+  const photographer = parts[0] || "unknown";
+  const event = parts[1] || "unknown";
+  const eventCode = event; // Server only uses event part
+
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [eventInfo, setEventInfo] = useState<EventInfo | null>(null);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState("gallery");
+  const { t } = useTranslation();
+
+  // Load initial data
+  useEffect(() => {
+    loadEventData();
+    loadPhotos(currentPage);
+  }, [eventCode, currentPage]);
+
+  // Set up SSE connection
+  useEffect(() => {
+    const sseClient = createSSEClient(
+      eventCode,
+      apiClient.getEventStreamUrl(eventCode)
+    );
+
+    sseClient.onMessage((message) => {
+      if (message.type === "photo_update" && message.photo) {
+        // Add new photo to the beginning of the list
+        setPhotos((prevPhotos) => [message.photo!, ...prevPhotos]);
+
+        // Update total count in event info
+        if (eventInfo) {
+          setEventInfo((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  totalPhotos: prev.totalPhotos + 1,
+                }
+              : null
+          );
+        }
+      }
+    });
+
+    sseClient.onConnect(() => {
+      console.log("SSE connected for event:", eventCode);
+    });
+
+    sseClient.onError((error) => {
+      console.error("SSE connection error:", error);
+    });
+
+    sseClient.connect();
+
+    return () => {
+      sseClient.disconnect();
+    };
+  }, [eventCode, eventInfo]);
+
+  const loadEventData = async () => {
+    try {
+      // For now, create mock event info since server doesn't have this endpoint yet
+      const mockEventInfo: EventInfo = {
+        eventCode,
+        eventName: event.charAt(0).toUpperCase() + event.slice(1),
+        photographerName: photographer,
+        createdAt: new Date().toISOString(),
+        totalPhotos: 0,
+      };
+      setEventInfo(mockEventInfo);
+    } catch (err) {
+      console.error("Error loading event info:", err);
+      setError("Failed to load event information");
+    }
+  };
+
+  const loadPhotos = async (page: number) => {
+    try {
+      setLoading(true);
+      const response = await apiClient.getPhotos(eventCode, page);
+
+      if (response.success) {
+        console.log("response", response);
+        setPhotos(response.photos);
+        setPagination(response.pagination);
+
+        // Update total photos count
+        if (eventInfo) {
+          setEventInfo((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  totalPhotos: response.pagination.totalPhotos,
+                }
+              : null
+          );
+        }
+      } else {
+        setError("Failed to load photos");
+      }
+    } catch (err) {
+      console.error("Error loading photos:", err);
+      setError("Failed to load photos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleDownloadPhoto = async (photoId: string) => {
+    try {
+      const base64 = await apiClient.downloadPhotoAsBase64(eventCode, photoId);
+
+      // Create download link
+      const link = document.createElement("a");
+      link.href = base64;
+      link.download = `photo_${photoId}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("Download error:", err);
+      alert(t("gallery.downloadError"));
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full mx-4">
+          <div className="text-center">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+              <svg
+                className="h-8 w-8 text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-red-600 mb-4">{t("gallery.error")}</h1>
+            <p className="text-gray-700 mb-6">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+            >
+              {t("gallery.tryAgain")}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <GalleryPage
+        eventInfo={eventInfo}
+        photos={photos}
+        pagination={pagination}
+        loading={loading}
+        onPageChange={handlePageChange}
+        onDownloadPhoto={handleDownloadPhoto}
+      />
+      <TabMenu
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+    </>
+  );
+}
