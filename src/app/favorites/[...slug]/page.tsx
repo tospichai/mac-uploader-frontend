@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import GalleryPage from "@/components/GalleryPage";
+import { useParams, useRouter } from "next/navigation";
+import FavoritesPage from "@/components/FavoritesPage";
 import TabMenu from "@/components/TabMenu";
-import { Photo, EventInfo, Pagination } from "@/types";
-import apiClient from "@/lib/api/client";
-import { createSSEClient } from "@/lib/api/sse";
+import { EventInfo } from "@/types";
 import { useTranslation } from "@/hooks/useTranslation";
 
-export default function GalleryRoute() {
+export default function FavoritesRoute() {
   const params = useParams();
+  const router = useRouter();
   const slug = params.slug as string;
+  const { t } = useTranslation();
 
   // Parse slug to extract photographer and event
   // Format: photographer_event
@@ -20,61 +20,15 @@ export default function GalleryRoute() {
   const event = parts[1] || "unknown";
   const eventCode = event; // Server only uses event part
 
-  const [photos, setPhotos] = useState<Photo[]>([]);
   const [eventInfo, setEventInfo] = useState<EventInfo | null>(null);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [activeTab, setActiveTab] = useState("gallery");
-  const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState("favorites");
 
   // Load initial data
   useEffect(() => {
     loadEventData();
-    loadPhotos(currentPage);
-  }, [eventCode, currentPage]);
-
-  // Set up SSE connection
-  useEffect(() => {
-    const sseClient = createSSEClient(
-      eventCode,
-      apiClient.getEventStreamUrl(eventCode)
-    );
-
-    sseClient.onMessage((message) => {
-      if (message.type === "photo_update" && message.photo) {
-        // Add new photo to the beginning of the list
-        setPhotos((prevPhotos) => [message.photo!, ...prevPhotos]);
-
-        // Update total count in event info
-        if (eventInfo) {
-          setEventInfo((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  totalPhotos: prev.totalPhotos + 1,
-                }
-              : null
-          );
-        }
-      }
-    });
-
-    sseClient.onConnect(() => {
-      console.log("SSE connected for event:", eventCode);
-    });
-
-    sseClient.onError((error) => {
-      console.error("SSE connection error:", error);
-    });
-
-    sseClient.connect();
-
-    return () => {
-      sseClient.disconnect();
-    };
-  }, [eventCode, eventInfo]);
+  }, [eventCode]);
 
   const loadEventData = async () => {
     try {
@@ -90,56 +44,29 @@ export default function GalleryRoute() {
     } catch (err) {
       console.error("Error loading event info:", err);
       setError("Failed to load event information");
-    }
-  };
-
-  const loadPhotos = async (page: number) => {
-    try {
-      setLoading(true);
-      const response = await apiClient.getPhotos(eventCode, page);
-
-      if (response.success) {
-        console.log("response", response);
-        setPhotos(response.photos);
-        setPagination(response.pagination);
-
-        // Update total photos count
-        if (eventInfo) {
-          setEventInfo((prev) =>
-            prev
-              ? {
-                  ...prev,
-                  totalPhotos: response.pagination.totalPhotos,
-                }
-              : null
-          );
-        }
-      } else {
-        setError("Failed to load photos");
-      }
-    } catch (err) {
-      console.error("Error loading photos:", err);
-      setError("Failed to load photos");
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
   const handleDownloadPhoto = async (photoId: string) => {
     try {
-      const base64 = await apiClient.downloadPhotoAsBase64(eventCode, photoId);
+      // For favorites, we need to construct the download URL
+      // This is a simplified version - in a real app, you'd call the API
+      const response = await fetch(`/api/photos/${eventCode}/download/${photoId}`);
+      if (!response.ok) {
+        throw new Error('Download failed');
+      }
 
-      // Create download link
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.href = base64;
+      link.href = url;
       link.download = `photo_${photoId}.jpg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Download error:", err);
       alert(t("gallery.downloadError"));
@@ -182,14 +109,10 @@ export default function GalleryRoute() {
 
   return (
     <>
-      <GalleryPage
+      <FavoritesPage
         eventInfo={eventInfo}
-        photos={photos}
-        pagination={pagination}
-        loading={loading}
-        onPageChange={handlePageChange}
-        onDownloadPhoto={handleDownloadPhoto}
         eventCode={eventCode}
+        onDownloadPhoto={handleDownloadPhoto}
       />
       <TabMenu
         activeTab={activeTab}

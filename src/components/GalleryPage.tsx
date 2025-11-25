@@ -14,6 +14,7 @@ interface GalleryPageProps {
   loading: boolean;
   onPageChange: (page: number) => void;
   onDownloadPhoto: (photoId: string) => void;
+  eventCode: string;
 }
 
 export default function GalleryPage({
@@ -23,6 +24,7 @@ export default function GalleryPage({
   loading,
   onPageChange,
   onDownloadPhoto,
+  eventCode,
 }: GalleryPageProps) {
   const { t } = useTranslation();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -52,7 +54,7 @@ export default function GalleryPage({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA]">
+    <div className="min-h-screen bg-linear-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA]">
       <div className="mx-auto px-4 py-8">
         {/* Header */}
         <header className="text-center mb-8">
@@ -88,6 +90,7 @@ export default function GalleryPage({
                 onImageClick={handleImageClick}
                 onDownloadPhoto={onDownloadPhoto}
                 onNewPhoto={handleNewPhoto}
+                eventCode={eventCode}
               />
 
               {/* Pagination */}

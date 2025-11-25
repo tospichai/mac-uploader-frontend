@@ -16,6 +16,17 @@
     "tryAgain": "Try Again",
     "error": "Error"
   },
+  "favorites": {
+    "title": "My Favorites",
+    "count": "Favorites",
+    "clearAll": "Clear All",
+    "confirmClearAll": "Are you sure you want to clear all favorites?",
+    "clearedAll": "All favorites cleared",
+    "empty": {
+      "title": "No favorites yet",
+      "description": "Start adding photos to your favorites by clicking the heart icon on any photo."
+    }
+  },
   "languageModal": {
     "title": "Select Language",
     "thai": "ไทย",

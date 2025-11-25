@@ -18,9 +18,11 @@ interface TabItem {
 interface TabMenuProps {
   activeTab: string;
   onTabChange?: (tabId: string) => void;
+  eventCode?: string;
+  photographer?: string;
 }
 
-export default function TabMenu({ activeTab, onTabChange }: TabMenuProps) {
+export default function TabMenu({ activeTab, onTabChange, eventCode, photographer }: TabMenuProps) {
   const router = useRouter();
   const { t, currentLanguage, setLanguage } = useTranslation();
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
@@ -30,7 +32,13 @@ export default function TabMenu({ activeTab, onTabChange }: TabMenuProps) {
       id: "gallery",
       label: t("tabs.gallery"),
       icon: <Images size={20} />,
-      path: "/gallery",
+      onClick: () => {
+        if (eventCode && photographer) {
+          router.push(`/gallery/${photographer}_${eventCode}`);
+        } else {
+          router.push('/gallery');
+        }
+      },
     },
     {
       id: "search",
@@ -45,7 +53,11 @@ export default function TabMenu({ activeTab, onTabChange }: TabMenuProps) {
       label: t("tabs.favorites"),
       icon: <Heart size={20} />,
       onClick: () => {
-        console.log("Favorites clicked");
+        if (eventCode && photographer) {
+          router.push(`/favorites/${photographer}_${eventCode}`);
+        } else {
+          router.push('/favorites');
+        }
       },
     },
     {

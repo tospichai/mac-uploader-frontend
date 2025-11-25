@@ -3,21 +3,26 @@
 import { useEffect, useRef } from 'react';
 import { Photo } from '@/types';
 import Image from 'next/image';
+import { Heart } from 'lucide-react';
+import { useFavorites } from '@/contexts/FavoritesContext';
 
 interface PhotoGridProps {
   photos: Photo[];
   onImageClick: (imageUrl: string) => void;
   onDownloadPhoto: (photoId: string) => void;
   onNewPhoto: () => void;
+  eventCode: string;
 }
 
 export default function PhotoGrid({
   photos,
   onImageClick,
   onDownloadPhoto,
-  onNewPhoto
+  onNewPhoto,
+  eventCode
 }: PhotoGridProps) {
   const newPhotoRef = useRef<HTMLDivElement>(null);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   // Highlight new photos
   useEffect(() => {
@@ -32,6 +37,11 @@ export default function PhotoGrid({
   }, [photos.length]);
 
   const imageUrl = (photo: Photo) => photo.displayUrl || photo.downloadUrl;
+
+  const handleFavoriteClick = (e: React.MouseEvent, photo: Photo) => {
+    e.stopPropagation();
+    toggleFavorite(eventCode, photo);
+  };
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mb-8">
@@ -67,6 +77,21 @@ export default function PhotoGrid({
                     fill
                     loading="lazy"
                   />
+
+                  {/* Favorite icon in top-right corner */}
+                  <button
+                    onClick={(e) => handleFavoriteClick(e, photo)}
+                    className="absolute top-2 right-2 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:bg-white/90 transition-all duration-200 group z-1 cursor-pointer"
+                  >
+                    <Heart
+                      size={22}
+                      className={`transition-colors duration-200 ${
+                        isFavorite(eventCode, photo.photoId)
+                          ? 'fill-red-500 text-red-500'
+                          : 'text-gray-600 hover:text-red-500'
+                      }`}
+                    />
+                  </button>
 
                   {/* Eye icon in center on hover */}
                   <div className="absolute inset-0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center pointer-events-none">
