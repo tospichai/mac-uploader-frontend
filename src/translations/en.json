@@ -14,7 +14,10 @@
     "next": "Next",
     "downloadError": "Cannot download file",
     "tryAgain": "Try Again",
-    "error": "Error"
+    "error": "Error",
+    "empty": {
+      "title": "No images yet"
+    }
   },
   "favorites": {
     "title": "My Favorites",

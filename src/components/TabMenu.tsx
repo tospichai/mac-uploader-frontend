@@ -22,7 +22,12 @@ interface TabMenuProps {
   photographer?: string;
 }
 
-export default function TabMenu({ activeTab, onTabChange, eventCode, photographer }: TabMenuProps) {
+export default function TabMenu({
+  activeTab,
+  onTabChange,
+  eventCode,
+  photographer,
+}: TabMenuProps) {
   const router = useRouter();
   const { t, currentLanguage, setLanguage } = useTranslation();
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
@@ -36,7 +41,7 @@ export default function TabMenu({ activeTab, onTabChange, eventCode, photographe
         if (eventCode && photographer) {
           router.push(`/gallery/${photographer}_${eventCode}`);
         } else {
-          router.push('/gallery');
+          router.push("/gallery");
         }
       },
     },
@@ -56,7 +61,7 @@ export default function TabMenu({ activeTab, onTabChange, eventCode, photographe
         if (eventCode && photographer) {
           router.push(`/favorites/${photographer}_${eventCode}`);
         } else {
-          router.push('/favorites');
+          router.push("/favorites");
         }
       },
     },
@@ -71,10 +76,6 @@ export default function TabMenu({ activeTab, onTabChange, eventCode, photographe
   ];
 
   const handleTabClick = (tab: TabItem) => {
-    if (onTabChange) {
-      onTabChange(tab.id);
-    }
-
     if (tab.path) {
       router.push(tab.path);
     } else if (tab.onClick) {
@@ -105,15 +106,15 @@ export default function TabMenu({ activeTab, onTabChange, eventCode, photographe
           className="mx-auto max-w-sm rounded-[999px] border border-white/60 bg-white/70
              shadow-[0_18px_45px_rgba(15,23,42,0.18)] backdrop-blur-xl"
         >
-          <ul className="flex items-center justify-between gap-2 px-5 py-3 text-xs font-medium">
+          <ul className="flex items-center justify-between gap-2 px-8 py-3 text-xs font-medium">
             {tabs.map((tab) => (
               <li key={tab.id}>
                 <button
                   onClick={() => handleTabClick(tab)}
-                  className={`group relative overflow-hidden flex flex-col items-center gap-1 rounded-2xl
-                    px-3 py-2 transition-colors duration-200 ${
+                  className={`group relative overflow-hidden flex flex-col items-center gap-1 rounded-xl
+                    px-3 py-2 transition-colors duration-200 cursor-pointer min-w-16 ${
                       activeTab === tab.id && tab.id !== "language"
-                        ? "bg-gray-200/60 text-gray-900"
+                        ? "bg-white text-gray-900"
                         : "text-gray-500 hover:text-gray-900"
                     }`}
                 >
@@ -121,7 +122,7 @@ export default function TabMenu({ activeTab, onTabChange, eventCode, photographe
                   <span>{tab.label}</span>
                   {tab.id !== "language" && (
                     <span
-                      className={`absolute bottom-[-0.5px] h-1 w-6 rounded-full bg-[#00C7A5] transition-opacity ${
+                      className={`absolute bottom-[-4.5px] h-2 w-10 rounded-full bg-[#00C7A5] transition-opacity ${
                         activeTab === tab.id
                           ? "opacity-100"
                           : "opacity-0 group-hover:opacity-0"

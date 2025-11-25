@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import { Photo } from '@/types';
-import Image from 'next/image';
-import { Heart } from 'lucide-react';
-import { useFavorites } from '@/contexts/FavoritesContext';
+import { useEffect, useRef } from "react";
+import { Photo } from "@/types";
+import Image from "next/image";
+import { Heart } from "lucide-react";
+import { useFavorites } from "@/contexts/FavoritesContext";
 
 interface PhotoGridProps {
   photos: Photo[];
@@ -19,7 +19,7 @@ export default function PhotoGrid({
   onImageClick,
   onDownloadPhoto,
   onNewPhoto,
-  eventCode
+  eventCode,
 }: PhotoGridProps) {
   const newPhotoRef = useRef<HTMLDivElement>(null);
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -27,10 +27,18 @@ export default function PhotoGrid({
   // Highlight new photos
   useEffect(() => {
     if (newPhotoRef.current && photos.length > 0) {
-      newPhotoRef.current.classList.add('ring-4', 'ring-blue-400', 'ring-opacity-75');
+      newPhotoRef.current.classList.add(
+        "ring-4",
+        "ring-blue-400",
+        "ring-opacity-75"
+      );
       setTimeout(() => {
         if (newPhotoRef.current) {
-          newPhotoRef.current.classList.remove('ring-4', 'ring-blue-400', 'ring-opacity-75');
+          newPhotoRef.current.classList.remove(
+            "ring-4",
+            "ring-blue-400",
+            "ring-opacity-75"
+          );
         }
       }, 3000);
     }
@@ -52,7 +60,7 @@ export default function PhotoGrid({
           className="rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
         >
           <div
-            className="aspect-[3.6/2.4] sm:aspect-[3.6/2.4] relative group cursor-pointer rounded-lg overflow-hidden"
+            className="aspect-3/2 relative group cursor-pointer rounded-lg overflow-hidden"
             onClick={() => {
               const url = imageUrl(photo);
               if (url) onImageClick(url);
@@ -87,8 +95,8 @@ export default function PhotoGrid({
                       size={22}
                       className={`transition-colors duration-200 ${
                         isFavorite(eventCode, photo.photoId)
-                          ? 'fill-red-500 text-red-500'
-                          : 'text-gray-600 hover:text-red-500'
+                          ? "fill-red-500 text-red-500"
+                          : "text-gray-600 hover:text-red-500"
                       }`}
                     />
                   </button>
@@ -130,9 +138,15 @@ export default function PhotoGrid({
               </p>
               <p
                 className="text-xs text-gray-400 truncate"
-                title={photo.lastModified ? new Date(photo.lastModified).toLocaleString('th-TH') : ''}
+                title={
+                  photo.lastModified
+                    ? new Date(photo.lastModified).toLocaleString("th-TH")
+                    : ""
+                }
               >
-                {photo.lastModified ? new Date(photo.lastModified).toLocaleString('th-TH') : ''}
+                {photo.lastModified
+                  ? new Date(photo.lastModified).toLocaleString("th-TH")
+                  : ""}
               </p>
             </div>
 

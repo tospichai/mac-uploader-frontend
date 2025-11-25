@@ -1,7 +1,13 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { Photo } from '@/types';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { Photo } from "@/types";
 
 export interface FavoriteItem {
   photoId: string;
@@ -23,15 +29,17 @@ interface FavoritesContextValue {
   clearFavoritesForEvent: (eventCode: string) => void;
 }
 
-const FavoritesContext = createContext<FavoritesContextValue | undefined>(undefined);
+const FavoritesContext = createContext<FavoritesContextValue | undefined>(
+  undefined
+);
 
-const FAVORITES_STORAGE_KEY = 'photo_favorites';
+const FAVORITES_STORAGE_KEY = "photo_favorites";
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   // Initialize state with data from localStorage if available
   const getInitialFavorites = (): FavoritesState => {
     // Check if we're in a browser environment
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return {};
     }
 
@@ -41,24 +49,37 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         return JSON.parse(stored);
       }
     } catch (error) {
-      console.error('Error loading favorites from localStorage:', error);
+      console.error("Error loading favorites from localStorage:", error);
     }
     return {};
   };
 
-  const [favorites, setFavorites] = useState<FavoritesState>(getInitialFavorites);
+  const [favorites, setFavorites] = useState<FavoritesState>({});
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
+      if (stored) {
+        setFavorites(JSON.parse(stored));
+      }
+    } catch (error) {
+      console.error("Error loading favorites from localStorage:", error);
+    } finally {
+      setIsHydrated(true);
+    }
+  }, []);
 
   // Save favorites to localStorage whenever they change
   useEffect(() => {
-    // Only save if we're in a browser environment
-    if (typeof window === 'undefined') {
-      return;
-    }
+    if (!isHydrated) return;
 
     try {
       localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
     } catch (error) {
-      console.error('Error saving favorites to localStorage:', error);
+      console.error("Error saving favorites to localStorage:", error);
     }
   }, [favorites]);
 
@@ -67,7 +88,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   };
 
   const toggleFavorite = (eventCode: string, photo: Photo) => {
-    setFavorites(prev => {
+    setFavorites((prev) => {
       // Create a deep copy to avoid mutation issues
       const newFavorites = JSON.parse(JSON.stringify(prev));
 
@@ -88,8 +109,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         // Add to favorites
         newFavorites[eventCode][photo.photoId] = {
           photoId: photo.photoId,
-          imageUrl: photo.displayUrl || photo.downloadUrl || '',
-          addedAt: Date.now()
+          imageUrl: photo.displayUrl || photo.downloadUrl || "",
+          addedAt: Date.now(),
         };
       }
 
@@ -100,11 +121,13 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const getFavoritesForEvent = (eventCode: string): FavoriteItem[] => {
     if (!favorites[eventCode]) return [];
 
-    return Object.values(favorites[eventCode]).sort((a, b) => b.addedAt - a.addedAt);
+    return Object.values(favorites[eventCode]).sort(
+      (a, b) => b.addedAt - a.addedAt
+    );
   };
 
   const clearFavoritesForEvent = (eventCode: string) => {
-    setFavorites(prev => {
+    setFavorites((prev) => {
       const newFavorites = { ...prev };
       delete newFavorites[eventCode];
       return newFavorites;
@@ -116,7 +139,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     isFavorite,
     toggleFavorite,
     getFavoritesForEvent,
-    clearFavoritesForEvent
+    clearFavoritesForEvent,
   };
 
   return (
@@ -129,7 +152,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 export function useFavorites() {
   const context = useContext(FavoritesContext);
   if (context === undefined) {
-    throw new Error('useFavorites must be used within a FavoritesProvider');
+    throw new Error("useFavorites must be used within a FavoritesProvider");
   }
   return context;
 }
