@@ -15,6 +15,13 @@
     "downloadError": "ไม่สามารถดาวน์โหลดไฟล์ได้",
     "tryAgain": "ลองใหม่",
     "error": "ข้อผิดพลาด",
+    "select": "เลือก",
+    "selected": "เลือกแล้ว",
+    "downloadSelected": "ดาวน์โหลดที่เลือก",
+    "selectionLimit": "สามารถเลือกได้สูงสุด 20 รูป",
+    "noSelection": "กรุณาเลือกรูปภาพก่อนดาวน์โหลด",
+    "downloading": "กำลังดาวน์โหลด...",
+    "downloadComplete": "ดาวน์โหลดเสร็จสิ้น",
     "empty": {
       "title": "ยังไม่มีรูปภาพ"
     }

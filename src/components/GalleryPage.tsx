@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Photo, EventInfo, Pagination } from "@/types";
 import PhotoGrid from "./PhotoGrid";
 import ImageModal from "./ImageModal";
 import NotificationAlert from "./NotificationAlert";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useSelection } from "@/contexts/SelectionContext";
 import Image from "next/image";
-import { Images } from "lucide-react";
+import { Images, Download, X, MousePointer2 } from "lucide-react";
 
 interface GalleryPageProps {
   eventInfo: EventInfo | null;
@@ -29,11 +30,20 @@ export default function GalleryPage({
   eventCode,
 }: GalleryPageProps) {
   const { t } = useTranslation();
+  const {
+    isSelectionMode,
+    selectedCount,
+    toggleSelectionMode,
+    selectedPhotos,
+    clearSelection,
+    MAX_SELECTION_LIMIT,
+  } = useSelection();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error" | "warning" | "info";
   } | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const showNotification = (
     message: string,
@@ -53,6 +63,63 @@ export default function GalleryPage({
 
   const handleNewPhoto = () => {
     showNotification(t("gallery.newPhoto"), "success");
+  };
+
+  const handleBatchDownload = async () => {
+    if (selectedCount === 0) {
+      showNotification(t("gallery.noSelection"), "warning");
+      return;
+    }
+
+    setIsDownloading(true);
+    showNotification(t("gallery.downloading"), "info");
+
+    try {
+      // Convert Set to Array and download each photo with a small delay
+      const photoIds = Array.from(selectedPhotos);
+
+      for (let i = 0; i < photoIds.length; i++) {
+        const photoId = photoIds[i];
+        console.log(
+          `Downloading photo ${i + 1}/${photoIds.length}: ${photoId}`
+        );
+
+        try {
+          // Create a promise to handle the download properly
+          await new Promise<void>((resolve, reject) => {
+            try {
+              // Call the download function
+              onDownloadPhoto(photoId);
+              // Give some time for the download to start
+              setTimeout(resolve, 100);
+            } catch (error) {
+              reject(error);
+            }
+          });
+        } catch (downloadError) {
+          console.error(`Failed to download photo ${photoId}:`, downloadError);
+          // Continue with next photo even if one fails
+        }
+
+        // Add a longer delay between downloads to avoid overwhelming the browser
+        if (i < photoIds.length - 1) {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+      }
+
+      showNotification(t("gallery.downloadComplete"), "success");
+      clearSelection();
+      toggleSelectionMode(); // Exit selection mode after download
+    } catch (error) {
+      console.error("Batch download error:", error);
+      showNotification(t("gallery.downloadError"), "error");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleSelectionLimit = () => {
+    showNotification(t("gallery.selectionLimit"), "warning");
   };
 
   const RenderContent = () => {
@@ -128,9 +195,9 @@ export default function GalleryPage({
   return (
     <div className="min-h-screen bg-linear-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA]">
       <div className="mx-auto px-4 py-8">
-        {/* Header */}
+        {/* Header with Selection Controls */}
         <header className="text-center mb-8">
-          <div className="mx-auto container flex flex-col sm:flex-row justify-center gap-4 items-center">
+          <div className="mx-auto container flex flex-col sm:flex-row justify-center gap-4 items-center mb-6">
             <div className="flex justify-center rounded-xl">
               <Image
                 src="/khai.jpg"
@@ -149,6 +216,46 @@ export default function GalleryPage({
                 <span className="font-semibold">H&N @Leaf Garden</span>
               </p>
             </div>
+          </div>
+
+          {/* Selection Controls */}
+          <div className="flex justify-end items-center gap-4">
+            {!isSelectionMode ? (
+              <button
+                onClick={toggleSelectionMode}
+                className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5"
+              >
+                <MousePointer2 size={16} />
+                {t("gallery.select")}
+              </button>
+            ) : (
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={toggleSelectionMode}
+                  className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                >
+                  <X size={18} />
+                  {t("gallery.selected")}
+                </button>
+
+                <span className="text-gray-700 font-medium bg-white/70 px-3 py-2 rounded-xl border border-white/60 backdrop-blur-xl">
+                  {selectedCount} / {MAX_SELECTION_LIMIT}
+                </span>
+
+                {selectedCount > 0 && (
+                  <button
+                    onClick={handleBatchDownload}
+                    disabled={isDownloading}
+                    className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] transition-all duration-200 flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Download size={18} />
+                    {isDownloading
+                      ? t("gallery.downloading")
+                      : t("gallery.downloadSelected")}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </header>
 

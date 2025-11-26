@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import { SelectionProvider } from "@/contexts/SelectionContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,9 @@ export default function RootLayout({
       >
         <LanguageProvider>
           <FavoritesProvider>
-            {children}
+            <SelectionProvider>
+              {children}
+            </SelectionProvider>
           </FavoritesProvider>
         </LanguageProvider>
       </body>

@@ -3,8 +3,9 @@
 import { useEffect, useRef } from "react";
 import { Photo } from "@/types";
 import Image from "next/image";
-import { Heart } from "lucide-react";
+import { Heart, Check } from "lucide-react";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { useSelection } from "@/contexts/SelectionContext";
 
 interface PhotoGridProps {
   photos: Photo[];
@@ -23,26 +24,38 @@ export default function PhotoGrid({
 }: PhotoGridProps) {
   const newPhotoRef = useRef<HTMLDivElement>(null);
   const { isFavorite, toggleFavorite } = useFavorites();
+  const {
+    isSelectionMode,
+    selectedPhotos,
+    togglePhotoSelection,
+    isPhotoSelected,
+  } = useSelection();
+
+  const handleSelectionLimit = () => {
+    // This will be called when selection limit is reached
+    // We'll use a simple notification here since we don't have access to showNotification
+    console.warn("Selection limit reached");
+  };
 
   // Highlight new photos
-  useEffect(() => {
-    if (newPhotoRef.current && photos.length > 0) {
-      newPhotoRef.current.classList.add(
-        "ring-4",
-        "ring-blue-400",
-        "ring-opacity-75"
-      );
-      setTimeout(() => {
-        if (newPhotoRef.current) {
-          newPhotoRef.current.classList.remove(
-            "ring-4",
-            "ring-blue-400",
-            "ring-opacity-75"
-          );
-        }
-      }, 3000);
-    }
-  }, [photos.length]);
+  // useEffect(() => {
+  //   if (newPhotoRef.current && photos.length > 0) {
+  //     newPhotoRef.current.classList.add(
+  //       "ring-4",
+  //       "ring-blue-400",
+  //       "ring-opacity-75"
+  //     );
+  //     setTimeout(() => {
+  //       if (newPhotoRef.current) {
+  //         newPhotoRef.current.classList.remove(
+  //           "ring-4",
+  //           "ring-blue-400",
+  //           "ring-opacity-75"
+  //         );
+  //       }
+  //     }, 3000);
+  //   }
+  // }, [photos.length]);
 
   const imageUrl = (photo: Photo) => photo.displayUrl || photo.downloadUrl;
 
@@ -57,13 +70,23 @@ export default function PhotoGrid({
         <div
           key={photo.photoId}
           ref={index === 0 ? newPhotoRef : null}
-          className="rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+          className={`rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 ${
+            isPhotoSelected(photo.photoId)
+              ? "ring-4 ring-[#00C7A5] ring-opacity-50 shadow-lg"
+              : ""
+          }`}
         >
           <div
-            className="aspect-3/2 relative group cursor-pointer rounded-lg overflow-hidden"
+            className={`aspect-3/2 relative group cursor-pointer rounded-lg overflow-hidden ${
+              isSelectionMode ? "cursor-pointer" : ""
+            }`}
             onClick={() => {
-              const url = imageUrl(photo);
-              if (url) onImageClick(url);
+              if (isSelectionMode) {
+                togglePhotoSelection(photo.photoId, handleSelectionLimit);
+              } else {
+                const url = imageUrl(photo);
+                if (url) onImageClick(url);
+              }
             }}
           >
             {(() => {
@@ -86,43 +109,65 @@ export default function PhotoGrid({
                     loading="lazy"
                   />
 
-                  {/* Favorite icon in top-right corner */}
-                  <button
-                    onClick={(e) => handleFavoriteClick(e, photo)}
-                    className="absolute top-2 right-2 p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:bg-white/90 transition-all duration-200 group z-1 cursor-pointer"
-                  >
-                    <Heart
-                      size={22}
-                      className={`transition-colors duration-200 ${
-                        isFavorite(eventCode, photo.photoId)
-                          ? "fill-red-500 text-red-500"
-                          : "text-gray-600 hover:text-red-500"
+                  {/* Selection checkbox or favorite icon in top-right corner */}
+                  {isSelectionMode ? (
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        togglePhotoSelection(
+                          photo.photoId,
+                          handleSelectionLimit
+                        );
+                      }}
+                      className={`absolute top-2 right-2 w-8 h-8 rounded-xl border-2 transition-all duration-200 flex items-center justify-center cursor-pointer z-10 ${
+                        isPhotoSelected(photo.photoId)
+                          ? "bg-[#00C7A5] border-[#00C7A5] shadow-[0_2px_8px_rgba(0,199,165,0.4)]"
+                          : "bg-white/80 backdrop-blur-sm border-gray-300 group-hover:border-[#00C7A5] hover:bg-white/90"
                       }`}
-                    />
-                  </button>
-
-                  {/* Eye icon in center on hover */}
-                  <div className="absolute inset-0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center pointer-events-none">
-                    <svg
-                      className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      />
-                    </svg>
-                  </div>
+                      {isPhotoSelected(photo.photoId) && (
+                        <Check size={16} className="text-white" />
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        onClick={(e) => handleFavoriteClick(e, photo)}
+                        className="absolute top-2 right-2 p-2 bg-white/80 backdrop-blur-sm rounded-xl shadow-md hover:bg-white/90 hover:shadow-lg transition-all duration-200 group z-1 cursor-pointer"
+                      >
+                        <Heart
+                          size={22}
+                          className={`transition-colors duration-200 ${
+                            isFavorite(eventCode, photo.photoId)
+                              ? "fill-red-500 text-red-500"
+                              : "text-gray-600 hover:text-red-500"
+                          }`}
+                        />
+                      </button>
+                      {/* Eye icon in center on hover */}
+                      <div className="absolute inset-0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center pointer-events-none">
+                        <svg
+                          className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      </div>
+                    </>
+                  )}
                 </>
               );
             })()}

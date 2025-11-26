@@ -30,13 +30,9 @@ export interface PhotosResponse {
 
 export interface PhotoResponse {
   success: boolean;
-  data: {
-    photo: {
-      photoId: string;
-      originalName?: string;
-    };
-    base64: string;
-  };
+  message: string;
+  base64: string;
+  photoId: string;
 }
 
 export interface EventInfo {

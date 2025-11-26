@@ -15,6 +15,13 @@
     "downloadError": "Cannot download file",
     "tryAgain": "Try Again",
     "error": "Error",
+    "select": "Select",
+    "selected": "Selected",
+    "downloadSelected": "Download Selected",
+    "selectionLimit": "Maximum 20 photos can be selected",
+    "noSelection": "Please select photos before downloading",
+    "downloading": "Downloading...",
+    "downloadComplete": "Download Complete",
     "empty": {
       "title": "No images yet"
     }
