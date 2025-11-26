@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7002:7002"
+    environment:
+      - NODE_ENV=production
+      - PORT=7002
+      - HOSTNAME=0.0.0.0
+      # Update this to your server URL when deploying
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+      - NEXT_PUBLIC_STORAGE_MODE=local
+    restart: unless-stopped
+    container_name: mac-uploader-frontend
+    networks:
+      - mac-uploader-network
+
+networks:
+  mac-uploader-network:
+    driver: bridge
