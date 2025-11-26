@@ -60,7 +60,7 @@ export default function ImageModal({ imageUrl, onClose }: ImageModalProps) {
       <img
         src={imageUrl}
         alt="Full size image"
-        className="max-w-[90%] max-h-[90%] object-contain"
+        className="max-w-[90%] max-h-[90%] object-contain rounded-xl"
         style={{
           maxWidth: '90vw',
           maxHeight: '90vh',

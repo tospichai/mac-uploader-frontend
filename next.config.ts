@@ -8,6 +8,12 @@ const nextConfig: NextConfig = {
         hostname: "khai-photo.s3.ap-southeast-1.amazonaws.com",
         pathname: "/**",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3001",
+        pathname: "/api/files/events/**",
+      },
     ],
   },
 };

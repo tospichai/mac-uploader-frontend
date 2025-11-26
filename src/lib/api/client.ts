@@ -9,6 +9,8 @@ import {
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
+const STORAGE_MODE = process.env.NEXT_PUBLIC_STORAGE_MODE || "s3";
+
 class ApiClient {
   private client: AxiosInstance;
 
@@ -60,7 +62,7 @@ class ApiClient {
     return `${API_BASE_URL}/api/events/${eventCode}/photos/stream`;
   }
 
-  // Utility method to download photo as base64
+  // Utility method to download photo as base64 (for S3 mode)
   async downloadPhotoAsBase64(
     eventCode: string,
     photoId: string
@@ -84,6 +86,43 @@ class ApiClient {
       console.error("Download error:", error);
       throw new Error("ไม่สามารถดาวน์โหลดไฟล์ได้");
     }
+  }
+
+  // Get download URL for a photo (for local mode)
+  async getPhotoAsBase64FromUrl(eventCode: string, photoId: string): Promise<string> {
+    if (STORAGE_MODE === "local") {
+      // For local storage, fetch the image from URL and convert to base64
+      const imageUrl = `${API_BASE_URL}/api/files/events/${eventCode}/${photoId}_original.jpg`;
+
+      try {
+        const response = await fetch(imageUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch image: ${response.statusText}`);
+        }
+
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = reader.result as string;
+            resolve(result);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      } catch (error) {
+        console.error("Error converting local image to base64:", error);
+        throw new Error("ไม่สามารถดาวน์โหลดไฟล์ได้");
+      }
+    } else {
+      // For S3, we'll use the base64 method
+      throw new Error("Use downloadPhotoAsBase64 for S3 mode");
+    }
+  }
+
+  // Check if using local storage
+  isUsingLocalStorage(): boolean {
+    return STORAGE_MODE === "local";
   }
 }
 

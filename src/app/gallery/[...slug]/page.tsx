@@ -131,15 +131,27 @@ export default function GalleryRoute() {
 
   const handleDownloadPhoto = async (photoId: string) => {
     try {
-      const base64 = await apiClient.downloadPhotoAsBase64(eventCode, photoId);
+      let base64: string;
 
-      // Create download link
+      // Check if using local storage
+      if (apiClient.isUsingLocalStorage()) {
+        // For local storage, fetch image and convert to base64
+        base64 = await apiClient.getPhotoAsBase64FromUrl(eventCode, photoId);
+        console.log(`Downloaded photo ${photoId} using local URL to base64 conversion`);
+      } else {
+        // For S3 storage, use existing base64 method
+        base64 = await apiClient.downloadPhotoAsBase64(eventCode, photoId);
+        console.log(`Downloaded photo ${photoId} using S3 base64`);
+      }
+
+      // Create download link (same logic for both modes)
       const link = document.createElement("a");
       link.href = base64;
       link.download = `photo_${photoId}.jpg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
     } catch (err) {
       console.error("Download error:", err);
       alert(t("gallery.downloadError"));

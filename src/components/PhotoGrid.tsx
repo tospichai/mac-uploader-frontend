@@ -84,7 +84,7 @@ export default function PhotoGrid({
               if (isSelectionMode) {
                 togglePhotoSelection(photo.photoId, handleSelectionLimit);
               } else {
-                const url = imageUrl(photo);
+                const url = photo.downloadUrl;
                 if (url) onImageClick(url);
               }
             }}
@@ -101,13 +101,14 @@ export default function PhotoGrid({
 
               return (
                 <>
-                  <Image
+                  {/* <Image
                     src={url}
                     alt={`Photo ${photo.photoId}`}
                     className="w-full h-full object-cover"
                     fill
                     loading="lazy"
-                  />
+                  /> */}
+                  <img src={url} alt={`Photo ${photo.photoId}`} className="w-full h-full object-cover" />
 
                   {/* Selection checkbox or favorite icon in top-right corner */}
                   {isSelectionMode ? (
