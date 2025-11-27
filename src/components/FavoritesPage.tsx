@@ -254,7 +254,11 @@ export default function FavoritesPage({
                         : t("favorites.singleColumn")
                     }
                   >
-                    {isSingleColumn ? <Columns size={16} /> : <Rows size={16} />}{" "}
+                    {isSingleColumn ? (
+                      <Columns size={16} />
+                    ) : (
+                      <Rows size={16} />
+                    )}{" "}
                     {t("favorites.view")}
                   </button>
 
@@ -291,7 +295,9 @@ export default function FavoritesPage({
                         <Trash2 size={16} />
                         {t("favorites.deleteSelected")}
                       </button>
-                    ):(<div></div>)}
+                    ) : (
+                      <div></div>
+                    )}
                     {favorites.length > 0 && (
                       <button
                         onClick={handleSelectAll}
@@ -324,7 +330,11 @@ export default function FavoritesPage({
                         : t("favorites.singleColumn")
                     }
                   >
-                    {isSingleColumn ? <Columns size={16} /> : <Rows size={16} />}{" "}
+                    {isSingleColumn ? (
+                      <Columns size={16} />
+                    ) : (
+                      <Rows size={16} />
+                    )}{" "}
                     {t("favorites.view")}
                   </button>
                 </div>
@@ -378,8 +388,15 @@ export default function FavoritesPage({
         </main>
 
         {/* Footer */}
-        <footer className="text-center my-24 text-gray-100 text-sm">
-          <p>© 2025 Foldex Gallery | All Rights Reserved.</p>
+        <footer className="flex justify-center flex-col items-center mt-4 mb-24 text-[#00C7A5] text-sm">
+          <Image
+            src="/logo.png"
+            alt="logo"
+            width={42}
+            height={42}
+            className="mb-2"
+          />
+          <p>© 2025 Live Moments Gallery | All Rights Reserved.</p>
         </footer>
       </div>
 

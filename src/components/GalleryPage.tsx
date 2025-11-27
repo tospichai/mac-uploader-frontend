@@ -289,8 +289,15 @@ export default function GalleryPage({
         <main>{RenderContent()}</main>
 
         {/* Footer */}
-        <footer className="text-center my-24 text-gray-100 text-sm">
-          <p>© 2025 Foldex Gallery | All Rights Reserved.</p>
+        <footer className="flex justify-center flex-col items-center mt-4 mb-24 text-[#00C7A5] text-sm">
+            <Image
+              src="/logo.png"
+              alt="logo"
+              width={42}
+              height={42}
+              className="mb-2"
+            />
+          <p>© 2025 Live Moments Gallery | All Rights Reserved.</p>
         </footer>
       </div>
 
