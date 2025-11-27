@@ -36,7 +36,7 @@ export const languageNames: Record<SupportedLanguage, string> = {
 interface LanguageContextType {
   currentLanguage: SupportedLanguage;
   setLanguage: (language: SupportedLanguage) => void;
-  t: (key: string, fallback?: string) => string;
+  t: (key: string, fallback?: string | Record<string, string | number>) => string;
   availableLanguages: SupportedLanguage[];
 }
 
@@ -93,7 +93,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   };
 
   // Translation function
-  const t = (key: string, fallback?: string): string => {
+  const t = (key: string, fallback?: string | Record<string, any>): string => {
     const keys = key.split(".");
     let translation: string | Translations | undefined = translations[currentLanguage];
 
@@ -107,14 +107,23 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
           if (fallbackTranslation && typeof fallbackTranslation === "object" && fallbackTranslation[fk]) {
             fallbackTranslation = fallbackTranslation[fk];
           } else {
-            return fallback || key;
+            return typeof fallback === "string" ? fallback : key;
           }
         }
-        return typeof fallbackTranslation === "string" ? fallbackTranslation : (fallback || key);
+        return typeof fallbackTranslation === "string" ? fallbackTranslation : (typeof fallback === "string" ? fallback : key);
       }
     }
 
-    return typeof translation === "string" ? translation : (fallback || key);
+    // If translation is a template string with placeholders, replace them
+    if (typeof translation === "string" && typeof fallback === "object") {
+      let result = translation;
+      for (const [placeholder, value] of Object.entries(fallback)) {
+        result = result.replace(new RegExp(`\\{${placeholder}\\}`, "g"), String(value));
+      }
+      return result;
+    }
+
+    return typeof translation === "string" ? translation : (typeof fallback === "string" ? fallback : key);
   };
 
   const value: LanguageContextType = {

@@ -17,6 +17,11 @@ interface SelectionContextValue {
   clearSelection: () => void;
   selectedCount: number;
   MAX_SELECTION_LIMIT: number;
+  // Download functionality
+  isDownloading: boolean;
+  setDownloadFunction: (downloadFn: (photoId: string) => Promise<void>) => void;
+  handleBatchDownload: () => Promise<void>;
+  showNotification: (message: string, type: "success" | "error" | "warning" | "info") => void;
 }
 
 const SelectionContext = createContext<SelectionContextValue | undefined>(
@@ -28,6 +33,12 @@ const MAX_SELECTION_LIMIT = 20;
 export function SelectionProvider({ children }: { children: ReactNode }) {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedPhotos, setSelectedPhotos] = useState<Set<string>>(new Set());
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadPhoto, setDownloadPhoto] = useState<(photoId: string) => Promise<void> | null>(() => null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+  } | null>(null);
 
   const toggleSelectionMode = useCallback(() => {
     setIsSelectionMode((prev) => {
@@ -77,7 +88,70 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     setSelectedPhotos(new Set());
   }, []);
 
+  const setDownloadFunction = useCallback((downloadFn: (photoId: string) => Promise<void>) => {
+    setDownloadPhoto(() => downloadFn);
+  }, []);
+
+  const showNotification = useCallback((
+    message: string,
+    type: "success" | "error" | "warning" | "info" = "info"
+  ) => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  }, []);
+
   const selectedCount = selectedPhotos.size;
+
+  const handleBatchDownload = useCallback(async () => {
+    if (selectedCount === 0) {
+      showNotification("No photos selected", "warning");
+      return;
+    }
+
+    if (!downloadPhoto) {
+      showNotification("Download function not available", "error");
+      return;
+    }
+
+    setIsDownloading(true);
+    showNotification("Downloading photos...", "info");
+
+    try {
+      // Convert Set to Array and download each photo with a small delay
+      const photoIds = Array.from(selectedPhotos);
+
+      for (let i = 0; i < photoIds.length; i++) {
+        const photoId = photoIds[i];
+        console.log(
+          `Downloading photo ${i + 1}/${photoIds.length}: ${photoId}`
+        );
+
+        try {
+          // Call the download function
+          await downloadPhoto(photoId);
+          // Give some time for the download to start
+          await new Promise<void>((resolve) => setTimeout(resolve, 100));
+        } catch (downloadError) {
+          console.error(`Failed to download photo ${photoId}:`, downloadError);
+          // Continue with next photo even if one fails
+        }
+
+        // Add a longer delay between downloads to avoid overwhelming the browser
+        if (i < photoIds.length - 1) {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+      }
+
+      showNotification("Download complete", "success");
+      clearSelection();
+      toggleSelectionMode(); // Exit selection mode after download
+    } catch (error) {
+      console.error("Batch download error:", error);
+      showNotification("Download failed", "error");
+    } finally {
+      setIsDownloading(false);
+    }
+  }, [selectedCount, downloadPhoto, showNotification, clearSelection, toggleSelectionMode]);
 
   const value: SelectionContextValue = {
     isSelectionMode,
@@ -88,6 +162,10 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     clearSelection,
     selectedCount,
     MAX_SELECTION_LIMIT,
+    isDownloading,
+    setDownloadFunction,
+    handleBatchDownload,
+    showNotification,
   };
 
   return (

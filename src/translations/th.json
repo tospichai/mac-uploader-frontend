@@ -19,6 +19,7 @@
     "cancel": "ยกเลิก",
     "downloadSelected": "ดาวน์โหลดที่เลือก",
     "selectionLimit": "สามารถเลือกได้สูงสุด 20 รูป",
+    "selectionCount": "จำนวน {count} / {limit} รูป",
     "noSelection": "กรุณาเลือกรูปภาพก่อนดาวน์โหลด",
     "downloading": "กำลังดาวน์โหลด...",
     "downloadComplete": "ดาวน์โหลดเสร็จสิ้น",

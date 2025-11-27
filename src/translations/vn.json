@@ -19,6 +19,7 @@
     "cancel": "Hủy",
     "downloadSelected": "Tải xuống đã chọn",
     "selectionLimit": "Tối đa có thể chọn 20 ảnh",
+    "selectionCount": "Đã chọn {count} / {limit} ảnh",
     "noSelection": "Vui lòng chọn ảnh trước khi tải xuống",
     "downloading": "Đang tải xuống...",
     "downloadComplete": "Tải xuống hoàn tất",

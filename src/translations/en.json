@@ -19,6 +19,7 @@
     "cancel": "Cancel",
     "downloadSelected": "Download Selected",
     "selectionLimit": "Maximum 20 photos can be selected",
+    "selectionCount": "{count} / {limit} photos",
     "noSelection": "Please select photos before downloading",
     "downloading": "Downloading...",
     "downloadComplete": "Download Complete",

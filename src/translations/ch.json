@@ -19,6 +19,7 @@
     "cancel": "取消",
     "downloadSelected": "下载选中",
     "selectionLimit": "最多可选择20张照片",
+    "selectionCount": "已选择 {count} / {limit} 张",
     "noSelection": "下载前请选择照片",
     "downloading": "下载中...",
     "downloadComplete": "下载完成",

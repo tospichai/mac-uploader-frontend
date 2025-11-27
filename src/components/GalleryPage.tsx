@@ -45,6 +45,10 @@ export default function GalleryPage({
     selectedPhotos,
     clearSelection,
     MAX_SELECTION_LIMIT,
+    setDownloadFunction,
+    showNotification: selectionShowNotification,
+    isDownloading,
+    handleBatchDownload,
   } = useSelection();
   const { isSingleColumn, toggleGridView, isMobile } = useGridView();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -52,7 +56,18 @@ export default function GalleryPage({
     message: string;
     type: "success" | "error" | "warning" | "info";
   } | null>(null);
-  const [isDownloading, setIsDownloading] = useState(false);
+
+  // Set the download function in the context when component mounts or when onDownloadPhoto changes
+  useEffect(() => {
+    setDownloadFunction(async (photoId: string) => {
+      try {
+        await onDownloadPhoto(photoId);
+      } catch (error) {
+        console.error("Download error:", error);
+        throw error;
+      }
+    });
+  }, [onDownloadPhoto, setDownloadFunction]);
 
   const showNotification = (
     message: string,
@@ -74,62 +89,6 @@ export default function GalleryPage({
     showNotification(t("gallery.newPhoto"), "success");
   };
 
-  const handleBatchDownload = async () => {
-    if (selectedCount === 0) {
-      showNotification(t("gallery.noSelection"), "warning");
-      return;
-    }
-
-    setIsDownloading(true);
-    showNotification(t("gallery.downloading"), "info");
-
-    try {
-      // Convert Set to Array and download each photo with a small delay
-      const photoIds = Array.from(selectedPhotos);
-
-      for (let i = 0; i < photoIds.length; i++) {
-        const photoId = photoIds[i];
-        console.log(
-          `Downloading photo ${i + 1}/${photoIds.length}: ${photoId}`
-        );
-
-        try {
-          // Create a promise to handle the download properly
-          await new Promise<void>((resolve, reject) => {
-            try {
-              // Call the download function
-              onDownloadPhoto(photoId);
-              // Give some time for the download to start
-              setTimeout(resolve, 100);
-            } catch (error) {
-              reject(error);
-            }
-          });
-        } catch (downloadError) {
-          console.error(`Failed to download photo ${photoId}:`, downloadError);
-          // Continue with next photo even if one fails
-        }
-
-        // Add a longer delay between downloads to avoid overwhelming the browser
-        if (i < photoIds.length - 1) {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-        }
-      }
-
-      showNotification(t("gallery.downloadComplete"), "success");
-      clearSelection();
-      toggleSelectionMode(); // Exit selection mode after download
-    } catch (error) {
-      console.error("Batch download error:", error);
-      showNotification(t("gallery.downloadError"), "error");
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  const handleSelectionLimit = () => {
-    showNotification(t("gallery.selectionLimit"), "warning");
-  };
 
   const RenderContent = () => {
     if (loading) {
@@ -268,11 +227,11 @@ export default function GalleryPage({
                   {t("gallery.cancel")}
                 </button>
 
-                <span className="text-gray-700 font-medium bg-white/70 px-3 py-2 rounded-xl border border-white/60 backdrop-blur-xl">
+                {/* <span className="text-gray-700 font-medium bg-white/70 px-3 py-2 rounded-xl border border-white/60 backdrop-blur-xl">
                   {selectedCount} / {MAX_SELECTION_LIMIT}
-                </span>
+                </span> */}
 
-                {selectedCount > 0 && (
+                {/* {selectedCount > 0 && (
                   <button
                     onClick={handleBatchDownload}
                     disabled={isDownloading}
@@ -285,7 +244,7 @@ export default function GalleryPage({
                         : t("gallery.downloadSelected")}
                     </span>
                   </button>
-                )}
+                )} */}
               </div>
             )}
           </div>
