@@ -81,7 +81,8 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   // Initialize language on mount
   useEffect(() => {
     const defaultLanguage = getDefaultLanguage();
-    setCurrentLanguage(defaultLanguage);
+    const timeoutId = setTimeout(() => setCurrentLanguage(defaultLanguage), 0);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   // Save language preference to localStorage
@@ -93,7 +94,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   };
 
   // Translation function
-  const t = (key: string, fallback?: string | Record<string, any>): string => {
+  const t = (key: string, fallback?: string | Record<string, unknown>): string => {
     const keys = key.split(".");
     let translation: string | Translations | undefined = translations[currentLanguage];
 

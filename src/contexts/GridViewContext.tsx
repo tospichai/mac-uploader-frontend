@@ -62,9 +62,10 @@ export function GridViewProvider({ children }: { children: ReactNode }) {
   // Reset to 2 columns when switching to desktop
   useEffect(() => {
     if (!isMobile && isSingleColumn) {
-      setIsSingleColumn(false);
+      const timeoutId = setTimeout(() => setIsSingleColumn(false), 0);
+      return () => clearTimeout(timeoutId);
     }
-  }, [isMobile]);
+  }, [isMobile, isSingleColumn]);
 
   // Save grid view preference to localStorage whenever it changes
   useEffect(() => {

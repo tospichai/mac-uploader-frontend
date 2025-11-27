@@ -104,15 +104,20 @@ export default function FavoritesPage({
     setSelectedImage(null);
   };
 
+  useEffect(() => {
+    if (favorites.length === 0) {
+      const timeoutId = setTimeout(() => {
+        setSelectedImage(null);
+        if (isSelectionMode) {
+          toggleSelectionMode();
+        }
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [favorites, isSelectionMode, toggleSelectionMode]);
+
   const handleNewPhoto = () => {
     // Not applicable for favorites page
-  };
-
-  const handleClearAllFavorites = () => {
-    if (window.confirm(t("favorites.confirmClearAll"))) {
-      clearFavoritesForEvent(eventCode);
-      showNotification(t("favorites.clearedAll"), "success");
-    }
   };
 
   const handleSelectAll = () => {
@@ -263,25 +268,27 @@ export default function FavoritesPage({
                   </button>
 
                   {/* Selection Controls - Top Row */}
-                  <div className="flex items-center gap-3">
-                    {!isSelectionMode ? (
-                      <button
-                        onClick={toggleSelectionMode}
-                        className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] flex items-center gap-2 cursor-pointer h-10.5 font-bold"
-                      >
-                        <MousePointer2 size={18} />
-                        {t("favorites.select")}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={toggleSelectionMode}
-                        className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 flex items-center gap-2 cursor-pointer font-bold"
-                      >
-                        <X size={18} />
-                        {t("favorites.cancel")}
-                      </button>
-                    )}
-                  </div>
+                  {favoritePhotos.length && (
+                    <div className="flex items-center gap-3">
+                      {!isSelectionMode ? (
+                        <button
+                          onClick={toggleSelectionMode}
+                          className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] flex items-center gap-2 cursor-pointer h-10.5 font-bold"
+                        >
+                          <MousePointer2 size={18} />
+                          {t("favorites.select")}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={toggleSelectionMode}
+                          className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 flex items-center gap-2 cursor-pointer font-bold"
+                        >
+                          <X size={18} />
+                          {t("favorites.cancel")}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Bottom row: Delete Selected + Select All (right-aligned) */}
