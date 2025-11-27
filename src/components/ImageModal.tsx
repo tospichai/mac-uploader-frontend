@@ -154,7 +154,7 @@ export default function ImageModal({
         {onDownloadPhoto && (
           <button
             onClick={handleDownload}
-            className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200 place-items-center"
+            className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200 place-items-center h-10"
             aria-label="Download image"
           >
             <Download size={20} />
@@ -165,7 +165,7 @@ export default function ImageModal({
         {onToggleFavorite && isFavorite && eventCode && (
           <button
             onClick={handleFavorite}
-            className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200 place-items-center"
+            className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200 place-items-center h-10"
             aria-label="Toggle favorite"
           >
             <Heart
