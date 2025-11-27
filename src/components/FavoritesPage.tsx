@@ -22,8 +22,9 @@ export default function FavoritesPage({
   onDownloadPhoto,
 }: FavoritesPageProps) {
   const { t } = useTranslation();
-  const { getFavoritesForEvent, clearFavoritesForEvent } = useFavorites();
+  const { getFavoritesForEvent, clearFavoritesForEvent, isFavorite, toggleFavorite } = useFavorites();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error" | "warning" | "info";
@@ -46,8 +47,9 @@ export default function FavoritesPage({
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const handleImageClick = (imageUrl: string) => {
+  const handleImageClick = (imageUrl: string, index: number) => {
     setSelectedImage(imageUrl);
+    setSelectedImageIndex(index);
   };
 
   const closeModal = () => {
@@ -93,7 +95,7 @@ export default function FavoritesPage({
 
   return (
     <div className="min-h-screen bg-linear-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA]">
-      <div className="mx-auto px-4 py-8">
+      <div className="mx-auto px-2 sm:px-4 py-8">
         {/* Header */}
         <header className="text-center mb-8">
           <div className="mx-auto container flex flex-col sm:flex-row justify-center gap-4 items-center">
@@ -147,7 +149,15 @@ export default function FavoritesPage({
 
       {/* Image Modal */}
       {selectedImage && (
-        <ImageModal imageUrl={selectedImage} onClose={closeModal} />
+        <ImageModal
+          photos={favoritePhotos}
+          currentIndex={selectedImageIndex}
+          onClose={closeModal}
+          onDownloadPhoto={onDownloadPhoto}
+          onToggleFavorite={(photo) => toggleFavorite(eventCode, photo)}
+          isFavorite={(photo) => isFavorite(eventCode, photo.photoId)}
+          eventCode={eventCode}
+        />
       )}
 
       {/* Notification */}

@@ -10,7 +10,7 @@ import { useGridView } from "@/contexts/GridViewContext";
 
 interface PhotoGridProps {
   photos: Photo[];
-  onImageClick: (imageUrl: string) => void;
+  onImageClick: (imageUrl: string, index: number) => void;
   onDownloadPhoto: (photoId: string) => void;
   onNewPhoto: () => void;
   eventCode: string;
@@ -67,7 +67,7 @@ export default function PhotoGrid({
   };
 
   return (
-    <div className={`grid mb-8 gap-4 ${
+    <div className={`grid mb-8 gap-2 sm:gap-4 ${
       isSingleColumn && isMobile
         ? "grid-cols-1"
         : "grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
@@ -91,7 +91,7 @@ export default function PhotoGrid({
                 togglePhotoSelection(photo.photoId, handleSelectionLimit);
               } else {
                 const url = photo.downloadUrl;
-                if (url) onImageClick(url);
+                if (url) onImageClick(url, index);
               }
             }}
           >

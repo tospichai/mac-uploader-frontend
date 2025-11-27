@@ -8,6 +8,7 @@ import NotificationAlert from "./NotificationAlert";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSelection } from "@/contexts/SelectionContext";
 import { useGridView } from "@/contexts/GridViewContext";
+import { useFavorites } from "@/contexts/FavoritesContext";
 import Image from "next/image";
 import {
   Images,
@@ -51,7 +52,9 @@ export default function GalleryPage({
     handleBatchDownload,
   } = useSelection();
   const { isSingleColumn, toggleGridView, isMobile } = useGridView();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error" | "warning" | "info";
@@ -77,8 +80,9 @@ export default function GalleryPage({
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const handleImageClick = (imageUrl: string) => {
+  const handleImageClick = (imageUrl: string, index: number) => {
     setSelectedImage(imageUrl);
+    setSelectedImageIndex(index);
   };
 
   const closeModal = () => {
@@ -162,7 +166,7 @@ export default function GalleryPage({
 
   return (
     <div className="min-h-screen bg-linear-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA]">
-      <div className="mx-auto px-4 py-8">
+      <div className="mx-auto px-2 sm:px-4 py-8">
         {/* Header with Selection Controls */}
         <header className="text-center">
           <div className="mx-auto container flex flex-col sm:flex-row justify-center gap-4 items-center mb-6">
@@ -188,7 +192,7 @@ export default function GalleryPage({
         </header>
 
         {/* Grid View and Selection Controls */}
-        <div className="sticky top-0 z-10 flex justify-between items-center gap-4 bg-white/60 backdrop-blur-md py-3 -mx-4 px-4 border-b border-white/20 mb-4">
+        <div className="sticky top-0 z-10 flex justify-between items-center gap-4 bg-white/60 backdrop-blur-md py-3 -mx-2 sm:-mx-4 px-4 border-b border-white/20 mb-4">
           {/* Grid View Toggle Button - Mobile Only */}
           {isMobile ? (
             <button
@@ -261,7 +265,15 @@ export default function GalleryPage({
 
       {/* Image Modal */}
       {selectedImage && (
-        <ImageModal imageUrl={selectedImage} onClose={closeModal} />
+        <ImageModal
+          photos={photos}
+          currentIndex={selectedImageIndex}
+          onClose={closeModal}
+          onDownloadPhoto={onDownloadPhoto}
+          onToggleFavorite={(photo) => toggleFavorite(eventCode, photo)}
+          isFavorite={(photo) => isFavorite(eventCode, photo.photoId)}
+          eventCode={eventCode}
+        />
       )}
 
       {/* Notification */}
