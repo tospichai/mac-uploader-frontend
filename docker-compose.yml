@@ -12,7 +12,7 @@ services:
       - PORT=7002
       - HOSTNAME=0.0.0.0
       # Update this to your server URL when deploying
-      - NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+      - NEXT_PUBLIC_API_BASE_URL=https://api-foldex.tospichai.synology.me
       - NEXT_PUBLIC_STORAGE_MODE=local
     restart: unless-stopped
     container_name: mac-uploader-frontend
