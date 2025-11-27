@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: "https://api-foldex.tospichai.synology.me"
+        NEXT_PUBLIC_STORAGE_MODE: "local"
     ports:
       - "7002:7002"
     environment:
