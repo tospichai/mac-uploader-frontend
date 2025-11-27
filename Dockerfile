@@ -19,8 +19,11 @@ COPY . .
 
 ARG NEXT_PUBLIC_API_BASE_URL
 ARG NEXT_PUBLIC_STORAGE_MODE
-ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
-ENV NEXT_PUBLIC_STORAGE_MODE=${NEXT_PUBLIC_STORAGE_MODE}
+
+RUN printf "NEXT_PUBLIC_API_BASE_URL=%s\nNEXT_PUBLIC_STORAGE_MODE=%s\n" \
+    "$NEXT_PUBLIC_API_BASE_URL" \
+    "$NEXT_PUBLIC_STORAGE_MODE" \
+    > .env.production
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
