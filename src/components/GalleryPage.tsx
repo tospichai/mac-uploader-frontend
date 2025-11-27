@@ -243,46 +243,29 @@ export default function GalleryPage({
           )}
 
           {/* Selection Controls */}
-          <div className="flex justify-end items-center gap-4">
-            {!isSelectionMode ? (
-              <button
-                onClick={toggleSelectionMode}
-                className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5 font-bold"
-              >
-                <MousePointer2 size={18} />
-                {t("gallery.select")}
-              </button>
-            ) : (
-              <div className="flex items-center gap-3">
+          {photos.length && (
+            <div className="flex justify-end items-center gap-4">
+              {!isSelectionMode ? (
                 <button
                   onClick={toggleSelectionMode}
-                  className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 transition-all duration-200 flex items-center gap-2 cursor-pointer font-bold"
+                  className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5 font-bold"
                 >
-                  <X size={18} />
-                  {t("gallery.cancel")}
+                  <MousePointer2 size={18} />
+                  {t("gallery.select")}
                 </button>
-
-                {/* <span className="text-gray-700 font-medium bg-white/70 px-3 py-2 rounded-xl border border-white/60 backdrop-blur-xl">
-                  {selectedCount} / {MAX_SELECTION_LIMIT}
-                </span> */}
-
-                {/* {selectedCount > 0 && (
+              ) : (
+                <div className="flex items-center gap-3">
                   <button
-                    onClick={handleBatchDownload}
-                    disabled={isDownloading}
-                    className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] transition-all duration-200 flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed h-10.5"
+                    onClick={toggleSelectionMode}
+                    className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 transition-all duration-200 flex items-center gap-2 cursor-pointer font-bold"
                   >
-                    <Download size={18} />
-                    <span className="hidden sm:block">
-                      {isDownloading
-                        ? t("gallery.downloading")
-                        : t("gallery.downloadSelected")}
-                    </span>
+                    <X size={18} />
+                    {t("gallery.cancel")}
                   </button>
-                )} */}
-              </div>
-            )}
-          </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Main Content */}
@@ -290,13 +273,13 @@ export default function GalleryPage({
 
         {/* Footer */}
         <footer className="flex justify-center flex-col items-center mt-4 mb-24 text-[#00C7A5] text-sm">
-            <Image
-              src="/logo.png"
-              alt="logo"
-              width={42}
-              height={42}
-              className="mb-2"
-            />
+          <Image
+            src="/logo.png"
+            alt="logo"
+            width={42}
+            height={42}
+            className="mb-2"
+          />
           <p>© 2025 Live Moments Gallery | All Rights Reserved.</p>
         </footer>
       </div>
