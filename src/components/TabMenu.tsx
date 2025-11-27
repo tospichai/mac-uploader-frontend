@@ -54,14 +54,14 @@ export default function TabMenu({
         }
       },
     },
-    {
-      id: "search",
-      label: t("tabs.search"),
-      icon: <Search size={20} />,
-      onClick: () => {
-        console.log("Search clicked");
-      },
-    },
+    // {
+    //   id: "search",
+    //   label: t("tabs.search"),
+    //   icon: <Search size={20} />,
+    //   onClick: () => {
+    //     console.log("Search clicked");
+    //   },
+    // },
     {
       id: "favorites",
       label: t("tabs.favorites"),
@@ -105,7 +105,7 @@ export default function TabMenu({
 
       <nav className="fixed bottom-6 left-1/2 z-10 w-full -translate-x-1/2 px-4 sm:px-0">
         <div
-          className="mx-auto max-w-[400px] rounded-[999px] border border-white/60 bg-white/70
+          className="mx-auto max-w-xs rounded-[999px] border border-white/60 bg-white/70
              shadow-[0_18px_45px_rgba(15,23,42,0.18)] backdrop-blur-xl h-20"
         >
           {isSelectionMode ? (
