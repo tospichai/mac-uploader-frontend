@@ -4,6 +4,7 @@ import "./globals.css";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { SelectionProvider } from "@/contexts/SelectionContext";
+import { GridViewProvider } from "@/contexts/GridViewContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +34,9 @@ export default function RootLayout({
         <LanguageProvider>
           <FavoritesProvider>
             <SelectionProvider>
-              {children}
+              <GridViewProvider>
+                {children}
+              </GridViewProvider>
             </SelectionProvider>
           </FavoritesProvider>
         </LanguageProvider>

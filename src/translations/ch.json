@@ -14,7 +14,32 @@
     "next": "下一页",
     "downloadError": "无法下载文件",
     "tryAgain": "重试",
-    "error": "错误"
+    "error": "错误",
+    "select": "选择",
+    "cancel": "取消",
+    "downloadSelected": "下载选中",
+    "selectionLimit": "最多可选择20张照片",
+    "noSelection": "下载前请选择照片",
+    "downloading": "下载中...",
+    "downloadComplete": "下载完成",
+    "gridView": "网格视图",
+    "singleColumn": "单列",
+    "doubleColumn": "双列",
+    "view": "视图",
+    "empty": {
+      "title": "暂无图片"
+    }
+  },
+  "favorites": {
+    "title": "我的收藏",
+    "count": "收藏",
+    "clearAll": "清除全部",
+    "confirmClearAll": "确定要清除所有收藏吗？",
+    "clearedAll": "已清除所有收藏",
+    "empty": {
+      "title": "暂无收藏",
+      "description": "点击照片上的心形图标开始添加收藏"
+    }
   },
   "languageModal": {
     "title": "选择语言",

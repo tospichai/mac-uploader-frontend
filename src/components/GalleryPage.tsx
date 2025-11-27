@@ -7,8 +7,16 @@ import ImageModal from "./ImageModal";
 import NotificationAlert from "./NotificationAlert";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useSelection } from "@/contexts/SelectionContext";
+import { useGridView } from "@/contexts/GridViewContext";
 import Image from "next/image";
-import { Images, Download, X, MousePointer2 } from "lucide-react";
+import {
+  Images,
+  Download,
+  X,
+  MousePointer2,
+  Columns,
+  Rows,
+} from "lucide-react";
 
 interface GalleryPageProps {
   eventInfo: EventInfo | null;
@@ -38,6 +46,7 @@ export default function GalleryPage({
     clearSelection,
     MAX_SELECTION_LIMIT,
   } = useSelection();
+  const { isSingleColumn, toggleGridView, isMobile } = useGridView();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [notification, setNotification] = useState<{
     message: string;
@@ -196,7 +205,7 @@ export default function GalleryPage({
     <div className="min-h-screen bg-linear-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA]">
       <div className="mx-auto px-4 py-8">
         {/* Header with Selection Controls */}
-        <header className="text-center mb-8">
+        <header className="text-center">
           <div className="mx-auto container flex flex-col sm:flex-row justify-center gap-4 items-center mb-6">
             <div className="flex justify-center rounded-xl">
               <Image
@@ -217,6 +226,27 @@ export default function GalleryPage({
               </p>
             </div>
           </div>
+        </header>
+
+        {/* Grid View and Selection Controls */}
+        <div className="sticky top-0 z-10 flex justify-between items-center gap-4 bg-white/60 backdrop-blur-md py-3 -mx-4 px-4 border-b border-white/20 mb-4">
+          {/* Grid View Toggle Button - Mobile Only */}
+          {isMobile ? (
+            <button
+              onClick={toggleGridView}
+              className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5"
+              title={
+                isSingleColumn
+                  ? t("gallery.doubleColumn")
+                  : t("gallery.singleColumn")
+              }
+            >
+              {isSingleColumn ? <Columns size={16} /> : <Rows size={16} />}{" "}
+              {t("gallery.view")}
+            </button>
+          ) : (
+            <div></div>
+          )}
 
           {/* Selection Controls */}
           <div className="flex justify-end items-center gap-4">
@@ -235,7 +265,7 @@ export default function GalleryPage({
                   className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 transition-all duration-200 flex items-center gap-2 cursor-pointer"
                 >
                   <X size={18} />
-                  {t("gallery.selected")}
+                  {t("gallery.cancel")}
                 </button>
 
                 <span className="text-gray-700 font-medium bg-white/70 px-3 py-2 rounded-xl border border-white/60 backdrop-blur-xl">
@@ -246,18 +276,20 @@ export default function GalleryPage({
                   <button
                     onClick={handleBatchDownload}
                     disabled={isDownloading}
-                    className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] transition-all duration-200 flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] transition-all duration-200 flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed h-10.5"
                   >
                     <Download size={18} />
-                    {isDownloading
-                      ? t("gallery.downloading")
-                      : t("gallery.downloadSelected")}
+                    <span className="hidden sm:block">
+                      {isDownloading
+                        ? t("gallery.downloading")
+                        : t("gallery.downloadSelected")}
+                    </span>
                   </button>
                 )}
               </div>
             )}
           </div>
-        </header>
+        </div>
 
         {/* Main Content */}
         <main>{RenderContent()}</main>

@@ -16,12 +16,16 @@
     "tryAgain": "ลองใหม่",
     "error": "ข้อผิดพลาด",
     "select": "เลือก",
-    "selected": "เลือกแล้ว",
+    "cancel": "ยกเลิก",
     "downloadSelected": "ดาวน์โหลดที่เลือก",
     "selectionLimit": "สามารถเลือกได้สูงสุด 20 รูป",
     "noSelection": "กรุณาเลือกรูปภาพก่อนดาวน์โหลด",
     "downloading": "กำลังดาวน์โหลด...",
     "downloadComplete": "ดาวน์โหลดเสร็จสิ้น",
+    "gridView": "มุมมองกริด",
+    "singleColumn": "1 คอลัมน์",
+    "doubleColumn": "2 คอลัมน์",
+    "view": "มุมมอง",
     "empty": {
       "title": "ยังไม่มีรูปภาพ"
     }

@@ -16,12 +16,16 @@
     "tryAgain": "Try Again",
     "error": "Error",
     "select": "Select",
-    "selected": "Selected",
+    "cancel": "Cancel",
     "downloadSelected": "Download Selected",
     "selectionLimit": "Maximum 20 photos can be selected",
     "noSelection": "Please select photos before downloading",
     "downloading": "Downloading...",
     "downloadComplete": "Download Complete",
+    "gridView": "Grid View",
+    "singleColumn": "1 Column",
+    "doubleColumn": "2 Columns",
+    "view": "View",
     "empty": {
       "title": "No images yet"
     }

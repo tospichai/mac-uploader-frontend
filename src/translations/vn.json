@@ -14,7 +14,32 @@
     "next": "Tiếp theo",
     "downloadError": "Không thể tải tệp",
     "tryAgain": "Thử lại",
-    "error": "Lỗi"
+    "error": "Lỗi",
+    "select": "Chọn",
+    "cancel": "Hủy",
+    "downloadSelected": "Tải xuống đã chọn",
+    "selectionLimit": "Tối đa có thể chọn 20 ảnh",
+    "noSelection": "Vui lòng chọn ảnh trước khi tải xuống",
+    "downloading": "Đang tải xuống...",
+    "downloadComplete": "Tải xuống hoàn tất",
+    "gridView": "Chế độ xem lưới",
+    "singleColumn": "1 cột",
+    "doubleColumn": "2 cột",
+    "view": "Chế độ xem",
+    "empty": {
+      "title": "Chưa có hình ảnh nào"
+    }
+  },
+  "favorites": {
+    "title": "Yêu thích của tôi",
+    "count": "Yêu thích",
+    "clearAll": "Xóa tất cả",
+    "confirmClearAll": "Bạn có chắc chắn muốn xóa tất cả mục yêu thích không?",
+    "clearedAll": "Đã xóa tất cả mục yêu thích",
+    "empty": {
+      "title": "Chưa có mục yêu thích nào",
+      "description": "Bắt đầu thêm ảnh vào mục yêu thích bằng cách nhấp vào biểu tượng trái tim trên bất kỳ ảnh nào."
+    }
   },
   "languageModal": {
     "title": "Chọn Ngôn ngữ",

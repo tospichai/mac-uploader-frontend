@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Heart, Check } from "lucide-react";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useSelection } from "@/contexts/SelectionContext";
+import { useGridView } from "@/contexts/GridViewContext";
 
 interface PhotoGridProps {
   photos: Photo[];
@@ -30,6 +31,7 @@ export default function PhotoGrid({
     togglePhotoSelection,
     isPhotoSelected,
   } = useSelection();
+  const { isSingleColumn, isMobile } = useGridView();
 
   const handleSelectionLimit = () => {
     // This will be called when selection limit is reached
@@ -65,7 +67,11 @@ export default function PhotoGrid({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 mb-8">
+    <div className={`grid mb-8 gap-4 ${
+      isSingleColumn && isMobile
+        ? "grid-cols-1"
+        : "grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+    }`}>
       {photos.map((photo, index) => (
         <div
           key={photo.photoId}
@@ -108,7 +114,11 @@ export default function PhotoGrid({
                     fill
                     loading="lazy"
                   /> */}
-                  <img src={url} alt={`Photo ${photo.photoId}`} className="w-full h-full object-cover" />
+                  <img
+                    src={url}
+                    alt={`Photo ${photo.photoId}`}
+                    className="w-full h-full object-cover"
+                  />
 
                   {/* Selection checkbox or favorite icon in top-right corner */}
                   {isSelectionMode ? (
@@ -120,14 +130,14 @@ export default function PhotoGrid({
                           handleSelectionLimit
                         );
                       }}
-                      className={`absolute top-2 right-2 w-8 h-8 rounded-xl border-2 transition-all duration-200 flex items-center justify-center cursor-pointer z-10 ${
+                      className={`absolute top-2 right-2 w-9.5 h-9.5 rounded-xl border-2 transition-all duration-200 flex items-center justify-center cursor-pointer z-9 ${
                         isPhotoSelected(photo.photoId)
                           ? "bg-[#00C7A5] border-[#00C7A5] shadow-[0_2px_8px_rgba(0,199,165,0.4)]"
                           : "bg-white/80 backdrop-blur-sm border-gray-300 group-hover:border-[#00C7A5] hover:bg-white/90"
                       }`}
                     >
                       {isPhotoSelected(photo.photoId) && (
-                        <Check size={16} className="text-white" />
+                        <Check size={22} className="text-white" />
                       )}
                     </div>
                   ) : (
