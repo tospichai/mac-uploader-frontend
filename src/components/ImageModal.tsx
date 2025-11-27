@@ -137,7 +137,7 @@ export default function ImageModal({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200"
+          className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200 cursor-pointer"
           aria-label="Close modal"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,7 +154,7 @@ export default function ImageModal({
         {onDownloadPhoto && (
           <button
             onClick={handleDownload}
-            className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200 place-items-center h-10"
+            className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200 place-items-center h-10 cursor-pointer"
             aria-label="Download image"
           >
             <Download size={20} />
@@ -165,7 +165,7 @@ export default function ImageModal({
         {onToggleFavorite && isFavorite && eventCode && (
           <button
             onClick={handleFavorite}
-            className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200 place-items-center h-10"
+            className="bg-white/20 backdrop-blur-sm text-white p-2 rounded-full hover:bg-white/30 transition-colors duration-200 place-items-center h-10 cursor-pointer"
             aria-label="Toggle favorite"
           >
             <Heart
@@ -173,7 +173,7 @@ export default function ImageModal({
               className={`transition-colors duration-200 ${
                 checkIsFavorite()
                   ? "fill-red-500 text-red-500"
-                  : "text-white hover:text-red-500"
+                  : "text-white"
               }`}
             />
           </button>
@@ -256,7 +256,7 @@ export default function ImageModal({
 
       {/* Image counter */}
       {photos.length > 1 && (
-        <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-10">
+        <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-10 font-thai-medium">
           {currentImageIndex + 1} / {photos.length}
         </div>
       )}

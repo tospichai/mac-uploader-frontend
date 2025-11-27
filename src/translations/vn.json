@@ -37,6 +37,16 @@
     "clearAll": "Xóa tất cả",
     "confirmClearAll": "Bạn có chắc chắn muốn xóa tất cả mục yêu thích không?",
     "clearedAll": "Đã xóa tất cả mục yêu thích",
+    "selectAll": "Chọn tất cả",
+    "deselectAll": "Bỏ chọn tất cả",
+    "deleteSelected": "Xóa đã chọn",
+    "confirmDeleteSelected": "Bạn có chắc chắn muốn xóa các mục yêu thích đã chọn không?",
+    "deletedSelected": "Đã xóa các mục yêu thích đã chọn",
+    "select": "Chọn",
+    "cancel": "Hủy",
+    "view": "Chế độ xem",
+    "singleColumn": "1 cột",
+    "doubleColumn": "2 cột",
     "empty": {
       "title": "Chưa có mục yêu thích nào",
       "description": "Bắt đầu thêm ảnh vào mục yêu thích bằng cách nhấp vào biểu tượng trái tim trên bất kỳ ảnh nào."

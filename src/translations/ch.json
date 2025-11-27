@@ -37,6 +37,16 @@
     "clearAll": "清除全部",
     "confirmClearAll": "确定要清除所有收藏吗？",
     "clearedAll": "已清除所有收藏",
+    "selectAll": "全选",
+    "deselectAll": "取消全选",
+    "deleteSelected": "删除选中",
+    "confirmDeleteSelected": "确定要删除选中的收藏吗？",
+    "deletedSelected": "已删除选中的收藏",
+    "select": "选择",
+    "cancel": "取消",
+    "view": "视图",
+    "singleColumn": "单列",
+    "doubleColumn": "双列",
     "empty": {
       "title": "暂无收藏",
       "description": "点击照片上的心形图标开始添加收藏"

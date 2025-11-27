@@ -40,7 +40,7 @@ export default function NotificationAlert({ message, type, onClose }: Notificati
         ${getNotificationStyles()}
       `}
     >
-      {message}
+      <span className="font-thai-medium thai-text">{message}</span>
     </div>
   );
 }

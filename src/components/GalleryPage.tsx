@@ -18,6 +18,8 @@ import {
   Columns,
   Rows,
 } from "lucide-react";
+import { siFacebook, siInstagram } from "simple-icons";
+import SimpleIcon from "./SimpleIcon";
 
 interface GalleryPageProps {
   eventInfo: EventInfo | null;
@@ -72,6 +74,11 @@ export default function GalleryPage({
     });
   }, [onDownloadPhoto, setDownloadFunction]);
 
+  // Clear any existing selections when GalleryPage mounts
+  useEffect(() => {
+    clearSelection();
+  }, [clearSelection]);
+
   const showNotification = (
     message: string,
     type: "success" | "error" | "warning" | "info" = "info"
@@ -92,7 +99,6 @@ export default function GalleryPage({
   const handleNewPhoto = () => {
     showNotification(t("gallery.newPhoto"), "success");
   };
-
 
   const RenderContent = () => {
     if (loading) {
@@ -118,7 +124,7 @@ export default function GalleryPage({
               {pagination.hasPrevPage && (
                 <button
                   onClick={() => onPageChange(pagination.prevPage!)}
-                  className="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 text-sm font-medium text-gray-700"
+                  className="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 text-sm font-thai-medium text-gray-700 thai-text"
                 >
                   {t("gallery.previous")}
                 </button>
@@ -129,7 +135,7 @@ export default function GalleryPage({
                   <button
                     key={p.number}
                     onClick={() => onPageChange(p.number)}
-                    className={`px-3 py-2 rounded-md text-sm font-medium ${
+                    className={`px-3 py-2 rounded-md text-sm font-thai-medium ${
                       p.active
                         ? "bg-blue-500 text-white"
                         : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -143,7 +149,7 @@ export default function GalleryPage({
               {pagination.hasNextPage && (
                 <button
                   onClick={() => onPageChange(pagination.nextPage!)}
-                  className="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 text-sm font-medium text-gray-700"
+                  className="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 text-sm font-thai-medium text-gray-700 thai-text"
                 >
                   {t("gallery.next")}
                 </button>
@@ -156,7 +162,7 @@ export default function GalleryPage({
       return (
         <div className="flex flex-col items-center justify-center py-16">
           <Images className="text-gray-300 mb-4" size={64} />
-          <h2 className="text-xl font-semibold text-gray-600 mb-2">
+          <h2 className="text-xl font-thai-semibold text-gray-600 mb-2 thai-text">
             {t("gallery.empty.title")}
           </h2>
         </div>
@@ -180,13 +186,34 @@ export default function GalleryPage({
               />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">
+              <h1 className="text-2xl font-thai-bold text-gray-800 thai-text">
                 Wedding 23.11.25
                 <br />
               </h1>
-              <p className="text-gray-500 text-lg mt-1">
-                <span className="font-semibold">H&N @Leaf Garden</span>
+              <p className="text-gray-500 text-lg mt-1 thai-text">
+                <span className="font-thai-semibold">H&N @Leaf Garden</span>
               </p>
+              {/* Social Media Icons */}
+              <div className="flex items-center gap-3 mt-3 justify-center">
+                <a
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                  aria-label="Facebook"
+                >
+                  <SimpleIcon icon={siFacebook} size={26} />
+                </a>
+                <a
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                  aria-label="Instagram"
+                >
+                  <SimpleIcon icon={siInstagram} size={26} />
+                </a>
+              </div>
             </div>
           </div>
         </header>
@@ -197,7 +224,11 @@ export default function GalleryPage({
           {isMobile ? (
             <button
               onClick={toggleGridView}
-              className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5"
+              className={`px-4 py-2 rounded-xl border backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5 font-semibold bg-white/70 ${
+                isSingleColumn
+                  ? "bg-gray-200 border-transparent ring-2 ring-[#00C7A5]/60 text-[#00C7A5]"
+                  : "border-white/60 text-gray-700"
+              }`}
               title={
                 isSingleColumn
                   ? t("gallery.doubleColumn")
@@ -216,16 +247,16 @@ export default function GalleryPage({
             {!isSelectionMode ? (
               <button
                 onClick={toggleSelectionMode}
-                className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5"
+                className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5 font-bold"
               >
-                <MousePointer2 size={16} />
+                <MousePointer2 size={18} />
                 {t("gallery.select")}
               </button>
             ) : (
               <div className="flex items-center gap-3">
                 <button
                   onClick={toggleSelectionMode}
-                  className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 transition-all duration-200 flex items-center gap-2 cursor-pointer font-bold"
                 >
                   <X size={18} />
                   {t("gallery.cancel")}

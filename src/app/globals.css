@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -8,7 +9,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-ibm-plex-sans-thai), var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,5 +23,31 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+  font-weight: 400;
+}
+
+/* Font weight utilities for IBM Plex Sans Thai */
+.font-thai-thin { font-weight: 100; }
+.font-thai-extralight { font-weight: 200; }
+.font-thai-light { font-weight: 300; }
+.font-thai-regular { font-weight: 400; }
+.font-thai-medium { font-weight: 500; }
+.font-thai-semibold { font-weight: 600; }
+.font-thai-bold { font-weight: 700; }
+
+/* Enhanced text styling for better readability */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+p {
+  line-height: 1.6;
+}
+
+/* Better spacing for Thai text */
+.thai-text {
+  letter-spacing: 0.02em;
+  line-height: 1.6;
 }

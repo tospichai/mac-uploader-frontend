@@ -37,6 +37,16 @@
     "clearAll": "Clear All",
     "confirmClearAll": "Are you sure you want to clear all favorites?",
     "clearedAll": "All favorites cleared",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "deleteSelected": "Delete Selected",
+    "confirmDeleteSelected": "Are you sure you want to delete selected favorites?",
+    "deletedSelected": "Selected favorites deleted",
+    "select": "Select",
+    "cancel": "Cancel",
+    "view": "View",
+    "singleColumn": "1 Column",
+    "doubleColumn": "2 Columns",
     "empty": {
       "title": "No favorites yet",
       "description": "Start adding photos to your favorites by clicking the heart icon on any photo."

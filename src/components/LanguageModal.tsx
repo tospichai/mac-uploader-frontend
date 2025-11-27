@@ -79,7 +79,7 @@ export default function LanguageModal({
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pb-4 pt-6">
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-thai-semibold text-gray-900 thai-text">
             {t("languageModal.title")}
           </h2>
           <button
@@ -106,7 +106,7 @@ export default function LanguageModal({
               >
                 {/* Language Flag/Icon */}
                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-sm mb-3">
-                  <span className="text-xl font-medium">
+                  <span className="text-xl font-thai-medium">
                     {language === "th" && "🇹🇭"}
                     {language === "en" && "🇺🇸"}
                     {language === "ch" && "🇨🇳"}
@@ -116,7 +116,7 @@ export default function LanguageModal({
 
                 {/* Language Name */}
                 <div className="text-center">
-                  <div className="font-medium text-gray-900 text-sm">
+                  <div className="font-thai-medium text-gray-900 text-sm thai-text">
                     {languageNames[language]}
                   </div>
                 </div>

@@ -6,6 +6,7 @@ import FavoritesPage from "@/components/FavoritesPage";
 import TabMenu from "@/components/TabMenu";
 import { EventInfo } from "@/types";
 import { useTranslation } from "@/hooks/useTranslation";
+import apiClient from "@/lib/api/client";
 
 export default function FavoritesRoute() {
   const params = useParams();
@@ -51,22 +52,28 @@ export default function FavoritesRoute() {
 
   const handleDownloadPhoto = async (photoId: string) => {
     try {
-      // For favorites, we need to construct the download URL
-      // This is a simplified version - in a real app, you'd call the API
-      const response = await fetch(`/api/photos/${eventCode}/download/${photoId}`);
-      if (!response.ok) {
-        throw new Error('Download failed');
+      let base64: string;
+
+      // Check if using local storage
+      if (apiClient.isUsingLocalStorage()) {
+        // For local storage, fetch image and convert to base64
+        base64 = await apiClient.getPhotoAsBase64FromUrl(eventCode, photoId);
+        console.log(
+          `Downloaded photo ${photoId} using local URL to base64 conversion`
+        );
+      } else {
+        // For S3 storage, use existing base64 method
+        base64 = await apiClient.downloadPhotoAsBase64(eventCode, photoId);
+        console.log(`Downloaded photo ${photoId} using S3 base64`);
       }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      // Create download link (same logic for both modes)
       const link = document.createElement("a");
-      link.href = url;
+      link.href = base64;
       link.download = `photo_${photoId}.jpg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Download error:", err);
       alert(t("gallery.downloadError"));
@@ -93,11 +100,13 @@ export default function FavoritesRoute() {
                 ></path>
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-red-600 mb-4">{t("gallery.error")}</h1>
-            <p className="text-gray-700 mb-6">{error}</p>
+            <h1 className="text-2xl font-thai-bold text-red-600 mb-4 thai-text">
+              {t("gallery.error")}
+            </h1>
+            <p className="text-gray-700 mb-6 thai-text">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+              className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 font-thai-medium"
             >
               {t("gallery.tryAgain")}
             </button>

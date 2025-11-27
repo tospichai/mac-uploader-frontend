@@ -67,18 +67,20 @@ export default function PhotoGrid({
   };
 
   return (
-    <div className={`grid mb-8 gap-2 sm:gap-4 ${
-      isSingleColumn && isMobile
-        ? "grid-cols-1"
-        : "grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
-    }`}>
+    <div
+      className={`grid mb-8 gap-2 sm:gap-4 ${
+        isSingleColumn && isMobile
+          ? "grid-cols-1"
+          : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4"
+      }`}
+    >
       {photos.map((photo, index) => (
         <div
           key={photo.photoId}
           ref={index === 0 ? newPhotoRef : null}
-          className={`rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 ${
+          className={`relative rounded-lg shadow-md overflow-hidden hover:shadow-lg${
             isPhotoSelected(photo.photoId)
-              ? "ring-4 ring-[#00C7A5] ring-opacity-50 shadow-lg"
+              ? "ring-3 sm:ring-4 ring-[#00C7A5] ring-opacity-50 shadow-lg"
               : ""
           }`}
         >
@@ -100,7 +102,9 @@ export default function PhotoGrid({
               if (!url) {
                 return (
                   <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500">No image</span>
+                    <span className="text-gray-500 font-thai-medium thai-text">
+                      No image
+                    </span>
                   </div>
                 );
               }
@@ -130,10 +134,10 @@ export default function PhotoGrid({
                           handleSelectionLimit
                         );
                       }}
-                      className={`absolute top-2 right-2 w-9.5 h-9.5 rounded-xl border-2 transition-all duration-200 flex items-center justify-center cursor-pointer z-9 ${
+                      className={`absolute top-2 right-2 w-9.5 h-9.5 rounded-xl border-2 flex items-center justify-center cursor-pointer z-9 ${
                         isPhotoSelected(photo.photoId)
                           ? "bg-[#00C7A5] border-[#00C7A5] shadow-[0_2px_8px_rgba(0,199,165,0.4)]"
-                          : "bg-white/80 backdrop-blur-sm border-gray-300 group-hover:border-[#00C7A5] hover:bg-white/90"
+                          : "backdrop-blur-sm border-gray-300 group-hover:border-[#00C7A5] hover:bg-white/20"
                       }`}
                     >
                       {isPhotoSelected(photo.photoId) && (
@@ -141,95 +145,49 @@ export default function PhotoGrid({
                       )}
                     </div>
                   ) : (
-                    <>
-                      <button
-                        onClick={(e) => handleFavoriteClick(e, photo)}
-                        className="absolute top-2 right-2 p-2 bg-white/80 backdrop-blur-sm rounded-xl shadow-md hover:bg-white/90 hover:shadow-lg transition-all duration-200 group z-1 cursor-pointer"
+                    <div className="absolute inset-0 group-hover:bg-black/30 flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                       >
-                        <Heart
-                          size={22}
-                          className={`transition-colors duration-200 ${
-                            isFavorite(eventCode, photo.photoId)
-                              ? "fill-red-500 text-red-500"
-                              : "text-gray-600 hover:text-red-500"
-                          }`}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                         />
-                      </button>
-                      {/* Eye icon in center on hover */}
-                      <div className="absolute inset-0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center pointer-events-none">
-                        <svg
-                          className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      </div>
-                    </>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                    </div>
                   )}
                 </>
               );
             })()}
           </div>
-
-          <div className="p-3 flex justify-between items-center hidden">
-            <div className="min-w-0 flex-1 mr-2">
-              <p
-                className="text-xs text-gray-500 truncate"
-                title={`ID: ${photo.photoId}`}
-              >
-                ID: {photo.photoId}
-              </p>
-              <p
-                className="text-xs text-gray-400 truncate"
-                title={
-                  photo.lastModified
-                    ? new Date(photo.lastModified).toLocaleString("th-TH")
-                    : ""
-                }
-              >
-                {photo.lastModified
-                  ? new Date(photo.lastModified).toLocaleString("th-TH")
-                  : ""}
-              </p>
-            </div>
-
-            {photo.downloadUrl && (
+          {!isSelectionMode && (
+            <div>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDownloadPhoto(photo.photoId);
-                }}
-                className="flex-shrink-0 text-black px-2 py-1 text-xs rounded hover:bg-gray-200 transition-colors duration-200 flex items-center"
+                onClick={(e) => handleFavoriteClick(e, photo)}
+                className="absolute top-2 right-2 p-2 backdrop-blur-sm rounded-full shadow-md hover:bg-white/20 hover:shadow-lg transition-all duration-200 group z-1 cursor-pointer"
               >
-                <svg
-                  className="w-5 h-5 mr-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                  />
-                </svg>
+                <Heart
+                  size={22}
+                  className={` ${
+                    isFavorite(eventCode, photo.photoId)
+                      ? "fill-red-500 text-red-500"
+                      : "text-gray-100"
+                  }`}
+                />
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       ))}
     </div>

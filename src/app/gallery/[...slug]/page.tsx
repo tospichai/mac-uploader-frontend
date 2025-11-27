@@ -178,11 +178,11 @@ export default function GalleryRoute() {
                 ></path>
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-red-600 mb-4">{t("gallery.error")}</h1>
-            <p className="text-gray-700 mb-6">{error}</p>
+            <h1 className="text-2xl font-thai-bold text-red-600 mb-4 thai-text">{t("gallery.error")}</h1>
+            <p className="text-gray-700 mb-6 thai-text">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+              className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 font-thai-medium"
             >
               {t("gallery.tryAgain")}
             </button>
