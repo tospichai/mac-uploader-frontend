@@ -51,3 +51,65 @@ p {
   letter-spacing: 0.02em;
   line-height: 1.6;
 }
+
+/* Enhanced placeholder styling for better visibility */
+::placeholder {
+  color: #6b7280 !important;
+  opacity: 0.8 !important;
+  font-weight: 400 !important;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-input-placeholder {
+  color: #6b7280 !important;
+  opacity: 0.8 !important;
+  font-weight: 400 !important;
+}
+
+/* Mozilla Firefox */
+::-moz-placeholder {
+  color: #6b7280 !important;
+  opacity: 0.8 !important;
+  font-weight: 400 !important;
+}
+
+/* Internet Explorer 10-11 */
+:-ms-input-placeholder {
+  color: #6b7280 !important;
+  opacity: 0.8 !important;
+  font-weight: 400 !important;
+}
+
+/* Microsoft Edge Legacy */
+::-ms-input-placeholder {
+  color: #6b7280 !important;
+  opacity: 0.8 !important;
+  font-weight: 400 !important;
+}
+
+/* Enhanced input text styling for better visibility */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"] {
+  color: #1f2937 !important;
+  font-weight: 500 !important;
+}
+
+/* Ensure input text is visible in all states */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="url"]:focus {
+  color: #111827 !important;
+  font-weight: 500 !important;
+}
+
+/* Override any conflicting text color styles */
+input {
+  color: #1f2937 !important;
+}
+
+input:focus {
+  color: #111827 !important;
+}

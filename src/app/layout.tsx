@@ -5,6 +5,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { SelectionProvider } from "@/contexts/SelectionContext";
 import { GridViewProvider } from "@/contexts/GridViewContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,15 +32,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <LanguageProvider>
-          <FavoritesProvider>
-            <SelectionProvider>
-              <GridViewProvider>
-                {children}
-              </GridViewProvider>
-            </SelectionProvider>
-          </FavoritesProvider>
-        </LanguageProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <FavoritesProvider>
+              <SelectionProvider>
+                <GridViewProvider>
+                  {children}
+                </GridViewProvider>
+              </SelectionProvider>
+            </FavoritesProvider>
+          </LanguageProvider>
+        </AuthProvider>
       </body>
     </html>
   );

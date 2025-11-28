@@ -75,3 +75,6 @@ export interface SSEMessage {
   eventCode?: string;
   photo?: SSEPhotoData["photo"];
 }
+
+// Re-export authentication types
+export * from './auth';

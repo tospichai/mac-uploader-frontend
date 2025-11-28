@@ -7,7 +7,10 @@ import {
 } from "@/types";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+
+// Debug logging to verify API URL
+console.log("API Base URL:", API_BASE_URL);
 
 const STORAGE_MODE = process.env.NEXT_PUBLIC_STORAGE_MODE || "s3";
 

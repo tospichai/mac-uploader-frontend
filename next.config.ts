@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
-        port: "3001",
+        port: "3000",
         pathname: "/api/files/events/**",
       },
     ],
