@@ -12,7 +12,6 @@ import { useFavorites } from "@/contexts/FavoritesContext";
 import Image from "next/image";
 import {
   Images,
-  Download,
   X,
   MousePointer2,
   Columns,
@@ -187,12 +186,24 @@ export default function GalleryPage({
             </div>
             <div>
               <h1 className="text-2xl font-thai-bold text-gray-800 thai-text">
-                Wedding 23.11.25
+                {eventInfo?.title || 'Event Name'}
                 <br />
               </h1>
-              <p className="text-gray-500 text-lg mt-1 thai-text">
-                <span className="font-thai-semibold">H&N @Leaf Garden</span>
-              </p>
+              {eventInfo?.subtitle && (
+                <p className="text-gray-500 text-lg mt-1 thai-text">
+                  <span className="font-thai-semibold">{eventInfo.subtitle}</span>
+                </p>
+              )}
+              {eventInfo?.eventDate && (
+                <p className="text-gray-500 text-sm mt-1 thai-text">
+                  {t("gallery.eventDetails.date")}: {new Date(eventInfo.eventDate).toLocaleDateString('th-TH')}
+                </p>
+              )}
+              {eventInfo?.description && (
+                <p className="text-gray-600 text-sm mt-2 thai-text max-w-md">
+                  {eventInfo.description}
+                </p>
+              )}
               {/* Social Media Icons */}
               <div className="flex items-center gap-3 mt-3 justify-center">
                 <a

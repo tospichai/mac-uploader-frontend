@@ -1,12 +1,8 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-import {
-  PhotosResponse,
-  PhotoResponse,
-  EventResponse,
-  ApiResponse,
-} from "@/types";
+import { PhotosResponse, PhotoResponse, EventResponse } from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
 // Debug logging to verify API URL
 console.log("API Base URL:", API_BASE_URL);
@@ -91,7 +87,10 @@ class ApiClient {
   }
 
   // Get download URL for a photo (for local mode)
-  async getPhotoAsBase64FromUrl(eventCode: string, photoId: string): Promise<string> {
+  async getPhotoAsBase64FromUrl(
+    eventCode: string,
+    photoId: string
+  ): Promise<string> {
     if (STORAGE_MODE === "local") {
       // For local storage, fetch the image from URL and convert to base64
       const imageUrl = `${API_BASE_URL}/api/files/events/${eventCode}/${photoId}_original.jpg`;

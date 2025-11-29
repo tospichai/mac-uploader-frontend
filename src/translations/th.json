@@ -29,6 +29,14 @@
     "view": "มุมมอง",
     "empty": {
       "title": "ยังไม่มีรูปภาพ"
+    },
+    "eventDetails": {
+      "date": "วันที่",
+      "location": "สถานที่",
+      "description": "รายละเอียดงาน",
+      "status": "สถานะ",
+      "published": "เผยแพร่",
+      "draft": "ฉบับร่าง"
     }
   },
   "favorites": {
@@ -135,6 +143,50 @@
     "manageSubscription": "จัดการการสมัครสมาชิก",
     "underDevelopment": "กำลังพัฒนา",
     "comingSoon": "เร็วๆ นี้"
+  },
+  "events": {
+    "title": "จัดการอีเวนต์",
+    "create": "สร้างอีเวนต์",
+    "edit": "แก้ไขอีเวนต์",
+    "delete": "ลบอีเวนต์",
+    "eventName": "ชื่องาน",
+    "eventDate": "วันที่จัดงาน",
+    "eventSubtitle": "ชื่องานข้อความรอง",
+    "eventDescription": "รายละเอียดงาน",
+    "folderName": "ชื่อโฟลเดอร์เก็บรูป",
+    "defaultLanguage": "ภาษาเริ่มต้น",
+    "status": "สถานะ",
+    "published": "เผยแพร่",
+    "draft": "ฉบับร่าง",
+    "totalPhotos": "จำนวนรูปภาพ",
+    "totalSize": "ขนาดรวม",
+    "createdAt": "สร้างเมื่อ",
+    "actions": "การกระทำ",
+    "publish": "เผยแพร่",
+    "unpublish": "ยกเลิกเผยแพร่",
+    "confirmDelete": "คุณแน่ใจหรือไม่ว่าต้องการลบอีเวนต์นี้?",
+    "eventDeleted": "ลบอีเวนต์เรียบร้อย",
+    "eventPublished": "เผยแพร่อีเวนต์เรียบร้อย",
+    "eventUnpublished": "ยกเลิกเผยแพร่อีเวนต์เรียบร้อย",
+    "eventUpdated": "อัพเดทอีเวนต์เรียบร้อย",
+    "eventCreated": "สร้างอีเวนต์เรียบร้อย",
+    "noEvents": "ไม่มีอีเวนต์",
+    "createFirstEvent": "สร้างอีเวนต์แรกของคุณเพื่อเริ่มต้น",
+    "validation": {
+      "eventNameRequired": "กรุณากรอกชื่องาน",
+      "eventDateRequired": "กรุณากรอกวันที่จัดงาน",
+      "folderNameRequired": "กรุณากรอกชื่อโฟลเดอร์",
+      "folderNameInvalid": "ชื่อโฟลเดอร์ไม่ถูกต้อง (ต้องเป็นตัวอักษรภาษาอังกฤษ ตัวเลข หรือ - _)",
+      "folderNameExists": "ชื่อโฟลเดอร์นี้มีอยู่แล้ว",
+      "languageRequired": "กรุณาเลือกภาษาเริ่มต้น"
+    },
+    "statistics": {
+      "totalEvents": "จำนวนอีเวนต์ทั้งหมด",
+      "publishedEvents": "อีเวนต์ที่เผยแพร่",
+      "draftEvents": "อีเวนต์ฉบับร่าง",
+      "totalPhotos": "จำนวนรูปภาพทั้งหมด",
+      "totalSize": "ขนาดรวมทั้งหมด"
+    }
   },
   "system": {
     "systemInfo": "ข้อมูลระบบ",

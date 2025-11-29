@@ -91,7 +91,9 @@ p {
 input[type="text"],
 input[type="email"],
 input[type="password"],
-input[type="url"] {
+input[type="url"],
+input[type="date"],
+textarea,select {
   color: #1f2937 !important;
   font-weight: 500 !important;
 }

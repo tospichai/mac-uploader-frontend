@@ -35,7 +35,7 @@ export default function LanguageButton({ className = "" }: LanguageButtonProps) 
       {/* Language Button - Fixed in top right corner */}
       <button
         onClick={() => setIsLanguageModalOpen(true)}
-        className={`fixed top-4 right-4 z-1 flex items-center justify-center w-12 h-12 bg-white/90 backdrop-blur-sm border border-white/60 shadow-lg rounded-full hover:bg-white hover:shadow-xl transition-all duration-200 group ${className}`}
+        className={`fixed top-4 right-4 z-1 flex items-center justify-center w-12 h-12 bg-white/90 backdrop-blur-sm border border-white/60 shadow-lg rounded-full hover:bg-white hover:shadow-xl transition-all duration-200 group cursor-pointer ${className}`}
         title="Change Language"
         aria-label="Change Language"
       >

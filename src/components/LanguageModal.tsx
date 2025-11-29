@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useModalAnimation } from "@/hooks/useModalAnimation";
 import { SupportedLanguage, languageNames } from "@/contexts/LanguageContext";
 
 interface LanguageModalProps {
@@ -21,6 +22,12 @@ export default function LanguageModal({
   const { t } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
 
+  // Use the modal animation hook
+  const { isClosing, handleClose, getModalStyle, getBackdropStyle } = useModalAnimation({
+    isOpen,
+    onClose,
+  });
+
   // Close modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -28,13 +35,13 @@ export default function LanguageModal({
         modalRef.current &&
         !modalRef.current.contains(event.target as Node)
       ) {
-        onClose();
+        handleClose();
       }
     };
 
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onClose();
+        handleClose();
       }
     };
 
@@ -50,15 +57,15 @@ export default function LanguageModal({
       document.removeEventListener("keydown", handleEscapeKey);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !isClosing) return null;
 
   const languages: SupportedLanguage[] = ["th", "en", "ch", "vn"];
 
   const handleLanguageSelect = (language: SupportedLanguage) => {
     onLanguageSelect(language);
-    onClose();
+    handleClose();
   };
 
   return (
@@ -66,16 +73,15 @@ export default function LanguageModal({
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300"
-        onClick={onClose}
+        style={getBackdropStyle()}
+        onClick={handleClose}
       />
 
       {/* Modal Content */}
       <div
         ref={modalRef}
         className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl transform transition-all duration-300 ease-out"
-        style={{
-          animation: "fadeIn 0.3s ease-out",
-        }}
+        style={getModalStyle()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pb-4 pt-6">
@@ -83,7 +89,7 @@ export default function LanguageModal({
             {t("languageModal.title")}
           </h2>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
             aria-label="Close"
           >
@@ -142,20 +148,6 @@ export default function LanguageModal({
           </div>
         </div>
       </div>
-
-      {/* Animation Styles */}
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
     </div>
   );
 }

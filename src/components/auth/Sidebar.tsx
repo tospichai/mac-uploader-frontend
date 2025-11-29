@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Camera, LayoutDashboard, Calendar, User, LogOut } from "lucide-react";
-import Image from "next/image";
 import LogoutModal from "./LogoutModal";
 
 interface SidebarProps {
@@ -55,7 +54,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
 
   return (
     <>
-      <div className="sticky top-0 p-6">
+      <div className="p-4 sticky top-0">
         {/* Profile Section */}
         <div className="text-center mb-8">
           {user?.logoUrl ? (
@@ -71,7 +70,7 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
               <Camera className="w-12 h-12 text-gray-400" />
             </div>
           )}
-          <h2 className="text-2xl font-thai-bold text-gray-900 thai-text">
+          <h2 className="text-2xl font-thai-bold text-gray-900 thai-text line-clamp-1">
             {user?.displayName}
           </h2>
         </div>

@@ -88,15 +88,14 @@ export default function AccountTab() {
             </p>
           </div>
         </div>
-      </div>
 
-      {/* Social Links */}
+        {/* Social Links */}
       {(user.facebookUrl ||
         user.instagramUrl ||
         user.twitterUrl ||
         user.websiteUrl) && (
-        <div className="bg-white rounded-2xl shadow-xl p-6">
-          <h3 className="text-xl font-thai-bold text-gray-900 mb-4 flex items-center thai-text">
+        <div>
+          <h3 className="text-xl font-thai-bold text-gray-900 mb-4 flex items-center thai-text mt-8">
             <Globe className="w-5 h-5 mr-2 text-[#00C7A5]" />
             {t("auth.socialLinks")}
           </h3>
@@ -145,6 +144,7 @@ export default function AccountTab() {
           </div>
         </div>
       )}
+      </div>
 
       {/* Account Settings */}
       <div className="relative bg-white rounded-2xl shadow-xl p-6">

@@ -36,16 +36,66 @@ export interface PhotoResponse {
 }
 
 export interface EventInfo {
-  eventCode: string;
-  eventName: string;
+  id: string;
+  title: string;
+  eventDate: string;
+  subtitle?: string;
+  description?: string;
+  folderName: string;
+  defaultLanguage: string;
+  isPublished: boolean;
   photographerName: string;
   createdAt: string;
   totalPhotos: number;
+  totalSize?: number;
 }
 
 export interface EventResponse {
   success: boolean;
   data: EventInfo;
+}
+
+export interface EventCreateRequest {
+  title: string;
+  eventDate: string;
+  subtitle?: string;
+  description?: string;
+  folderName: string;
+  defaultLanguage: string;
+  isPublished: boolean;
+}
+
+export interface EventUpdateRequest {
+  title?: string;
+  eventDate?: string;
+  subtitle?: string;
+  description?: string;
+  folderName?: string;
+  defaultLanguage?: string;
+  status?: 'draft' | 'published';
+}
+
+export interface EventsListResponse {
+  success: boolean;
+  events: EventInfo[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalEvents: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
+}
+
+export interface EventStatisticsResponse {
+  success: boolean;
+  data: {
+    totalEvents: number;
+    publishedEvents: number;
+    draftEvents: number;
+    totalPhotos: number;
+    totalSize: number;
+  };
 }
 
 export interface ApiResponse<T = unknown> {

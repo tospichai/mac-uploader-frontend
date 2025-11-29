@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useModalAnimation } from "@/hooks/useModalAnimation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Photographer, ProfileUpdateRequest } from "@/types/auth";
 import {
@@ -31,8 +32,8 @@ export default function ProfileEdit({
   const { updateProfile, isLoading } = useAuth();
   const modalRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [isClosing, setIsClosing] = useState(false);
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const { isClosing, handleClose, getModalStyle, getBackdropStyle } =
+    useModalAnimation({ isOpen, onClose });
 
   const [formData, setFormData] = useState<ProfileUpdateRequest>({
     displayName: user.displayName,
@@ -61,25 +62,6 @@ export default function ProfileEdit({
 
     return () => clearTimeout(timer);
   }, [user]);
-
-  // Handle opening animation
-  useEffect(() => {
-    if (isOpen && isFirstRender) {
-      const timer = setTimeout(() => setIsFirstRender(false), 0);
-      return () => clearTimeout(timer);
-    } else if (!isOpen) {
-      const timer = setTimeout(() => setIsFirstRender(true), 0);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen, isFirstRender]);
-
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsClosing(false);
-      onClose();
-    }, 300); // Match the transition duration
-  };
 
   // Handle click outside to close
   useEffect(() => {
@@ -111,7 +93,7 @@ export default function ProfileEdit({
       // Restore body scroll when modal is closed
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, handleClose]);
+  }, [isOpen, handleClose, onClose]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -208,7 +190,7 @@ export default function ProfileEdit({
       {/* Backdrop */}
       <div
         className={`absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
-          isClosing ? "opacity-0" : isOpen ? "opacity-100" : "opacity-0"
+          getBackdropStyle().opacity === 0 ? "opacity-0" : "opacity-100"
         }`}
         onClick={handleClose}
       />
@@ -217,16 +199,7 @@ export default function ProfileEdit({
       <div
         ref={modalRef}
         className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col transform transition-all duration-300 ease-out"
-        style={{
-          opacity: isClosing ? 0 : isOpen ? 1 : 0,
-          transform: isClosing
-            ? "scale(0.95) translateY(10px)"
-            : isOpen
-            ? isFirstRender
-              ? "scale(0.95) translateY(10px)"
-              : "scale(1) translateY(0)"
-            : "scale(0.95) translateY(10px)",
-        }}
+        style={getModalStyle()}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">

@@ -37,14 +37,14 @@ export default function Dashboard() {
       <LanguageButton />
       <div className="mx-auto px-4 py-8 max-w-7xl">
         {/* Main Content */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="flex flex-col md:flex-row gap-4">
           {/* Sidebar */}
-          <div className="md:col-span-1">
+          <div className="w-full md:w-64 flex-shrink-0">
             <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
           </div>
 
           {/* Tab Content */}
-          <div className="md:col-span-3 mt-16">
+          <div className="flex-1 mt-0 md:mt-16">
             {renderTabContent()}
           </div>
         </div>

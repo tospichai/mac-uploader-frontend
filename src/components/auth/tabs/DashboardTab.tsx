@@ -28,7 +28,6 @@ export default function DashboardTab() {
         <h1 className="text-4xl font-thai-bold text-gray-900 thai-text mb-2">
           {t("auth.welcome")}, {user.displayName}!
         </h1>
-        <p className="text-gray-600 thai-text">{t("auth.dashboard")}</p>
       </header>
       {/* Storage Info Card */}
       <div className="bg-white rounded-2xl shadow-xl p-6">
