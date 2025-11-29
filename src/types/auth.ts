@@ -69,6 +69,6 @@ export interface AuthContextType {
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
   logout: () => void;
-  updateProfile: (userData: ProfileUpdateRequest | FormData) => Promise<Photographer>;
+  updateProfile: (userData: ProfileUpdateRequest | FormData) => Promise<void>;
   checkAuth: () => Promise<void>;
 }

@@ -82,6 +82,11 @@
     "registerSuccess": "Đăng ký thành công",
     "loginError": "Tên người dùng hoặc mật khẩu không hợp lệ",
     "registerError": "Đăng ký thất bại",
+    "registrationSuccessTitle": "Đăng ký thành công!",
+    "registrationSuccessSubtitle": "Chào mừng đến với Live Moments Gallery",
+    "registrationSuccessMessage": "Đăng ký của bạn đã hoàn tất thành công",
+    "registrationSuccessDescription": "Bạn đã được đăng nhập tự động và sẵn sàng bắt đầu sử dụng hệ thống quản lý ảnh của chúng tôi",
+    "getStarted": "Bắt đầu",
     "passwordMismatch": "Mật khẩu không khớp",
     "requiredField": "Trường này là bắt buộc",
     "invalidEmail": "Vui lòng nhập email hợp lệ",
@@ -99,7 +104,14 @@
     "storageUsed": "Đã sử dụng",
     "storageQuota": "của tổng số",
     "welcomeBack": "Chào mừng trở lại",
-    "welcome": "Chào mừng"
+    "welcome": "Chào mừng",
+    "status": "Trạng thái",
+    "active": "Hoạt động",
+    "inactive": "Không hoạt động",
+    "socialLinks": "Liên kết xã hội",
+    "profilePicture": "Ảnh đại diện",
+    "accountInfo": "Thông tin tài khoản",
+    "socialMediaLinks": "Liên kết mạng xã hội"
   },
   "common": {
     "photoGallery": "Thư viện Ảnh",

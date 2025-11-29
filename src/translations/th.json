@@ -104,7 +104,14 @@
     "storageUsed": "ใช้ไป",
     "storageQuota": "จากทั้งหมด",
     "welcomeBack": "ยินดีต้อนรับกลับ",
-    "welcome": "ยินดีต้อนรับ"
+    "welcome": "ยินดีต้อนรับ",
+    "status": "สถานะ",
+    "active": "ใช้งาน",
+    "inactive": "ไม่ใช้งาน",
+    "socialLinks": "ลิงก์โซเชียล",
+    "profilePicture": "รูปโปรไฟล์",
+    "accountInfo": "ข้อมูลบัญชี",
+    "socialMediaLinks": "ลิงก์โซเชียลมีเดีย"
   },
   "common": {
     "photoGallery": "แกลลอรี่รูปภาพ",

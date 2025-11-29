@@ -1,25 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Photographer, ProfileUpdateRequest } from "@/types/auth";
-import { X, Save, Camera, Globe, Facebook, Instagram } from "lucide-react";
-import Image from "next/image";
+import {
+  X,
+  Save,
+  Camera,
+  Globe,
+  Facebook,
+  Instagram,
+  Twitter,
+} from "lucide-react";
 
 interface ProfileEditProps {
   isOpen: boolean;
   onClose: () => void;
   user: Photographer;
+  onProfileUpdated?: () => void;
 }
 
 export default function ProfileEdit({
   isOpen,
   onClose,
   user,
+  onProfileUpdated,
 }: ProfileEditProps) {
   const { t } = useTranslation();
   const { updateProfile, isLoading } = useAuth();
+  const modalRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   const [formData, setFormData] = useState<ProfileUpdateRequest>({
     displayName: user.displayName,
@@ -48,6 +61,57 @@ export default function ProfileEdit({
 
     return () => clearTimeout(timer);
   }, [user]);
+
+  // Handle opening animation
+  useEffect(() => {
+    if (isOpen && isFirstRender) {
+      const timer = setTimeout(() => setIsFirstRender(false), 0);
+      return () => clearTimeout(timer);
+    } else if (!isOpen) {
+      const timer = setTimeout(() => setIsFirstRender(true), 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, isFirstRender]);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, 300); // Match the transition duration
+  };
+
+  // Handle click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        handleClose();
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscape);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+      // Restore body scroll when modal is closed
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen, handleClose]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -109,13 +173,14 @@ export default function ProfileEdit({
       formDataToSend.append("twitterUrl", formData.twitterUrl || "");
       formDataToSend.append("websiteUrl", formData.websiteUrl || "");
 
-      const user = await updateProfile(formDataToSend);
+      await updateProfile(formDataToSend);
 
-      if (user) {
-        setFormData((prev) => ({ ...prev, logoUrl: user.logoUrl }));
+      // Notify parent component that profile was updated
+      if (onProfileUpdated) {
+        onProfileUpdated();
       }
 
-      onClose();
+      handleClose();
     } catch (error: unknown) {
       const errorMessage = error as { message?: string };
       setErrors({
@@ -124,221 +189,287 @@ export default function ProfileEdit({
     }
   };
 
-  if (!isOpen) return null;
+  const getLogoSrc = (url: string, updatedAt: string): string => {
+    if (!url) return ""; // กัน null/undefined
+
+    // ถ้าเป็น base64 (data:image/...)
+    if (url.startsWith("data:image/")) {
+      return url;
+    }
+
+    // ถ้าเป็น URL ปกติ เติม version กัน cache
+    return `${url}?v=${encodeURIComponent(updatedAt)}`;
+  };
+
+  if (!isOpen && !isClosing) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4`}>
+      {/* Backdrop */}
+      <div
+        className={`absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
+          isClosing ? "opacity-0" : isOpen ? "opacity-100" : "opacity-0"
+        }`}
+        onClick={handleClose}
+      />
+
+      {/* Modal Content */}
+      <div
+        ref={modalRef}
+        className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col transform transition-all duration-300 ease-out"
+        style={{
+          opacity: isClosing ? 0 : isOpen ? 1 : 0,
+          transform: isClosing
+            ? "scale(0.95) translateY(10px)"
+            : isOpen
+            ? isFirstRender
+              ? "scale(0.95) translateY(10px)"
+              : "scale(1) translateY(0)"
+            : "scale(0.95) translateY(10px)",
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
           <h2 className="text-2xl font-thai-bold text-gray-900 thai-text">
             {t("auth.editProfile")}
           </h2>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200 cursor-pointer"
           >
             <X className="h-5 w-5 text-gray-500" />
           </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Profile Picture */}
-          <div className="text-center">
-            <div className="relative inline-block">
-              {formData.logoUrl ? (
-                <img
-                  src={formData.logoUrl}
-                  alt="Profile"
-                  className="w-30 h-30 rounded-full object-cover border-4 border-white shadow-lg"
-                />
-              ) : (
-                <div className="w-30 h-30 bg-gray-200 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
-                  <Camera className="w-12 h-12 text-gray-400" />
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <form ref={formRef} onSubmit={handleSubmit} className="p-6 space-y-8">
+            {/* Profile Picture Section */}
+            <div>
+              <div className="text-center">
+                <div className="relative inline-block">
+                  {formData.logoUrl ? (
+                    <img
+                      src={getLogoSrc(formData.logoUrl, user.updatedAt)}
+                      alt="Profile"
+                      className="w-45 h-45 rounded-full object-cover border-4 border-white shadow-lg"
+                    />
+                  ) : (
+                    <div className="w-45 h-45 bg-gray-200 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+                      <Camera className="w-12 h-12 text-gray-400" />
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    id="logo-upload"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      document.getElementById("logo-upload")?.click()
+                    }
+                    className="absolute bottom-2 right-2 bg-[#00C7A5] text-white p-2 rounded-full shadow-lg hover:bg-[#00B595] transition-colors duration-200 cursor-pointer"
+                  >
+                    <Camera className="w-4 h-4" />
+                  </button>
                 </div>
-              )}
-              <input
-                type="file"
-                id="logo-upload"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
-              <button
-                type="button"
-                onClick={() => document.getElementById("logo-upload")?.click()}
-                className="absolute bottom-0 right-0 bg-[#00C7A5] text-white p-2 rounded-full shadow-lg hover:bg-[#00B595] transition-colors duration-200 cursor-pointer"
-              >
-                <Camera className="w-4 h-4" />
-              </button>
+              </div>
             </div>
-            {profileImageFile && (
-              <p className="mt-2 text-sm text-green-600 thai-text">
-                ไฟล์รูปภาพ: {profileImageFile.name}
-              </p>
+
+            {/* Account Information Section */}
+            <div>
+              <h3 className="text-lg font-thai-bold text-gray-900 mb-4 thai-text">
+                {t("auth.accountInfo")}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Username */}
+                <div>
+                  <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                    {t("auth.username")}
+                  </label>
+                  <input
+                    type="text"
+                    value={user.username}
+                    disabled
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-xl bg-gray-200 text-gray-600 thai-text"
+                    readOnly
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                    {t("auth.email")}
+                  </label>
+                  <input
+                    type="email"
+                    value={user.email}
+                    disabled
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-xl bg-gray-200 text-gray-600 thai-text"
+                    readOnly
+                  />
+                </div>
+              </div>
+
+              {/* Display Name - Full Width */}
+              <div className="mt-6">
+                <label
+                  htmlFor="displayName"
+                  className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
+                >
+                  {t("auth.displayName")} *
+                </label>
+                <input
+                  id="displayName"
+                  name="displayName"
+                  type="text"
+                  value={formData.displayName}
+                  onChange={handleInputChange}
+                  className={`block w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
+                    errors.displayName ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder={t("auth.displayName")}
+                  disabled={isLoading}
+                />
+                {errors.displayName && (
+                  <p className="mt-1 text-sm text-red-600 thai-text">
+                    {errors.displayName}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Social Media Links Section */}
+            <div>
+              <h3 className="text-lg font-thai-bold text-gray-900 mb-4 thai-text">
+                {t("auth.socialMediaLinks")}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Facebook URL */}
+                <div>
+                  <label
+                    htmlFor="facebookUrl"
+                    className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
+                  >
+                    <Facebook className="inline h-4 w-4 mr-1" />
+                    {t("auth.facebookUrl")}
+                  </label>
+                  <input
+                    id="facebookUrl"
+                    name="facebookUrl"
+                    type="url"
+                    value={formData.facebookUrl}
+                    onChange={handleInputChange}
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
+                    placeholder="https://facebook.com/yourpage"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                {/* Instagram URL */}
+                <div>
+                  <label
+                    htmlFor="instagramUrl"
+                    className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
+                  >
+                    <Instagram className="inline h-4 w-4 mr-1" />
+                    {t("auth.instagramUrl")}
+                  </label>
+                  <input
+                    id="instagramUrl"
+                    name="instagramUrl"
+                    type="url"
+                    value={formData.instagramUrl}
+                    onChange={handleInputChange}
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
+                    placeholder="https://instagram.com/yourprofile"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                {/* Twitter URL */}
+                <div>
+                  <label
+                    htmlFor="twitterUrl"
+                    className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
+                  >
+                    <Twitter className="inline h-4 w-4 mr-1" />
+                    {t("auth.twitterUrl")}
+                  </label>
+                  <input
+                    id="twitterUrl"
+                    name="twitterUrl"
+                    type="url"
+                    value={formData.twitterUrl}
+                    onChange={handleInputChange}
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
+                    placeholder="https://twitter.com/yourhandle"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                {/* Website URL */}
+                <div>
+                  <label
+                    htmlFor="websiteUrl"
+                    className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
+                  >
+                    <Globe className="inline h-4 w-4 mr-1 " />
+                    {t("auth.websiteUrl")}
+                  </label>
+                  <input
+                    id="websiteUrl"
+                    name="websiteUrl"
+                    type="url"
+                    value={formData.websiteUrl}
+                    onChange={handleInputChange}
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
+                    placeholder="https://yourwebsite.com"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Error */}
+            {errors.submit && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl thai-text">
+                {errors.submit}
+              </div>
             )}
-          </div>
+          </form>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Username */}
-            <div>
-              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-                ชื่อผู้ใช้
-              </label>
-              <input
-                type="text"
-                value={user.username}
-                disabled
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-600 thai-text"
-                readOnly
-              />
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-                อีเมล
-              </label>
-              <input
-                type="email"
-                value={user.email}
-                disabled
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-600 thai-text"
-                readOnly
-              />
-            </div>
-            {/* Display Name */}
-            <div>
-              <label
-                htmlFor="displayName"
-                className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
-              >
-                {t("auth.displayName")} *
-              </label>
-              <input
-                id="displayName"
-                name="displayName"
-                type="text"
-                value={formData.displayName}
-                onChange={handleInputChange}
-                className={`block w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                  errors.displayName ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder={t("auth.displayName")}
-                disabled={isLoading}
-              />
-              {errors.displayName && (
-                <p className="mt-1 text-sm text-red-600 thai-text">
-                  {errors.displayName}
-                </p>
-              )}
-            </div>
-
-            {/* Facebook URL */}
-            <div>
-              <label
-                htmlFor="facebookUrl"
-                className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
-              >
-                <Facebook className="inline h-4 w-4 mr-1" />
-                {t("auth.facebookUrl")}
-              </label>
-              <input
-                id="facebookUrl"
-                name="facebookUrl"
-                type="url"
-                value={formData.facebookUrl}
-                onChange={handleInputChange}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
-                placeholder="https://facebook.com/yourpage"
-                disabled={isLoading}
-              />
-            </div>
-
-            {/* Instagram URL */}
-            <div>
-              <label
-                htmlFor="instagramUrl"
-                className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
-              >
-                <Instagram className="inline h-4 w-4 mr-1" />
-                {t("auth.instagramUrl")}
-              </label>
-              <input
-                id="instagramUrl"
-                name="instagramUrl"
-                type="url"
-                value={formData.instagramUrl}
-                onChange={handleInputChange}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
-                placeholder="https://instagram.com/yourprofile"
-                disabled={isLoading}
-              />
-            </div>
-
-            {/* Twitter URL */}
-            <div>
-              <label
-                htmlFor="twitterUrl"
-                className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
-              >
-                {t("auth.twitterUrl")}
-              </label>
-              <input
-                id="twitterUrl"
-                name="twitterUrl"
-                type="url"
-                value={formData.twitterUrl}
-                onChange={handleInputChange}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
-                placeholder="https://twitter.com/yourhandle"
-                disabled={isLoading}
-              />
-            </div>
-
-            {/* Website URL */}
-            <div>
-              <label
-                htmlFor="websiteUrl"
-                className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
-              >
-                <Globe className="inline h-4 w-4 mr-1" />
-                {t("auth.websiteUrl")}
-              </label>
-              <input
-                id="websiteUrl"
-                name="websiteUrl"
-                type="url"
-                value={formData.websiteUrl}
-                onChange={handleInputChange}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
-                placeholder="https://yourwebsite.com"
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-
-          {/* Submit Error */}
-          {errors.submit && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl thai-text">
-              {errors.submit}
-            </div>
-          )}
-
-          {/* Action Buttons */}
+        {/* Action Buttons - Always Visible */}
+        <div className="p-6 border-t border-gray-200 shrink-0">
           <div className="flex justify-end space-x-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 font-thai-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00C7A5] transition-colors duration-200 thai-text cursor-pointer"
               disabled={isLoading}
             >
               {t("auth.cancel")}
             </button>
             <button
-              type="submit"
+              type="button"
               disabled={isLoading}
+              onClick={async (e) => {
+                e.preventDefault();
+                if (formRef.current) {
+                  // Create a synthetic form event to trigger validation
+                  const syntheticEvent = new Event("submit", {
+                    bubbles: true,
+                    cancelable: true,
+                  }) as unknown as React.FormEvent;
+
+                  // Call handleSubmit directly with the synthetic event
+                  await handleSubmit(syntheticEvent);
+                }
+              }}
               className="px-6 py-3 border border-transparent rounded-xl shadow-sm text-sm font-thai-bold text-white bg-[#00C7A5] hover:bg-[#00B595] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00C7A5] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 thai-text flex items-center cursor-pointer"
             >
               {isLoading ? (
@@ -354,7 +485,7 @@ export default function ProfileEdit({
               )}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

@@ -104,7 +104,14 @@
     "storageUsed": "Used",
     "storageQuota": "of total",
     "welcomeBack": "Welcome back",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "socialLinks": "Social Links",
+    "profilePicture": "Profile Picture",
+    "accountInfo": "Account Information",
+    "socialMediaLinks": "Social Media Links"
   },
   "common": {
     "photoGallery": "Photo Gallery",

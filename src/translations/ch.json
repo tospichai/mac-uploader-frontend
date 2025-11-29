@@ -82,6 +82,11 @@
     "registerSuccess": "注册成功",
     "loginError": "用户名或密码无效",
     "registerError": "注册失败",
+    "registrationSuccessTitle": "注册成功！",
+    "registrationSuccessSubtitle": "欢迎使用 Live Moments Gallery",
+    "registrationSuccessMessage": "您的注册已成功完成",
+    "registrationSuccessDescription": "您已自动登录，可以开始使用我们的照片管理系统",
+    "getStarted": "开始使用",
     "passwordMismatch": "密码不匹配",
     "requiredField": "此字段为必填项",
     "invalidEmail": "请输入有效的邮箱地址",
@@ -99,7 +104,14 @@
     "storageUsed": "已使用",
     "storageQuota": "总计",
     "welcomeBack": "欢迎回来",
-    "welcome": "欢迎"
+    "welcome": "欢迎",
+    "status": "状态",
+    "active": "活跃",
+    "inactive": "未活跃",
+    "socialLinks": "社交链接",
+    "profilePicture": "头像",
+    "accountInfo": "账户信息",
+    "socialMediaLinks": "社交媒体链接"
   },
   "common": {
     "photoGallery": "照片画廊",

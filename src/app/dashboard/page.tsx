@@ -19,7 +19,7 @@ export default function DashboardPage() {
   }, [isAuthenticated, user, isLoading, router]);
 
   // Show loading screen while checking authentication
-  if (isLoading) {
+  if (isLoading && !isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA] flex items-center justify-center">
         <div className="text-center">
@@ -31,9 +31,5 @@ export default function DashboardPage() {
   }
 
   // Show dashboard only when authenticated and user data is available
-  return (
-    <ProtectedRoute>
-      {user && <Dashboard />}
-    </ProtectedRoute>
-  );
+  return <Dashboard />;
 }
