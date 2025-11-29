@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { X, ExternalLink, Download } from "lucide-react";
+import { X, ExternalLink, Download, Copy, Check, Images } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useModalAnimation } from "@/hooks/useModalAnimation";
 
@@ -24,6 +24,7 @@ export default function GalleryModal({
   const modalRef = useRef<HTMLDivElement>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isGeneratingQR, setIsGeneratingQR] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
 
   // Use the modal animation hook
   const { isClosing, handleClose, getModalStyle, getBackdropStyle } =
@@ -68,6 +69,16 @@ export default function GalleryModal({
 
   const openGallery = () => {
     window.open(galleryUrl, "_blank");
+  };
+
+  const handleCopy = async (text: string, type: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(type);
+      setTimeout(() => setCopied(null), 2000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+    }
   };
 
   if (!isOpen && !isClosing) return null;
@@ -118,7 +129,7 @@ export default function GalleryModal({
                 <img
                   src={qrCodeUrl}
                   alt="QR Code for Gallery"
-                  className="w-48 h-48 rounded-xl shadow-md"
+                  className="w-56 h-56 rounded-xl shadow-md p-4"
                 />
                 <button
                   onClick={downloadQRCode}
@@ -142,18 +153,26 @@ export default function GalleryModal({
             <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
               ลิงก์แกลเลอรี่
             </label>
-            <div className="flex items-center">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Images className="h-4 w-4 text-gray-400" />
+            </div>
               <input
                 type="text"
                 value={galleryUrl}
                 readOnly
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-l-xl bg-gray-50 text-gray-700 text-sm"
+                className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
               />
               <button
-                onClick={() => navigator.clipboard.writeText(galleryUrl)}
-                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-r-xl transition-colors duration-200 text-sm"
+                onClick={() => handleCopy(galleryUrl, "gallery")}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer hover:text-[#00C7A5] transition-colors duration-200"
+                title="คัดลอกลิงก์"
               >
-                คัดลอก
+                {copied === "gallery" ? (
+                  <Check className="h-5 w-5 text-green-500" />
+                ) : (
+                  <Copy className="h-5 w-5 text-gray-400" />
+                )}
               </button>
             </div>
           </div>
