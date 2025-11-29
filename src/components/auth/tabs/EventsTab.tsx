@@ -278,7 +278,7 @@ export default function EventsTab() {
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h3 className="text-lg font-thai-semibold text-gray-900 thai-text">
-                ยืนยันการลบอีเวนต์
+                {t("events.confirmDelete")}
               </h3>
               <button
                 onClick={handleClose}
@@ -312,13 +312,13 @@ export default function EventsTab() {
                   onClick={handleClose}
                   className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors duration-200 thai-text cursor-pointer"
                 >
-                  ยกเลิก
+                  {t("events.cancel")}
                 </button>
                 <button
                   onClick={confirmDeleteEvent}
                   className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors duration-200 thai-text cursor-pointer"
                 >
-                  ลบอีเวนต์
+                  {t("events.delete")}
                 </button>
               </div>
             </div>

@@ -29,6 +29,14 @@
     "view": "Chế độ xem",
     "empty": {
       "title": "Chưa có hình ảnh nào"
+    },
+    "eventDetails": {
+      "date": "Ngày",
+      "location": "Địa điểm",
+      "description": "Mô tả Sự kiện",
+      "status": "Trạng thái",
+      "published": "Đã xuất bản",
+      "draft": "Bản nháp"
     }
   },
   "favorites": {
@@ -135,6 +143,53 @@
     "logoutConfirmationMessage": "Bạn có chắc chắn muốn đăng xuất?",
     "underDevelopment": "Đang phát triển",
     "comingSoon": "Sắp ra mắt"
+  },
+  "events": {
+    "title": "Quản lý Sự kiện",
+    "create": "Tạo Sự kiện",
+    "edit": "Chỉnh sửa Sự kiện",
+    "delete": "Xóa Sự kiện",
+    "eventName": "Tên Sự kiện",
+    "eventDate": "Ngày Sự kiện",
+    "eventSubtitle": "Tiêu đề Phụ Sự kiện",
+    "eventDescription": "Mô tả Sự kiện",
+    "folderName": "Tên Thư mục Ảnh",
+    "defaultLanguage": "Ngôn ngữ Mặc định",
+    "status": "Trạng thái",
+    "published": "Đã xuất bản",
+    "draft": "Bản nháp",
+    "totalPhotos": "Tổng số Ảnh",
+    "totalSize": "Tổng kích thước",
+    "createdAt": "Ngày tạo",
+    "actions": "Hành động",
+    "publish": "Xuất bản",
+    "unpublish": "Hủy xuất bản",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa sự kiện này không?",
+    "deleteConfirmation": "Bạn có chắc chắn muốn xóa sự kiện \"",
+    "deleteWarning": "Thao tác này không thể hoàn tác",
+    "cancel": "Hủy",
+    "eventDeleted": "Xóa sự kiện thành công",
+    "eventPublished": "Xuất bản sự kiện thành công",
+    "eventUnpublished": "Hủy xuất bản sự kiện thành công",
+    "eventUpdated": "Cập nhật sự kiện thành công",
+    "eventCreated": "Tạo sự kiện thành công",
+    "noEvents": "Không có Sự kiện",
+    "createFirstEvent": "Tạo sự kiện đầu tiên của bạn để bắt đầu",
+    "validation": {
+      "eventNameRequired": "Vui lòng nhập tên sự kiện",
+      "eventDateRequired": "Vui lòng nhập ngày sự kiện",
+      "folderNameRequired": "Vui lòng nhập tên thư mục",
+      "folderNameInvalid": "Tên thư mục không hợp lệ (phải là chữ cái tiếng Anh, số, hoặc - _)",
+      "folderNameExists": "Tên thư mục này đã tồn tại",
+      "languageRequired": "Vui lòng chọn ngôn ngữ mặc định"
+    },
+    "statistics": {
+      "totalEvents": "Tổng số Sự kiện",
+      "publishedEvents": "Sự kiện đã xuất bản",
+      "draftEvents": "Sự kiện bản nháp",
+      "totalPhotos": "Tổng số Ảnh",
+      "totalSize": "Tổng kích thước"
+    }
   },
   "system": {
     "systemInfo": "Thông tin hệ thống",

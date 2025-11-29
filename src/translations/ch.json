@@ -29,6 +29,14 @@
     "view": "视图",
     "empty": {
       "title": "暂无图片"
+    },
+    "eventDetails": {
+      "date": "日期",
+      "location": "地点",
+      "description": "活动描述",
+      "status": "状态",
+      "published": "已发布",
+      "draft": "草稿"
     }
   },
   "favorites": {
@@ -135,6 +143,53 @@
     "logoutConfirmationMessage": "您确定要登出吗？",
     "underDevelopment": "开发中",
     "comingSoon": "即将推出"
+  },
+  "events": {
+    "title": "活动管理",
+    "create": "创建活动",
+    "edit": "编辑活动",
+    "delete": "删除活动",
+    "eventName": "活动名称",
+    "eventDate": "活动日期",
+    "eventSubtitle": "活动副标题",
+    "eventDescription": "活动描述",
+    "folderName": "照片文件夹名称",
+    "defaultLanguage": "默认语言",
+    "status": "状态",
+    "published": "已发布",
+    "draft": "草稿",
+    "totalPhotos": "照片总数",
+    "totalSize": "总大小",
+    "createdAt": "创建时间",
+    "actions": "操作",
+    "publish": "发布",
+    "unpublish": "取消发布",
+    "confirmDelete": "您确定要删除此活动吗？",
+    "deleteConfirmation": "您确定要删除活动 \"",
+    "deleteWarning": "此操作无法撤销",
+    "cancel": "取消",
+    "eventDeleted": "活动删除成功",
+    "eventPublished": "活动发布成功",
+    "eventUnpublished": "活动取消发布成功",
+    "eventUpdated": "活动更新成功",
+    "eventCreated": "活动创建成功",
+    "noEvents": "暂无活动",
+    "createFirstEvent": "创建您的第一个活动以开始",
+    "validation": {
+      "eventNameRequired": "请输入活动名称",
+      "eventDateRequired": "请输入活动日期",
+      "folderNameRequired": "请输入文件夹名称",
+      "folderNameInvalid": "无效的文件夹名称（必须是英文字母、数字或 - _）",
+      "folderNameExists": "此文件夹名称已存在",
+      "languageRequired": "请选择默认语言"
+    },
+    "statistics": {
+      "totalEvents": "活动总数",
+      "publishedEvents": "已发布活动",
+      "draftEvents": "草稿活动",
+      "totalPhotos": "照片总数",
+      "totalSize": "总大小"
+    }
   },
   "system": {
     "systemInfo": "系统信息",

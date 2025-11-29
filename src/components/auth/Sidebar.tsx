@@ -70,9 +70,6 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
               <Camera className="w-12 h-12 text-gray-400" />
             </div>
           )}
-          <h2 className="text-2xl font-thai-bold text-gray-900 thai-text line-clamp-1">
-            {user?.displayName}
-          </h2>
         </div>
 
         {/* Tab Menu */}

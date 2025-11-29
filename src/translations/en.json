@@ -29,6 +29,14 @@
     "view": "View",
     "empty": {
       "title": "No images yet"
+    },
+    "eventDetails": {
+      "date": "Date",
+      "location": "Location",
+      "description": "Event Description",
+      "status": "Status",
+      "published": "Published",
+      "draft": "Draft"
     }
   },
   "favorites": {
@@ -135,6 +143,53 @@
     "manageSubscription": "Manage Subscription",
     "underDevelopment": "Under Development",
     "comingSoon": "Coming Soon"
+  },
+  "events": {
+    "title": "Event Management",
+    "create": "Create Event",
+    "edit": "Edit Event",
+    "delete": "Delete Event",
+    "eventName": "Event Name",
+    "eventDate": "Event Date",
+    "eventSubtitle": "Event Subtitle",
+    "eventDescription": "Event Description",
+    "folderName": "Photo Folder Name",
+    "defaultLanguage": "Default Language",
+    "status": "Status",
+    "published": "Published",
+    "draft": "Draft",
+    "totalPhotos": "Total Photos",
+    "totalSize": "Total Size",
+    "createdAt": "Created At",
+    "actions": "Actions",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "confirmDelete": "Are you sure you want to delete this event?",
+    "deleteConfirmation": "Are you sure you want to delete the event \"",
+    "deleteWarning": "This action cannot be undone",
+    "cancel": "Cancel",
+    "eventDeleted": "Event deleted successfully",
+    "eventPublished": "Event published successfully",
+    "eventUnpublished": "Event unpublished successfully",
+    "eventUpdated": "Event updated successfully",
+    "eventCreated": "Event created successfully",
+    "noEvents": "No Events",
+    "createFirstEvent": "Create your first event to get started",
+    "validation": {
+      "eventNameRequired": "Please enter event name",
+      "eventDateRequired": "Please enter event date",
+      "folderNameRequired": "Please enter folder name",
+      "folderNameInvalid": "Invalid folder name (must be English letters, numbers, or - _)",
+      "folderNameExists": "This folder name already exists",
+      "languageRequired": "Please select default language"
+    },
+    "statistics": {
+      "totalEvents": "Total Events",
+      "publishedEvents": "Published Events",
+      "draftEvents": "Draft Events",
+      "totalPhotos": "Total Photos",
+      "totalSize": "Total Size"
+    }
   },
   "system": {
     "systemInfo": "System Information",
