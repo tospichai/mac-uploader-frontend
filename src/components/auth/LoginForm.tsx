@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LoginRequest } from "@/types/auth";
 import { Eye, EyeOff, Camera, Lock, User2 } from "lucide-react";
 import Image from "next/image";
+import LanguageButton from "@/components/LanguageButton";
 
 export default function LoginForm() {
   const { t } = useTranslation();
@@ -69,6 +70,7 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA] flex items-center justify-center px-4">
+      <LanguageButton />
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">

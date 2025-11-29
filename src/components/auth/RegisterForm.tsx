@@ -8,6 +8,7 @@ import { RegisterRequest } from "@/types/auth";
 import { Eye, EyeOff, Camera, Mail, Lock, User2 } from "lucide-react";
 import Image from "next/image";
 import RegistrationSuccess from "./RegistrationSuccess";
+import LanguageButton from "@/components/LanguageButton";
 
 export default function RegisterForm() {
   const { t } = useTranslation();
@@ -106,6 +107,7 @@ export default function RegisterForm() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA] flex items-center justify-center px-4 py-8">
+      <LanguageButton />
       <div className="max-w-2xl w-full space-y-8">
         {/* Header */}
         <div className="text-center">

@@ -126,14 +126,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const updateProfile = async (
-    userData: ProfileUpdateRequest
-  ): Promise<void> => {
+    userData: ProfileUpdateRequest | FormData
+  ): Promise<Photographer> => {
     setIsLoading(true);
     try {
       const response = await authApiClient.updateProfile(userData);
 
       if (response.success && response.user) {
         setUser(response.user);
+        return response.user
       } else {
         throw new Error(response.message || "Profile update failed");
       }

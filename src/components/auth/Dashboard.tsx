@@ -7,15 +7,16 @@ import { Photographer } from "@/types/auth";
 import { Edit, LogOut, Camera, Mail, Globe, HardDrive, Calendar } from "lucide-react";
 import Image from "next/image";
 import ProfileEdit from "./ProfileEdit";
+import LanguageButton from "@/components/LanguageButton";
 
-interface DashboardProps {
-  user: Photographer;
-}
-
-export default function Dashboard({ user }: DashboardProps) {
+export default function Dashboard() {
   const { t } = useTranslation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   const handleEditProfile = () => {
     setIsEditModalOpen(true);
@@ -40,6 +41,7 @@ export default function Dashboard({ user }: DashboardProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA]">
+      <LanguageButton />
       <div className="mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <header className="text-center mb-8">
@@ -58,7 +60,7 @@ export default function Dashboard({ user }: DashboardProps) {
             <div className="bg-white rounded-2xl shadow-xl p-6">
               <div className="text-center">
                 {user.logoUrl ? (
-                  <Image
+                  <img
                     src={user.logoUrl}
                     alt="Profile"
                     width={120}

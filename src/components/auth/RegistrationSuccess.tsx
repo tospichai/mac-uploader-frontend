@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "@/hooks/useTranslation";
 import { Camera, CheckCircle } from "lucide-react";
 import Image from "next/image";
+import LanguageButton from "@/components/LanguageButton";
 
 export default function RegistrationSuccess() {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ export default function RegistrationSuccess() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA] flex items-center justify-center px-4 py-8">
+      <LanguageButton />
       <div className="max-w-2xl w-full space-y-8">
         {/* Header */}
         <div className="text-center">

@@ -13,7 +13,11 @@ interface ProfileEditProps {
   user: Photographer;
 }
 
-export default function ProfileEdit({ isOpen, onClose, user }: ProfileEditProps) {
+export default function ProfileEdit({
+  isOpen,
+  onClose,
+  user,
+}: ProfileEditProps) {
   const { t } = useTranslation();
   const { updateProfile, isLoading } = useAuth();
 
@@ -47,11 +51,27 @@ export default function ProfileEdit({ isOpen, onClose, user }: ProfileEditProps)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImageFile(file);
+      // Create preview URL for immediate display
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setFormData((prev) => ({ ...prev, logoUrl: result }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -74,18 +94,40 @@ export default function ProfileEdit({ isOpen, onClose, user }: ProfileEditProps)
     }
 
     try {
-      await updateProfile(formData);
+      // Create FormData for file upload
+      const formDataToSend = new FormData();
+
+      // Add profile image if exists
+      if (profileImageFile) {
+        formDataToSend.append("profileImage", profileImageFile);
+      }
+
+      // Add other form fields with fallback to empty string
+      formDataToSend.append("displayName", formData.displayName || "");
+      formDataToSend.append("facebookUrl", formData.facebookUrl || "");
+      formDataToSend.append("instagramUrl", formData.instagramUrl || "");
+      formDataToSend.append("twitterUrl", formData.twitterUrl || "");
+      formDataToSend.append("websiteUrl", formData.websiteUrl || "");
+
+      const user = await updateProfile(formDataToSend);
+
+      if (user) {
+        setFormData((prev) => ({ ...prev, logoUrl: user.logoUrl }));
+      }
+
       onClose();
     } catch (error: unknown) {
       const errorMessage = error as { message?: string };
-      setErrors({ submit: errorMessage.message || t("auth.profileUpdateError") });
+      setErrors({
+        submit: errorMessage.message || t("auth.profileUpdateError"),
+      });
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
@@ -106,11 +148,9 @@ export default function ProfileEdit({ isOpen, onClose, user }: ProfileEditProps)
           <div className="text-center">
             <div className="relative inline-block">
               {formData.logoUrl ? (
-                <Image
+                <img
                   src={formData.logoUrl}
                   alt="Profile"
-                  width={120}
-                  height={120}
                   className="w-30 h-30 rounded-full object-cover border-4 border-white shadow-lg"
                 />
               ) : (
@@ -118,22 +158,62 @@ export default function ProfileEdit({ isOpen, onClose, user }: ProfileEditProps)
                   <Camera className="w-12 h-12 text-gray-400" />
                 </div>
               )}
+              <input
+                type="file"
+                id="logo-upload"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
               <button
                 type="button"
+                onClick={() => document.getElementById("logo-upload")?.click()}
                 className="absolute bottom-0 right-0 bg-[#00C7A5] text-white p-2 rounded-full shadow-lg hover:bg-[#00B595] transition-colors duration-200 cursor-pointer"
               >
                 <Camera className="w-4 h-4" />
               </button>
             </div>
-            <p className="mt-2 text-sm text-gray-500 thai-text">
-              {t("auth.logoUrl")}
-            </p>
+            {profileImageFile && (
+              <p className="mt-2 text-sm text-green-600 thai-text">
+                ไฟล์รูปภาพ: {profileImageFile.name}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Username */}
+            <div>
+              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                ชื่อผู้ใช้
+              </label>
+              <input
+                type="text"
+                value={user.username}
+                disabled
+                className="block w-full px-3 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-600 thai-text"
+                readOnly
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                อีเมล
+              </label>
+              <input
+                type="email"
+                value={user.email}
+                disabled
+                className="block w-full px-3 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-600 thai-text"
+                readOnly
+              />
+            </div>
             {/* Display Name */}
             <div>
-              <label htmlFor="displayName" className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+              <label
+                htmlFor="displayName"
+                className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
+              >
                 {t("auth.displayName")} *
               </label>
               <input
@@ -149,30 +229,18 @@ export default function ProfileEdit({ isOpen, onClose, user }: ProfileEditProps)
                 disabled={isLoading}
               />
               {errors.displayName && (
-                <p className="mt-1 text-sm text-red-600 thai-text">{errors.displayName}</p>
+                <p className="mt-1 text-sm text-red-600 thai-text">
+                  {errors.displayName}
+                </p>
               )}
-            </div>
-
-            {/* Logo URL */}
-            <div>
-              <label htmlFor="logoUrl" className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-                {t("auth.logoUrl")}
-              </label>
-              <input
-                id="logoUrl"
-                name="logoUrl"
-                type="url"
-                value={formData.logoUrl}
-                onChange={handleInputChange}
-                className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
-                placeholder="https://example.com/logo.jpg"
-                disabled={isLoading}
-              />
             </div>
 
             {/* Facebook URL */}
             <div>
-              <label htmlFor="facebookUrl" className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+              <label
+                htmlFor="facebookUrl"
+                className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
+              >
                 <Facebook className="inline h-4 w-4 mr-1" />
                 {t("auth.facebookUrl")}
               </label>
@@ -190,7 +258,10 @@ export default function ProfileEdit({ isOpen, onClose, user }: ProfileEditProps)
 
             {/* Instagram URL */}
             <div>
-              <label htmlFor="instagramUrl" className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+              <label
+                htmlFor="instagramUrl"
+                className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
+              >
                 <Instagram className="inline h-4 w-4 mr-1" />
                 {t("auth.instagramUrl")}
               </label>
@@ -208,7 +279,10 @@ export default function ProfileEdit({ isOpen, onClose, user }: ProfileEditProps)
 
             {/* Twitter URL */}
             <div>
-              <label htmlFor="twitterUrl" className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+              <label
+                htmlFor="twitterUrl"
+                className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
+              >
                 {t("auth.twitterUrl")}
               </label>
               <input
@@ -225,7 +299,10 @@ export default function ProfileEdit({ isOpen, onClose, user }: ProfileEditProps)
 
             {/* Website URL */}
             <div>
-              <label htmlFor="websiteUrl" className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+              <label
+                htmlFor="websiteUrl"
+                className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text"
+              >
                 <Globe className="inline h-4 w-4 mr-1" />
                 {t("auth.websiteUrl")}
               </label>

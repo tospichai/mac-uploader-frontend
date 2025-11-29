@@ -33,7 +33,7 @@ export default function DashboardPage() {
   // Show dashboard only when authenticated and user data is available
   return (
     <ProtectedRoute>
-      {user && <Dashboard user={user} />}
+      {user && <Dashboard />}
     </ProtectedRoute>
   );
 }

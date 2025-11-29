@@ -8,8 +8,7 @@ import {
   ProfileResponse,
 } from "@/types/auth";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
 // Debug logging to verify API URL
 console.log("Auth API Base URL:", API_BASE_URL);
@@ -123,9 +122,18 @@ class AuthApiClient {
     }
   }
 
-  async updateProfile(userData: ProfileUpdateRequest): Promise<ProfileResponse> {
+  async updateProfile(userData: ProfileUpdateRequest | FormData): Promise<ProfileResponse> {
     try {
-      const response = await this.client.put("/api/auth/profile", userData);
+      // If userData is FormData, don't set Content-Type header (let browser set it with boundary)
+      const config = userData instanceof FormData
+        ? {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        : {};
+
+      const response = await this.client.put("/api/auth/profile", userData, config);
       return response.data;
     } catch (error: unknown) {
       console.error("Update profile error:", error);
