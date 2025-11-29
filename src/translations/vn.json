@@ -132,7 +132,9 @@
     "planDescription": "Truy cập các tính năng nâng cao và lưu trữ không giới hạn",
     "manageSubscription": "Quản lý đăng ký",
     "confirmLogout": "Xác nhận đăng xuất",
-    "logoutConfirmationMessage": "Bạn có chắc chắn muốn đăng xuất?"
+    "logoutConfirmationMessage": "Bạn có chắc chắn muốn đăng xuất?",
+    "underDevelopment": "Đang phát triển",
+    "comingSoon": "Sắp ra mắt"
   },
   "system": {
     "systemInfo": "Thông tin hệ thống",

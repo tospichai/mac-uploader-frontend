@@ -132,7 +132,9 @@
     "currentPlan": "แผนปัจจุบัน",
     "proPlan": "แผน Pro",
     "planDescription": "เข้าถึงคุณสมบัติขั้นสูงและพื้นที่จัดเก็บข้อมูลไม่จำกัด",
-    "manageSubscription": "จัดการการสมัครสมาชิก"
+    "manageSubscription": "จัดการการสมัครสมาชิก",
+    "underDevelopment": "กำลังพัฒนา",
+    "comingSoon": "เร็วๆ นี้"
   },
   "system": {
     "systemInfo": "ข้อมูลระบบ",

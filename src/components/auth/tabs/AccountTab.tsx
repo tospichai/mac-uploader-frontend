@@ -147,7 +147,13 @@ export default function AccountTab() {
       )}
 
       {/* Account Settings */}
-      <div className="bg-white rounded-2xl shadow-xl p-6">
+      <div className="relative bg-white rounded-2xl shadow-xl p-6">
+        <div className="absolute inset-0 bg-black/60 bg-opacity-50 rounded-2xl z-10 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-white font-thai-bold text-lg thai-text">{t("auth.underDevelopment") || "กำลังพัฒนา"}</p>
+            <p className="text-white text-sm thai-text mt-2">{t("auth.comingSoon") || "เร็วๆ นี้"}</p>
+          </div>
+        </div>
         <h3 className="text-xl font-thai-bold text-gray-900 mb-4 flex items-center thai-text">
           <Shield className="w-5 h-5 mr-2 text-[#00C7A5]" />
           {t("auth.accountSettings")}
@@ -192,7 +198,13 @@ export default function AccountTab() {
       </div>
 
       {/* Subscription */}
-      <div className="bg-white rounded-2xl shadow-xl p-6">
+      <div className="relative bg-white rounded-2xl shadow-xl p-6">
+        <div className="absolute inset-0 bg-black/60 bg-opacity-50 rounded-2xl z-10 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-white font-thai-bold text-lg thai-text">{t("auth.underDevelopment") || "กำลังพัฒนา"}</p>
+            <p className="text-white text-sm thai-text mt-2">{t("auth.comingSoon") || "เร็วๆ นี้"}</p>
+          </div>
+        </div>
         <h3 className="text-xl font-thai-bold text-gray-900 mb-4 flex items-center thai-text">
           <CreditCard className="w-5 h-5 mr-2 text-[#00C7A5]" />
           {t("auth.subscription")}

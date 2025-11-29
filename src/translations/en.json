@@ -132,7 +132,9 @@
     "currentPlan": "Current Plan",
     "proPlan": "Pro Plan",
     "planDescription": "Access advanced features and unlimited storage",
-    "manageSubscription": "Manage Subscription"
+    "manageSubscription": "Manage Subscription",
+    "underDevelopment": "Under Development",
+    "comingSoon": "Coming Soon"
   },
   "system": {
     "systemInfo": "System Information",

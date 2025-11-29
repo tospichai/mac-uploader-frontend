@@ -36,14 +36,6 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA]">
       <LanguageButton />
       <div className="mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
-        <header className="text-center mb-8">
-          <h1 className="text-4xl font-thai-bold text-gray-900 thai-text mb-2">
-            {t("auth.welcome")}, {user.displayName}!
-          </h1>
-          <p className="text-gray-600 thai-text">{t("auth.dashboard")}</p>
-        </header>
-
         {/* Main Content */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Sidebar */}
@@ -52,7 +44,7 @@ export default function Dashboard() {
           </div>
 
           {/* Tab Content */}
-          <div className="md:col-span-3">
+          <div className="md:col-span-3 mt-16">
             {renderTabContent()}
           </div>
         </div>

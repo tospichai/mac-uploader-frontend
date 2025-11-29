@@ -132,7 +132,9 @@
     "planDescription": "访问高级功能和无限存储空间",
     "manageSubscription": "管理订阅",
     "confirmLogout": "确认登出",
-    "logoutConfirmationMessage": "您确定要登出吗？"
+    "logoutConfirmationMessage": "您确定要登出吗？",
+    "underDevelopment": "开发中",
+    "comingSoon": "即将推出"
   },
   "system": {
     "systemInfo": "系统信息",
