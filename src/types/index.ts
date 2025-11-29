@@ -52,7 +52,20 @@ export interface EventInfo {
 
 export interface EventResponse {
   success: boolean;
-  data: EventInfo;
+  message?: string;
+  id?: string;
+  title?: string;
+  eventDate?: string;
+  subtitle?: string;
+  description?: string;
+  folderName?: string;
+  defaultLanguage?: string;
+  isPublished?: boolean;
+  photographerName?: string;
+  createdAt?: string;
+  totalPhotos?: number;
+  totalSize?: number;
+  data?: EventInfo;
 }
 
 export interface EventCreateRequest {
@@ -72,7 +85,7 @@ export interface EventUpdateRequest {
   description?: string;
   folderName?: string;
   defaultLanguage?: string;
-  status?: 'draft' | 'published';
+  isPublished?: boolean;
 }
 
 export interface EventsListResponse {

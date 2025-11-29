@@ -44,7 +44,7 @@ export default function EventManagementPage() {
     description: "",
     folderName: "",
     defaultLanguage: "th",
-    status: "draft",
+    isPublished: true,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [notification, setNotification] = useState<{
@@ -148,7 +148,7 @@ export default function EventManagementPage() {
       if (formData.folderName !== selectedEvent.folderName) {
         const validation = await eventApiClient.validateFolderName(
           formData.folderName,
-          selectedEvent.eventCode
+          selectedEvent.id
         );
         if (
           validation.success &&
@@ -167,11 +167,11 @@ export default function EventManagementPage() {
         description: formData.description,
         folderName: formData.folderName,
         defaultLanguage: formData.defaultLanguage,
-        status: formData.status,
+        isPublished: formData.isPublished,
       };
 
       const response = await eventApiClient.updateEvent(
-        selectedEvent.eventCode,
+        selectedEvent.id,
         updateData
       );
       if (response.success) {
@@ -239,7 +239,7 @@ export default function EventManagementPage() {
       description: "",
       folderName: "",
       defaultLanguage: "th",
-      status: "draft",
+      isPublished: true,
     });
     setErrors({});
     setSelectedEvent(null);
@@ -254,7 +254,7 @@ export default function EventManagementPage() {
       description: event.description || "",
       folderName: event.folderName,
       defaultLanguage: event.defaultLanguage,
-      status: event.status,
+      isPublished: event.isPublished,
     });
     setShowEditModal(true);
   };
@@ -388,7 +388,7 @@ export default function EventManagementPage() {
           <div className="bg-white shadow overflow-hidden sm:rounded-md">
             <ul className="divide-y divide-gray-200">
               {events.map((event) => (
-                <li key={event.eventCode}>
+                <li key={event.id}>
                   <div className="px-4 py-4 sm:px-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
@@ -398,12 +398,12 @@ export default function EventManagementPage() {
                           </h3>
                           <span
                             className={`ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              event.status === "published"
+                              event.isPublished
                                 ? "bg-green-100 text-green-800"
                                 : "bg-gray-100 text-gray-800"
                             }`}
                           >
-                            {event.status === "published" ? (
+                            {event.isPublished ? (
                               <>
                                 <Eye className="h-3 w-3 mr-1" />
                                 {t("events.published")}
@@ -437,9 +437,9 @@ export default function EventManagementPage() {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        {event.status === "draft" ? (
+                        {!event.isPublished ? (
                           <button
-                            onClick={() => handlePublishEvent(event.eventCode)}
+                            onClick={() => handlePublishEvent(event.id)}
                             className="p-2 text-green-600 hover:text-green-900"
                             title={t("events.publish")}
                           >
@@ -448,7 +448,7 @@ export default function EventManagementPage() {
                         ) : (
                           <button
                             onClick={() =>
-                              handleUnpublishEvent(event.eventCode)
+                              handleUnpublishEvent(event.id)
                             }
                             className="p-2 text-gray-600 hover:text-gray-900"
                             title={t("events.unpublish")}
@@ -464,7 +464,7 @@ export default function EventManagementPage() {
                           <Edit className="h-5 w-5" />
                         </button>
                         <button
-                          onClick={() => handleDeleteEvent(event.eventCode)}
+                          onClick={() => handleDeleteEvent(event.id)}
                           className="p-2 text-red-600 hover:text-red-900"
                           title={t("events.delete")}
                         >
@@ -610,11 +610,11 @@ export default function EventManagementPage() {
                     {t("events.status")}
                   </label>
                   <select
-                    value={formData.status}
+                    value={+formData.isPublished}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        status: e.target.value as "draft" | "published",
+                        isPublished: !!e.target.value,
                       })
                     }
                     className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-[#00C7A5] focus:border-[#00C7A5]"

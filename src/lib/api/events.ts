@@ -64,6 +64,11 @@ class EventApiClient {
     return response.data;
   }
 
+  async getEvent(eventCode: string): Promise<EventResponse> {
+    const response = await this.client.get(`/api/events/${eventCode}`);
+    return response.data;
+  }
+
   async createEvent(eventData: EventCreateRequest): Promise<EventResponse> {
     const response = await this.client.post(`/api/events`, eventData);
     return response.data;

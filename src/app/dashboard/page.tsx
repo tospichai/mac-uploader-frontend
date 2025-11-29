@@ -23,7 +23,7 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-gradient-to-br from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-l-2 border-[#00C7A5] mx-auto mb-4"></div>
-          <p className="text-gray-600 thai-text">กำลังตรวจสอบสถานะ...</p>
+          <p className="text-gray-600 thai-text">กำลังโหลด...</p>
         </div>
       </div>
     );

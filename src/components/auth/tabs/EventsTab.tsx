@@ -9,12 +9,14 @@ import {
   Calendar,
   Plus,
   Eye,
-  Settings,
   Trash2,
   X,
   AlertCircle,
+  Images,
 } from "lucide-react";
 import CreateEventModal from "@/components/auth/CreateEventModal";
+import ViewEditEventModal from "@/components/auth/ViewEditEventModal";
+import GalleryModal from "@/components/auth/GalleryModal";
 
 export default function EventsTab() {
   const { t } = useTranslation();
@@ -22,6 +24,13 @@ export default function EventsTab() {
   const [events, setEvents] = useState<EventInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isViewEditModalOpen, setIsViewEditModalOpen] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string>("");
+  const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
+  const [folderName, setFolderName] = useState<string>("");
+  const [photographerDisplayname, setPhotographerDisplayname] =
+    useState<string>("");
+  const [galleryEventTitle, setGalleryEventTitle] = useState<string>("");
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     id: string;
@@ -33,10 +42,11 @@ export default function EventsTab() {
   });
 
   // Use the modal animation hook for delete modal
-  const { isClosing, handleClose, getModalStyle, getBackdropStyle } = useModalAnimation({
-    isOpen: deleteModal.isOpen,
-    onClose: () => setDeleteModal({ isOpen: false, id: "", eventName: "" }),
-  });
+  const { isClosing, handleClose, getModalStyle, getBackdropStyle } =
+    useModalAnimation({
+      isOpen: deleteModal.isOpen,
+      onClose: () => setDeleteModal({ isOpen: false, id: "", eventName: "" }),
+    });
 
   useEffect(() => {
     loadEvents();
@@ -161,12 +171,26 @@ export default function EventsTab() {
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <button className="flex-1 flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm cursor-pointer">
+                <button
+                  onClick={() => {
+                    setSelectedEventId(event.id);
+                    setIsViewEditModalOpen(true);
+                  }}
+                  className="flex-1 flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm cursor-pointer"
+                >
                   <Eye className="w-4 h-4 mr-1" />
                   {t("auth.view")}
                 </button>
-                <button className="flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
-                  <Settings className="w-4 h-4" />
+                <button
+                  onClick={() => {
+                    setGalleryEventTitle(event.title);
+                    setIsGalleryModalOpen(true);
+                    setFolderName(event.folderName);
+                    setPhotographerDisplayname(event.photographerName);
+                  }}
+                  className="flex items-center justify-center px-3 py-2 bg-[#00C7A5] text-white rounded-lg hover:bg-[#00B595] transition-colors duration-200 cursor-pointer"
+                >
+                  <Images className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleDeleteEvent(event.id, event.title)}
@@ -211,6 +235,30 @@ export default function EventsTab() {
         }
       />
 
+      {/* View/Edit Event Modal */}
+      <ViewEditEventModal
+        isOpen={isViewEditModalOpen}
+        onClose={() => {
+          setIsViewEditModalOpen(false);
+          setSelectedEventId("");
+        }}
+        eventId={selectedEventId}
+        onEventUpdated={() =>
+          setTimeout(() => {
+            loadEvents();
+          }, 0)
+        }
+      />
+
+      {/* Gallery Modal */}
+      <GalleryModal
+        isOpen={isGalleryModalOpen}
+        onClose={() => setIsGalleryModalOpen(false)}
+        folderName={folderName}
+        eventTitle={galleryEventTitle}
+        prefix={'gallery'}
+      />
+
       {/* Delete Confirmation Modal */}
       {(deleteModal.isOpen || isClosing) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -243,36 +291,35 @@ export default function EventsTab() {
 
             {/* Content */}
             <div className="p-6">
-              <div className="flex items-center mb-4">
-              <AlertCircle className="h-8 w-8 text-red-500 mr-3" />
-              <p className="text-gray-700 thai-text">
-                คุณต้องการลบอีเวนต์ &quot;
-                <span className="font-semibold">{deleteModal.eventName}</span>
-                &quot; ใช่หรือไม่?
-                <br />
-                <span className="text-sm text-gray-500">
-                  การดำเนินการนี้ไม่สามารถยกเลิกได้
-                </span>
-              </p>
+              <div className="flex items-center">
+                <AlertCircle className="h-8 w-8 text-red-500 mr-3" />
+                <p className="text-gray-700 thai-text">
+                  คุณต้องการลบอีเวนต์ &quot;
+                  <span className="font-semibold">{deleteModal.eventName}</span>
+                  &quot; ใช่หรือไม่?
+                  <br />
+                  <span className="text-sm text-gray-500">
+                    การดำเนินการนี้ไม่สามารถยกเลิกได้
+                  </span>
+                </p>
               </div>
             </div>
-
 
             {/* Footer */}
             <div className="p-6 border-t border-gray-200">
               <div className="flex justify-end space-x-3">
-              <button
-                onClick={handleClose}
-                className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors duration-200 thai-text cursor-pointer"
-              >
-                ยกเลิก
-              </button>
-              <button
-                onClick={confirmDeleteEvent}
-                className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors duration-200 thai-text cursor-pointer"
-              >
-                ลบอีเวนต์
-              </button>
+                <button
+                  onClick={handleClose}
+                  className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors duration-200 thai-text cursor-pointer"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  onClick={confirmDeleteEvent}
+                  className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors duration-200 thai-text cursor-pointer"
+                >
+                  ลบอีเวนต์
+                </button>
               </div>
             </div>
           </div>
