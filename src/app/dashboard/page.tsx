@@ -3,7 +3,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Dashboard from "@/components/auth/Dashboard";
 
 export default function DashboardPage() {

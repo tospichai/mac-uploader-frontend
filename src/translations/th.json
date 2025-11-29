@@ -113,6 +113,16 @@
     "accountInfo": "ข้อมูลบัญชี",
     "socialMediaLinks": "ลิงก์โซเชียลมีเดีย"
   },
+  "system": {
+    "systemInfo": "ข้อมูลระบบ",
+    "backendEndpoint": "Backend Endpoint",
+    "frontendEndpoint": "Frontend Endpoint",
+    "apiKey": "API Key",
+    "generateApiKey": "สร้าง API Key",
+    "generating": "กำลังสร้าง...",
+    "noApiKey": "ยังไม่มี API Key",
+    "copyToClipboard": "คัดลอกไปยังคลิปบอร์ด"
+  },
   "common": {
     "photoGallery": "แกลลอรี่รูปภาพ",
     "loading": "กำลังโหลด..."

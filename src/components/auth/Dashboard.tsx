@@ -9,6 +9,7 @@ import Image from "next/image";
 import ProfileEdit from "./ProfileEdit";
 import LanguageButton from "@/components/LanguageButton";
 import SimpleIcon from "@/components/SimpleIcon";
+import SystemInfoCard from "@/components/SystemInfoCard";
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -250,6 +251,8 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
+            {/* System Information Card */}
+            <SystemInfoCard />
           </div>
         </div>
 

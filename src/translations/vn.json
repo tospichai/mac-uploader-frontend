@@ -113,6 +113,16 @@
     "accountInfo": "Thông tin tài khoản",
     "socialMediaLinks": "Liên kết mạng xã hội"
   },
+  "system": {
+    "systemInfo": "Thông tin hệ thống",
+    "backendEndpoint": "Backend Endpoint",
+    "frontendEndpoint": "Frontend Endpoint",
+    "apiKey": "API Key",
+    "generateApiKey": "Tạo API Key",
+    "generating": "Đang tạo...",
+    "noApiKey": "Chưa có API Key",
+    "copyToClipboard": "Sao chép vào clipboard"
+  },
   "common": {
     "photoGallery": "Thư viện Ảnh",
     "loading": "Đang tải..."

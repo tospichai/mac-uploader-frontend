@@ -161,6 +161,36 @@ class AuthApiClient {
     }
   }
 
+  // System information endpoint
+  async getSystemInformation(): Promise<{ success: boolean; data?: { backendEndpoint: string; frontendEndpoint: string }; message?: string }> {
+    try {
+      const response = await this.client.get("/api/system-information");
+      return response.data;
+    } catch (error: unknown) {
+      console.error("Get system information error:", error);
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      return {
+        success: false,
+        message: axiosError.response?.data?.message || "Failed to get system information",
+      };
+    }
+  }
+
+  // Generate new API key
+  async generateApiKey(): Promise<{ success: boolean; apiKey?: string; message?: string }> {
+    try {
+      const response = await this.client.post("/api/auth/generate-api-key");
+      return response.data;
+    } catch (error: unknown) {
+      console.error("Generate API key error:", error);
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      return {
+        success: false,
+        message: axiosError.response?.data?.message || "Failed to generate API key",
+      };
+    }
+  }
+
   // Check if user is authenticated
   isAuthenticated(): boolean {
     return !!this.getToken();

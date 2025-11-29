@@ -113,6 +113,16 @@
     "accountInfo": "Account Information",
     "socialMediaLinks": "Social Media Links"
   },
+  "system": {
+    "systemInfo": "System Information",
+    "backendEndpoint": "Backend Endpoint",
+    "frontendEndpoint": "Frontend Endpoint",
+    "apiKey": "API Key",
+    "generateApiKey": "Generate API Key",
+    "generating": "Generating...",
+    "noApiKey": "No API Key",
+    "copyToClipboard": "Copy to clipboard"
+  },
   "common": {
     "photoGallery": "Photo Gallery",
     "loading": "Loading..."

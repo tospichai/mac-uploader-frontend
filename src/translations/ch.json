@@ -113,6 +113,16 @@
     "accountInfo": "账户信息",
     "socialMediaLinks": "社交媒体链接"
   },
+  "system": {
+    "systemInfo": "系统信息",
+    "backendEndpoint": "后端端点",
+    "frontendEndpoint": "前端端点",
+    "apiKey": "API 密钥",
+    "generateApiKey": "生成 API 密钥",
+    "generating": "生成中...",
+    "noApiKey": "暂无 API 密钥",
+    "copyToClipboard": "复制到剪贴板"
+  },
   "common": {
     "photoGallery": "照片画廊",
     "loading": "加载中..."
