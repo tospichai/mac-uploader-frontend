@@ -10,20 +10,21 @@ import {
 import { Photo } from "@/types";
 
 export interface FavoriteItem {
-  photoId: string;
-  imageUrl: string;
+  id: string;
+  thumbnailUrl: string;
+  originalUrl: string;
   addedAt: number;
 }
 
 export interface FavoritesState {
   [eventCode: string]: {
-    [photoId: string]: FavoriteItem;
+    [id: string]: FavoriteItem;
   };
 }
 
 interface FavoritesContextValue {
   favorites: FavoritesState;
-  isFavorite: (eventCode: string, photoId: string) => boolean;
+  isFavorite: (eventCode: string, id: string) => boolean;
   toggleFavorite: (eventCode: string, photo: Photo) => void;
   getFavoritesForEvent: (eventCode: string) => FavoriteItem[];
   clearFavoritesForEvent: (eventCode: string) => void;
@@ -83,8 +84,8 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     }
   }, [favorites]);
 
-  const isFavorite = (eventCode: string, photoId: string): boolean => {
-    return !!(favorites[eventCode] && favorites[eventCode][photoId]);
+  const isFavorite = (eventCode: string, id: string): boolean => {
+    return !!(favorites[eventCode] && favorites[eventCode][id]);
   };
 
   const toggleFavorite = (eventCode: string, photo: Photo) => {
@@ -97,9 +98,9 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         newFavorites[eventCode] = {};
       }
 
-      if (newFavorites[eventCode][photo.photoId]) {
+      if (newFavorites[eventCode][photo.id]) {
         // Remove from favorites
-        delete newFavorites[eventCode][photo.photoId];
+        delete newFavorites[eventCode][photo.id];
 
         // Clean up empty event objects
         if (Object.keys(newFavorites[eventCode]).length === 0) {
@@ -107,9 +108,11 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         }
       } else {
         // Add to favorites
-        newFavorites[eventCode][photo.photoId] = {
-          photoId: photo.photoId,
-          imageUrl: photo.displayUrl || photo.downloadUrl || "",
+        newFavorites[eventCode][photo.id] = {
+          id: photo.id,
+          thumbnailUrl: photo.thumbnailUrl,
+          originalUrl: photo.originalUrl,
+          imageUrl: photo.thumbnailUrl || photo.originalUrl || "",
           addedAt: Date.now(),
         };
       }

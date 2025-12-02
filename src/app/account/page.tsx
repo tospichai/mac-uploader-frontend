@@ -3,10 +3,10 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import DashboardTab from "@/components/auth/tabs/DashboardTab";
+import AccountTab from "@/components/auth/tabs/AccountTab";
 import MainLayout from "@/components/auth/MainLayout";
 
-export default function DashboardPage() {
+export default function AccountPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
@@ -30,6 +30,6 @@ export default function DashboardPage() {
     );
   }
 
-  // Show dashboard only when authenticated and user data is available
-  return <MainLayout activeTab="dashboard"><DashboardTab /></MainLayout>;
+  // Show account tab only when authenticated and user data is available
+  return <MainLayout activeTab="account"><AccountTab /></MainLayout>;
 }

@@ -43,7 +43,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setToken(storedToken);
           // Verify token with server and get user data
           const profileResponse = await authApiClient.getProfile();
-          if (profileResponse.success && profileResponse.user) {
+          if (profileResponse.user) {
             setUser(profileResponse.user);
           } else {
             // Token is invalid, clear it
@@ -68,7 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const response = await authApiClient.login(credentials);
 
-      if (response.success && response.token && response.user) {
+      if (response.token && response.user) {
         setToken(response.token);
         setUser(response.user);
         // Use window.location for more reliable redirect
@@ -149,7 +149,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (storedToken) {
         setToken(storedToken);
         const profileResponse = await authApiClient.getProfile();
-        if (profileResponse.success && profileResponse.user) {
+        if (profileResponse.user) {
           setUser(profileResponse.user);
         } else {
           authApiClient.clearToken();

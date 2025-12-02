@@ -31,7 +31,7 @@ export default function ImageModal({
   // Get current photo URL
   const getCurrentPhotoUrl = () => {
     const photo = photos[currentImageIndex];
-    return photo?.displayUrl || photo?.downloadUrl || '';
+    return photo?.originalUrl || photo?.thumbnailUrl || '';
   };
 
   // Navigate to previous image
@@ -111,7 +111,7 @@ export default function ImageModal({
   const handleDownload = () => {
     const currentPhoto = photos[currentImageIndex];
     if (currentPhoto && onDownloadPhoto) {
-      onDownloadPhoto(currentPhoto.photoId);
+      onDownloadPhoto(currentPhoto.id);
     }
   };
 

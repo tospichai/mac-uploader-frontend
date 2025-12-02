@@ -59,7 +59,7 @@ export default function PhotoGrid({
   //   }
   // }, [photos.length]);
 
-  const imageUrl = (photo: Photo) => photo.displayUrl || photo.downloadUrl;
+  const imageUrl = (photo: Photo) => photo.thumbnailUrl || photo.originalUrl;
 
   const handleFavoriteClick = (e: React.MouseEvent, photo: Photo) => {
     e.stopPropagation();
@@ -76,10 +76,10 @@ export default function PhotoGrid({
     >
       {photos.map((photo, index) => (
         <div
-          key={photo.photoId}
+          key={photo.id}
           ref={index === 0 ? newPhotoRef : null}
           className={`relative rounded-lg shadow-md overflow-hidden hover:shadow-lg${
-            isPhotoSelected(photo.photoId)
+            isPhotoSelected(photo.id)
               ? "ring-3 sm:ring-4 ring-[#00C7A5] ring-opacity-50 shadow-lg"
               : ""
           }`}
@@ -90,9 +90,9 @@ export default function PhotoGrid({
             }`}
             onClick={() => {
               if (isSelectionMode) {
-                togglePhotoSelection(photo.photoId, handleSelectionLimit);
+                togglePhotoSelection(photo.id, handleSelectionLimit);
               } else {
-                const url = photo.downloadUrl;
+                const url = photo.originalUrl;
                 if (url) onImageClick(url, index);
               }
             }}
@@ -113,14 +113,14 @@ export default function PhotoGrid({
                 <>
                   {/* <Image
                     src={url}
-                    alt={`Photo ${photo.photoId}`}
+                    alt={`Photo ${photo.id}`}
                     className="w-full h-full object-cover"
                     fill
                     loading="lazy"
                   /> */}
                   <img
                     src={url}
-                    alt={`Photo ${photo.photoId}`}
+                    alt={`Photo ${photo.id}`}
                     className="w-full h-full object-cover"
                   />
 
@@ -130,17 +130,17 @@ export default function PhotoGrid({
                       onClick={(e) => {
                         e.stopPropagation();
                         togglePhotoSelection(
-                          photo.photoId,
+                          photo.id,
                           handleSelectionLimit
                         );
                       }}
                       className={`absolute top-2 right-2 w-9.5 h-9.5 rounded-xl border-2 flex items-center justify-center cursor-pointer z-9 ${
-                        isPhotoSelected(photo.photoId)
+                        isPhotoSelected(photo.id)
                           ? "bg-[#00C7A5] border-[#00C7A5] shadow-[0_2px_8px_rgba(0,199,165,0.4)]"
                           : "backdrop-blur-sm border-gray-300 group-hover:border-[#00C7A5] hover:bg-white/20"
                       }`}
                     >
-                      {isPhotoSelected(photo.photoId) && (
+                      {isPhotoSelected(photo.id) && (
                         <Check size={22} className="text-white" />
                       )}
                     </div>
@@ -180,7 +180,7 @@ export default function PhotoGrid({
                 <Heart
                   size={22}
                   className={` ${
-                    isFavorite(eventCode, photo.photoId)
+                    isFavorite(eventCode, photo.id)
                       ? "fill-red-500 text-red-500"
                       : "text-gray-100"
                   }`}

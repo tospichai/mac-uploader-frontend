@@ -62,21 +62,22 @@ export default function ViewEditEventModal({
     try {
       const response = await eventApiClient.getEvent(eventId);
       console.log("Event response:", response); // Debug log
-      if (response.success && response.id) {
+      if (response.success) {
         // Ensure required fields are present before creating the event object
+        const data = response.data
         const event: EventInfo = {
-          id: response.id,
-          title: response.title || "",
-          eventDate: response.eventDate || "",
-          subtitle: response.subtitle,
-          description: response.description,
-          folderName: response.folderName || "",
-          defaultLanguage: response.defaultLanguage || "th",
-          isPublished: response.isPublished || false,
-          photographerName: response.photographerName || "",
-          createdAt: response.createdAt || new Date().toISOString(),
-          totalPhotos: response.totalPhotos || 0,
-          totalSize: response.totalSize,
+          id: data.id,
+          title: data.title || "",
+          eventDate: data.eventDate || "",
+          subtitle: data.subtitle,
+          description: data.description,
+          folderName: data.folderName || "",
+          defaultLanguage: data.defaultLanguage || "th",
+          isPublished: data.isPublished || false,
+          photographerName: data.photographerName || "",
+          createdAt: data.createdAt || new Date().toISOString(),
+          totalPhotos: data.totalPhotos || 0,
+          totalSize: data.totalSize,
         };
         console.log("Event data:", event); // Debug log
         setOriginalData(event);
@@ -106,11 +107,11 @@ export default function ViewEditEventModal({
           isPublished: event.isPublished,
         });
       } else {
-        setSubmitError("ไม่สามารถโหลดข้อมูลอีเวนต์ได้");
+        setSubmitError(t("viewEditEventModal.loadEventError"));
       }
     } catch (error) {
       console.error("Error loading event data:", error);
-      setSubmitError("ไม่สามารถโหลดข้อมูลอีเวนต์ได้");
+      setSubmitError(t("viewEditEventModal.loadEventError"));
     } finally {
       setIsLoading(false);
     }
@@ -156,7 +157,7 @@ export default function ViewEditEventModal({
     if (!formData.title?.trim()) {
       newErrors.title = t("events.validation.eventNameRequired");
     } else if (formData.title.length > 200) {
-      newErrors.title = "ชื่องานต้องไม่เกิน 200 ตัวอักษร";
+      newErrors.title = t("viewEditEventModal.eventNameMaxLength");
     }
 
     // Event date validation
@@ -173,7 +174,7 @@ export default function ViewEditEventModal({
       formData.folderName.length < 3 ||
       formData.folderName.length > 100
     ) {
-      newErrors.folderName = "ชื่อโฟลเดอร์ต้องมีความยาว 3-100 ตัวอักษร";
+      newErrors.folderName = t("viewEditEventModal.folderNameLength");
     }
 
     // Default language validation
@@ -207,7 +208,7 @@ export default function ViewEditEventModal({
         onEventUpdated();
         handleClose();
       } else {
-        setSubmitError("ไม่สามารถอัปเดตอีเวนต์ได้ กรุณาลองใหม่");
+        setSubmitError(t("viewEditEventModal.updateEventError"));
       }
     } catch (error: unknown) {
       console.error("Error updating event:", error);
@@ -218,10 +219,10 @@ export default function ViewEditEventModal({
         if (axiosError.response?.data?.message) {
           setSubmitError(axiosError.response.data.message);
         } else {
-          setSubmitError("เกิดข้อผิดพลาดในการอัปเดตอีเวนต์ กรุณาลองใหม่");
+          setSubmitError(t("viewEditEventModal.updateEventGenericError"));
         }
       } else {
-        setSubmitError("เกิดข้อผิดพลาดในการอัปเดตอีเวนต์ กรุณาลองใหม่");
+        setSubmitError(t("viewEditEventModal.updateEventGenericError"));
       }
     } finally {
       setIsSubmitting(false);
@@ -298,7 +299,7 @@ export default function ViewEditEventModal({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0 ">
           <h2 className="text-xl font-thai-semibold text-gray-900 thai-text">
-            ดู/แก้ไขอีเวนต์
+            {t("viewEditEventModal.title")}
           </h2>
           <button
             onClick={handleClose}
@@ -337,9 +338,7 @@ export default function ViewEditEventModal({
                 className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
                   errors.eventDate ? "border-red-500" : "border-gray-300"
                 }`}
-                placeholder={
-                  formData.defaultLanguage === "th" ? "วว/ดด/ปปปป" : ""
-                }
+                placeholder={t("viewEditEventModal.datePlaceholder")}
               />
               {errors.eventDate && (
                 <p className="mt-1 text-sm text-red-500 thai-text">
@@ -361,7 +360,7 @@ export default function ViewEditEventModal({
                 className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
                   errors.title ? "border-red-500" : "border-gray-300"
                 }`}
-                placeholder="กรอกชื่องาน"
+                placeholder={t("viewEditEventModal.eventNamePlaceholder")}
               />
               {errors.title && (
                 <p className="mt-1 text-sm text-red-500 thai-text">
@@ -381,7 +380,7 @@ export default function ViewEditEventModal({
                 value={formData.subtitle}
                 onChange={handleInputChange}
                 className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
-                placeholder="กรอกชื่องานข้อความรอง (ถ้ามี)"
+                placeholder={t("viewEditEventModal.eventSubtitlePlaceholder")}
                 maxLength={200}
               />
             </div>
@@ -396,7 +395,7 @@ export default function ViewEditEventModal({
                 value={formData.description}
                 onChange={handleInputChange}
                 className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text resize-none"
-                placeholder="กรอกรายละเอียดงาน (ถ้ามี)"
+                placeholder={t("viewEditEventModal.eventDescriptionPlaceholder")}
                 rows={3}
                 maxLength={5000}
               />
@@ -415,7 +414,7 @@ export default function ViewEditEventModal({
                 className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
                   errors.folderName ? "border-red-500" : "border-gray-300"
                 }`}
-                placeholder="ชื่อโฟลเดอร์ (ภาษาอังกฤษเท่านั้น)"
+                placeholder={t("viewEditEventModal.folderNamePlaceholder")}
               />
               {errors.folderName && (
                 <p className="mt-1 text-sm text-red-500 thai-text">
@@ -423,7 +422,7 @@ export default function ViewEditEventModal({
                 </p>
               )}
               <p className="mt-1 text-xs text-gray-500 thai-text">
-                ใช้ตัวอักษรภาษาอังกฤษ ตัวเลข ขีดกลาง (-) และขีดล่าง (_) เท่านั้น
+                {t("viewEditEventModal.folderNameHelp")}
               </p>
             </div>
 
@@ -457,18 +456,17 @@ export default function ViewEditEventModal({
             {originalData && (
               <div className="mb-4 p-4 bg-gray-50 rounded-xl">
                 <h3 className="text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-                  ข้อมูลเพิ่มเติม
+                  {t("viewEditEventModal.additionalInfo")}
                 </h3>
                 <div className="space-y-1 text-sm text-gray-600 thai-text">
-                  <p>รหัสอีเวนต์: {originalData.id}</p>
-                  <p>ช่างภาพ: {originalData.photographerName}</p>
+                  <p>{t("viewEditEventModal.eventId")}: {originalData.id}</p>
                   <p>
-                    สร้างเมื่อ:{" "}
+                    {t("viewEditEventModal.createdAt")}:{" "}
                     {new Date(originalData.createdAt).toLocaleDateString(
                       "th-TH"
                     )}
                   </p>
-                  <p>จำนวนรูปภาพ: {originalData.totalPhotos} รูป</p>
+                  <p>{t("viewEditEventModal.photoCount")}: {originalData.totalPhotos} รูป</p>
                 </div>
               </div>
             )}
@@ -546,12 +544,12 @@ export default function ViewEditEventModal({
               {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  กำลังอัปเดต...
+                  {t("viewEditEventModal.updating")}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4 mr-2" />
-                  อัปเดตอีเวนต์
+                  {t("viewEditEventModal.updateEvent")}
                 </>
               )}
             </button>

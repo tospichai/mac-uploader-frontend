@@ -44,8 +44,7 @@ export default function SystemInfoCard() {
     setGeneratingApiKey(true);
     try {
       const response = await authApiClient.generateApiKey();
-      if (response.success && response.apiKey) {
-        // Update user context with new API key
+      if (response.apiKey) {
         if (user) {
           user.apiKey = response.apiKey;
         }

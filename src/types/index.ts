@@ -1,9 +1,9 @@
 export interface Photo {
-  photoId: string;
-  displayUrl?: string;
-  downloadUrl?: string;
   lastModified?: string;
   originalName?: string;
+  id: string;
+  originalUrl?: string;
+  thumbnailUrl?: string;
 }
 
 export interface Pagination {
@@ -24,8 +24,10 @@ export interface Pagination {
 export interface PhotosResponse {
   success: boolean;
   message: string;
-  photos: Photo[];
-  pagination: Pagination;
+  data:{
+    photos: Photo[];
+    pagination: Pagination;
+  }
 }
 
 export interface PhotoResponse {
@@ -52,20 +54,8 @@ export interface EventInfo {
 
 export interface EventResponse {
   success: boolean;
-  message?: string;
-  id?: string;
-  title?: string;
-  eventDate?: string;
-  subtitle?: string;
-  description?: string;
-  folderName?: string;
-  defaultLanguage?: string;
-  isPublished?: boolean;
-  photographerName?: string;
-  createdAt?: string;
-  totalPhotos?: number;
-  totalSize?: number;
-  data?: EventInfo;
+  message: string;
+  data: EventInfo;
 }
 
 export interface EventCreateRequest {
@@ -90,13 +80,15 @@ export interface EventUpdateRequest {
 
 export interface EventsListResponse {
   success: boolean;
-  events: EventInfo[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalEvents: number;
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
+  data: {
+    events: EventInfo[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalEvents: number;
+      hasNextPage: boolean;
+      hasPrevPage: boolean;
+    };
   };
 }
 
@@ -140,4 +132,4 @@ export interface SSEMessage {
 }
 
 // Re-export authentication types
-export * from './auth';
+export * from "./auth";

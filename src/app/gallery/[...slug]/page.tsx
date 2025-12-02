@@ -79,7 +79,7 @@ export default function GalleryRoute() {
   const loadEventData = async () => {
     try {
       // For now, create mock event info since server doesn't have this endpoint yet
-      const mockEventInfo: EventInfo = {
+      const mockEventInfo: any = {
         eventCode,
         eventName: event.charAt(0).toUpperCase() + event.slice(1),
         photographerName: photographer,
@@ -99,9 +99,8 @@ export default function GalleryRoute() {
       const response = await apiClient.getPhotos(eventCode, page);
 
       if (response.success) {
-        console.log("response", response);
-        setPhotos(response.photos);
-        setPagination(response.pagination);
+        setPhotos(response.data.photos);
+        setPagination(response.data.pagination);
 
         // Update total photos count
         if (eventInfo) {
@@ -109,7 +108,7 @@ export default function GalleryRoute() {
             prev
               ? {
                   ...prev,
-                  totalPhotos: response.pagination.totalPhotos,
+                  totalPhotos: response.data.pagination.totalPhotos,
                 }
               : null
           );

@@ -57,7 +57,7 @@ export default function EventsTab() {
       setLoading(true);
       const response = await eventApiClient.getEventsList();
       if (response.success) {
-        setEvents(response.events);
+        setEvents(response.data.events);
       }
     } catch (error) {
       console.error("Error loading events:", error);
@@ -132,14 +132,27 @@ export default function EventsTab() {
             key={event.id}
             className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300"
           >
-            {/* Event Image Placeholder */}
-            <div className="h-48 bg-gradient-to-br from-[#00C7A5] to-[#A4ECEA] flex items-center justify-center">
-              <Calendar className="w-16 h-16 text-white opacity-50" />
-            </div>
+            {/* Event Image - Clickable to open gallery management */}
+            <button
+              onClick={() => {
+                setGalleryEventTitle(event.title);
+                setIsGalleryModalOpen(true);
+                setFolderName(event.folderName);
+                setPhotographerDisplayname(event.photographerName);
+              }}
+              className="relative h-48 w-full bg-gradient-to-br from-[#00C7A5] to-[#A4ECEA] flex items-center justify-center hover:opacity-90 transition-opacity duration-200 cursor-pointer group"
+            >
+              <Images className="w-16 h-16 text-white opacity-50 group-hover:opacity-70 transition-opacity duration-200" />
+              <div className="absolute inset-0 bg-black/0 bg-opacity-0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
+                  {t("auth.manageGallery")}
+                </div>
+              </div>
+            </button>
 
             {/* Event Details */}
             <div className="p-6">
-              <h3 className="text-xl font-thai-bold text-gray-900 thai-text mb-2">
+              <h3 className="text-xl font-thai-bold text-gray-900 mb-2 line-clamp-1">
                 {event.title}
               </h3>
 

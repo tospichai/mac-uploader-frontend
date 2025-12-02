@@ -9,6 +9,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useSelection } from "@/contexts/SelectionContext";
 import { useGridView } from "@/contexts/GridViewContext";
+import Footer from "./Footer";
 import {
   Heart,
   Trash2,
@@ -25,7 +26,7 @@ import Image from "next/image";
 interface FavoritesPageProps {
   eventInfo: EventInfo | null;
   eventCode: string;
-  onDownloadPhoto: (photoId: string) => void;
+  onDownloadPhoto: (id: string) => void;
 }
 
 export default function FavoritesPage({
@@ -65,16 +66,16 @@ export default function FavoritesPage({
 
   // Convert favorites back to Photo format for PhotoGrid
   const favoritePhotos = favorites.map((fav) => ({
-    photoId: fav.photoId,
-    displayUrl: fav.imageUrl,
-    downloadUrl: fav.imageUrl,
+    id: fav.id,
+    originalUrl: fav.originalUrl,
+    thumbnailUrl: fav.thumbnailUrl,
   }));
-
+console.log('favoritePhotos', favoritePhotos)
   // Set the download function in the context when component mounts or when onDownloadPhoto changes
   useEffect(() => {
-    setDownloadFunction(async (photoId: string) => {
+    setDownloadFunction(async (id: string) => {
       try {
-        await onDownloadPhoto(photoId);
+        await onDownloadPhoto(id);
       } catch (error) {
         console.error("Download error:", error);
         throw error;
@@ -126,11 +127,11 @@ export default function FavoritesPage({
       clearSelection();
     } else {
       const favoriteUnselects = favoritePhotos.filter(
-        (favoritePhoto) => !selectedPhotos.has(favoritePhoto.photoId)
+        (favoritePhoto) => !selectedPhotos.has(favoritePhoto.id)
       );
 
-      favoriteUnselects.forEach((photoId) => {
-        togglePhotoSelection(photoId.photoId);
+      favoriteUnselects.forEach((id) => {
+        togglePhotoSelection(id.id);
       });
     }
   };
@@ -143,11 +144,9 @@ export default function FavoritesPage({
 
     if (window.confirm(t("favorites.confirmDeleteSelected"))) {
       // Get selected photo IDs and remove them from favorites
-      selectedPhotos.forEach((photoId) => {
+      selectedPhotos.forEach((id) => {
         // Remove from favorites context
-        const favoriteToRemove = favorites.find(
-          (fav) => fav.photoId === photoId
-        );
+        const favoriteToRemove = favorites.find((fav) => fav.id === id);
         if (favoriteToRemove) {
           toggleFavorite(eventCode, favoriteToRemove);
         }
@@ -185,8 +184,8 @@ export default function FavoritesPage({
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA]">
-      <div className="mx-auto px-2 sm:px-4 py-8">
+    <div className="min-h-screen bg-linear-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA] flex flex-col">
+      <div className="flex-grow mx-auto px-2 sm:px-4 py-8">
         {/* Header */}
         <header className="text-center mb-8">
           <div className="mx-auto container flex flex-col sm:flex-row justify-center gap-4 items-center">
@@ -393,19 +392,10 @@ export default function FavoritesPage({
           </div>
           {RenderContent()}
         </main>
-
-        {/* Footer */}
-        <footer className="flex justify-center flex-col items-center mt-4 mb-24 text-[#00C7A5] text-sm">
-          <Image
-            src="/logo.png"
-            alt="logo"
-            width={42}
-            height={42}
-            className="mb-2"
-          />
-          <p>© 2025 Live Moments Gallery | All Rights Reserved.</p>
-        </footer>
       </div>
+
+      {/* Footer */}
+      <Footer className="mt-4 mb-24" />
 
       {/* Image Modal */}
       {selectedImage && (
@@ -415,7 +405,7 @@ export default function FavoritesPage({
           onClose={closeModal}
           onDownloadPhoto={onDownloadPhoto}
           onToggleFavorite={(photo) => toggleFavorite(eventCode, photo)}
-          isFavorite={(photo) => isFavorite(eventCode, photo.photoId)}
+          isFavorite={(photo) => isFavorite(eventCode, photo.id)}
           eventCode={eventCode}
         />
       )}

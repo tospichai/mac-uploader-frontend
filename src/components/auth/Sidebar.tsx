@@ -3,17 +3,19 @@
 import { useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter, usePathname } from "next/navigation";
 import { Camera, LayoutDashboard, Calendar, User, LogOut } from "lucide-react";
 import LogoutModal from "./LogoutModal";
 
 interface SidebarProps {
   activeTab: string;
-  onTabChange: (tab: string) => void;
 }
 
-export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
+export default function Sidebar({ activeTab }: SidebarProps) {
   const { t } = useTranslation();
   const { logout, user } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -33,16 +35,19 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
       id: "dashboard",
       label: t("auth.dashboard"),
       icon: LayoutDashboard,
+      href: "/dashboard",
     },
     {
       id: "events",
       label: t("auth.events"),
       icon: Calendar,
+      href: "/events",
     },
     {
       id: "account",
       label: t("auth.account"),
       icon: User,
+      href: "/account",
     },
     {
       id: "logout",
@@ -61,8 +66,6 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
             <img
               src={`${user.logoUrl}?v=${encodeURIComponent(user.updatedAt)}`}
               alt="Profile"
-              width={120}
-              height={120}
               className="w-30 h-30 rounded-full object-cover border-4 border-white shadow-lg mx-auto mb-4"
             />
           ) : (
@@ -75,7 +78,8 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         {/* Tab Menu */}
         <nav className="space-y-2">
           {menuItems.map((item) => {
-            const isActive = activeTab === item.id;
+            // Determine active state based on current pathname
+            const isActive = item.href ? pathname === item.href : activeTab === item.id;
             const Icon = item.icon;
 
             return (
@@ -84,8 +88,8 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                 onClick={() => {
                   if (item.action) {
                     item.action();
-                  } else {
-                    onTabChange(item.id);
+                  } else if (item.href) {
+                    router.push(item.href);
                   }
                 }}
                 className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 thai-text cursor-pointer ${

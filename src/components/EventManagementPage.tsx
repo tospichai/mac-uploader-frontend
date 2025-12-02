@@ -62,7 +62,7 @@ export default function EventManagementPage() {
       setLoading(true);
       const response = await eventApiClient.getEventsList();
       if (response.success) {
-        setEvents(response.events);
+        setEvents(response.data.events);
       }
     } catch (error) {
       console.error("Error loading events:", error);

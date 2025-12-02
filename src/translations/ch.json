@@ -201,6 +201,37 @@
     "noApiKey": "暂无 API 密钥",
     "copyToClipboard": "复制到剪贴板"
   },
+  "galleryModal": {
+    "title": "画廊 {eventTitle}",
+    "scanQR": "扫描二维码访问画廊",
+    "generatingQR": "正在生成二维码...",
+    "qrError": "无法生成二维码",
+    "downloadQR": "下载二维码",
+    "galleryLink": "画廊链接",
+    "copyLink": "复制链接",
+    "openGallery": "打开画廊"
+  },
+  "viewEditEventModal": {
+    "title": "查看/编辑活动",
+    "loadingEventData": "正在加载活动数据...",
+    "eventNamePlaceholder": "输入活动名称",
+    "eventSubtitlePlaceholder": "输入活动副标题（如有）",
+    "eventDescriptionPlaceholder": "输入活动描述（如有）",
+    "folderNamePlaceholder": "文件夹名称（仅英文）",
+    "folderNameHelp": "仅使用英文字母、数字、连字符（-）和下划线（_）",
+    "datePlaceholder": "日/月/年",
+    "additionalInfo": "附加信息",
+    "eventId": "活动ID",
+    "createdAt": "创建时间",
+    "photoCount": "照片数量",
+    "updating": "正在更新...",
+    "updateEvent": "更新活动",
+    "loadEventError": "无法加载活动数据",
+    "updateEventError": "无法更新活动，请重试",
+    "updateEventGenericError": "更新活动时发生错误，请重试",
+    "eventNameMaxLength": "活动名称不得超过200个字符",
+    "folderNameLength": "文件夹名称长度必须为3-100个字符"
+  },
   "common": {
     "photoGallery": "照片画廊",
     "loading": "加载中..."

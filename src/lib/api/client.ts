@@ -42,7 +42,7 @@ class ApiClient {
     eventCode: string,
     page: number = 1
   ): Promise<PhotosResponse> {
-    const response = await this.client.get(`/api/events/${eventCode}/photos`, {
+    const response = await this.client.get(`/api/gallery/${eventCode}/photos`, {
       params: { page },
     });
     return response.data;
@@ -50,14 +50,14 @@ class ApiClient {
 
   async getPhoto(eventCode: string, photoId: string): Promise<PhotoResponse> {
     const response = await this.client.get(
-      `/api/events/${eventCode}/photos/${photoId}`
+      `/api/gallery/${eventCode}/photos/${photoId}`
     );
     return response.data; // The response.data is already the PhotoResponse object
   }
 
   // SSE endpoint for real-time updates
   getEventStreamUrl(eventCode: string): string {
-    return `${API_BASE_URL}/api/events/${eventCode}/photos/stream`;
+    return `${API_BASE_URL}/api/gallery/${eventCode}/photos/stream`;
   }
 
   // Utility method to download photo as base64 (for S3 mode)

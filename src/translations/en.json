@@ -142,7 +142,8 @@
     "planDescription": "Access advanced features and unlimited storage",
     "manageSubscription": "Manage Subscription",
     "underDevelopment": "Under Development",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "manageGallery": "Manage Gallery"
   },
   "events": {
     "title": "Event Management",
@@ -200,6 +201,45 @@
     "generating": "Generating...",
     "noApiKey": "No API Key",
     "copyToClipboard": "Copy to clipboard"
+  },
+  "galleryModal": {
+    "title": "Gallery {eventTitle}",
+    "scanQR": "Scan QR Code to visit gallery",
+    "generatingQR": "Generating QR Code...",
+    "qrError": "Unable to generate QR Code",
+    "downloadQR": "Download QR Code",
+    "galleryLink": "Gallery Link",
+    "copyLink": "Copy Link",
+    "openGallery": "Open Gallery",
+    "qrTab": "QR Code",
+    "managementTab": "Photo Management",
+    "photoManagement": "Photo Management",
+    "select": "Select",
+    "deleteSelected": "Delete Selected",
+    "cancel": "Cancel",
+    "downloadZip": "Download as ZIP",
+    "noPhotos": "No photos"
+  },
+  "viewEditEventModal": {
+    "title": "View/Edit Event",
+    "loadingEventData": "Loading event data...",
+    "eventNamePlaceholder": "Enter event name",
+    "eventSubtitlePlaceholder": "Enter event subtitle (if any)",
+    "eventDescriptionPlaceholder": "Enter event description (if any)",
+    "folderNamePlaceholder": "Folder name (English only)",
+    "folderNameHelp": "Use English letters, numbers, hyphens (-), and underscores (_) only",
+    "datePlaceholder": "DD/MM/YYYY",
+    "additionalInfo": "Additional Information",
+    "eventId": "Event ID",
+    "createdAt": "Created At",
+    "photoCount": "Number of photos",
+    "updating": "Updating...",
+    "updateEvent": "Update Event",
+    "loadEventError": "Unable to load event data",
+    "updateEventError": "Unable to update event. Please try again.",
+    "updateEventGenericError": "An error occurred while updating the event. Please try again.",
+    "eventNameMaxLength": "Event name must not exceed 200 characters",
+    "folderNameLength": "Folder name must be 3-100 characters"
   },
   "common": {
     "photoGallery": "Photo Gallery",

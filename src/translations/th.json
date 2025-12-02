@@ -142,7 +142,8 @@
     "planDescription": "เข้าถึงคุณสมบัติขั้นสูงและพื้นที่จัดเก็บข้อมูลไม่จำกัด",
     "manageSubscription": "จัดการการสมัครสมาชิก",
     "underDevelopment": "กำลังพัฒนา",
-    "comingSoon": "เร็วๆ นี้"
+    "comingSoon": "เร็วๆ นี้",
+    "manageGallery": "จัดการแกลลอรี่"
   },
   "events": {
     "title": "จัดการอีเวนต์",
@@ -200,6 +201,45 @@
     "generating": "กำลังสร้าง...",
     "noApiKey": "ยังไม่มี API Key",
     "copyToClipboard": "คัดลอกไปยังคลิปบอร์ด"
+  },
+  "galleryModal": {
+    "title": "แกลเลอรี่ {eventTitle}",
+    "scanQR": "สแกน QR Code เพื่อเข้าชมแกลเลอรี่",
+    "generatingQR": "กำลังสร้าง QR Code...",
+    "qrError": "ไม่สามารถสร้าง QR Code",
+    "downloadQR": "ดาวน์โหลด QR Code",
+    "galleryLink": "ลิงก์แกลเลอรี่",
+    "copyLink": "คัดลอกลิงก์",
+    "openGallery": "เปิดแกลเลอรี่",
+    "qrTab": "QR Code",
+    "managementTab": "จัดการรูปภาพ",
+    "photoManagement": "จัดการรูปภาพ",
+    "select": "เลือก",
+    "deleteSelected": "ลบที่เลือก",
+    "cancel": "ยกเลิก",
+    "downloadZip": "ดาวน์โหลดเป็น ZIP",
+    "noPhotos": "ไม่มีรูปภาพ"
+  },
+  "viewEditEventModal": {
+    "title": "ดู/แก้ไขอีเวนต์",
+    "loadingEventData": "กำลังโหลดข้อมูลอีเวนต์...",
+    "eventNamePlaceholder": "กรอกชื่องาน",
+    "eventSubtitlePlaceholder": "กรอกชื่องานข้อความรอง (ถ้ามี)",
+    "eventDescriptionPlaceholder": "กรอกรายละเอียดงาน (ถ้ามี)",
+    "folderNamePlaceholder": "ชื่อโฟลเดอร์ (ภาษาอังกฤษเท่านั้น)",
+    "folderNameHelp": "ใช้ตัวอักษรภาษาอังกฤษ ตัวเลข ขีดกลาง (-) และขีดล่าง (_) เท่านั้น",
+    "datePlaceholder": "วว/ดด/ปปปป",
+    "additionalInfo": "ข้อมูลเพิ่มเติม",
+    "eventId": "รหัสอีเวนต์",
+    "createdAt": "สร้างเมื่อ",
+    "photoCount": "จำนวนรูปภาพ",
+    "updating": "กำลังอัปเดต...",
+    "updateEvent": "อัปเดตอีเวนต์",
+    "loadEventError": "ไม่สามารถโหลดข้อมูลอีเวนต์ได้",
+    "updateEventError": "ไม่สามารถอัปเดตอีเวนต์ได้ กรุณาลองใหม่",
+    "updateEventGenericError": "เกิดข้อผิดพลาดในการอัปเดตอีเวนต์ กรุณาลองใหม่",
+    "eventNameMaxLength": "ชื่องานต้องไม่เกิน 200 ตัวอักษร",
+    "folderNameLength": "ชื่อโฟลเดอร์ต้องมีความยาว 3-100 ตัวอักษร"
   },
   "common": {
     "photoGallery": "แกลลอรี่รูปภาพ",

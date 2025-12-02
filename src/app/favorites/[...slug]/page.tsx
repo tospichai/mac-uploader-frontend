@@ -34,7 +34,7 @@ export default function FavoritesRoute() {
   const loadEventData = async () => {
     try {
       // For now, create mock event info since server doesn't have this endpoint yet
-      const mockEventInfo: EventInfo = {
+      const mockEventInfo: any = {
         eventCode,
         eventName: event.charAt(0).toUpperCase() + event.slice(1),
         photographerName: photographer,

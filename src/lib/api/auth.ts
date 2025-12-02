@@ -8,7 +8,8 @@ import {
   ProfileResponse,
 } from "@/types/auth";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
 // Debug logging to verify API URL
 console.log("Auth API Base URL:", API_BASE_URL);
@@ -77,16 +78,18 @@ class AuthApiClient {
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     try {
       const response = await this.client.post("/api/auth/login", credentials);
-      const data = response.data;
+      const data = response.data.data;
 
-      if (data.success && data.token) {
+      if (data.token) {
         this.setToken(data.token);
       }
 
       return data;
     } catch (error: unknown) {
       console.error("Login error:", error);
-      const axiosError = error as { response?: { data?: { message?: string } } };
+      const axiosError = error as {
+        response?: { data?: { message?: string } };
+      };
       return {
         success: false,
         message: axiosError.response?.data?.message || "Login failed",
@@ -100,7 +103,9 @@ class AuthApiClient {
       return response.data;
     } catch (error: unknown) {
       console.error("Registration error:", error);
-      const axiosError = error as { response?: { data?: { message?: string } } };
+      const axiosError = error as {
+        response?: { data?: { message?: string } };
+      };
       return {
         success: false,
         message: axiosError.response?.data?.message || "Registration failed",
@@ -111,10 +116,12 @@ class AuthApiClient {
   async getProfile(): Promise<ProfileResponse> {
     try {
       const response = await this.client.get("/api/auth/me");
-      return response.data;
+      return response.data.data;
     } catch (error: unknown) {
       console.error("Get profile error:", error);
-      const axiosError = error as { response?: { data?: { message?: string } } };
+      const axiosError = error as {
+        response?: { data?: { message?: string } };
+      };
       return {
         success: false,
         message: axiosError.response?.data?.message || "Failed to get profile",
@@ -122,25 +129,35 @@ class AuthApiClient {
     }
   }
 
-  async updateProfile(userData: ProfileUpdateRequest | FormData): Promise<ProfileResponse> {
+  async updateProfile(
+    userData: ProfileUpdateRequest | FormData
+  ): Promise<ProfileResponse> {
     try {
       // If userData is FormData, don't set Content-Type header (let browser set it with boundary)
-      const config = userData instanceof FormData
-        ? {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        : {};
+      const config =
+        userData instanceof FormData
+          ? {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          : {};
 
-      const response = await this.client.put("/api/auth/profile", userData, config);
+      const response = await this.client.put(
+        "/api/auth/profile",
+        userData,
+        config
+      );
       return response.data;
     } catch (error: unknown) {
       console.error("Update profile error:", error);
-      const axiosError = error as { response?: { data?: { message?: string } } };
+      const axiosError = error as {
+        response?: { data?: { message?: string } };
+      };
       return {
         success: false,
-        message: axiosError.response?.data?.message || "Failed to update profile",
+        message:
+          axiosError.response?.data?.message || "Failed to update profile",
       };
     }
   }
@@ -162,31 +179,45 @@ class AuthApiClient {
   }
 
   // System information endpoint
-  async getSystemInformation(): Promise<{ success: boolean; data?: { backendEndpoint: string; frontendEndpoint: string }; message?: string }> {
+  async getSystemInformation(): Promise<{
+    success: boolean;
+    data?: { backendEndpoint: string; frontendEndpoint: string };
+    message?: string;
+  }> {
     try {
-      const response = await this.client.get("/api/system-information");
+      const response = await this.client.get("/api/api-information");
       return response.data;
     } catch (error: unknown) {
-      console.error("Get system information error:", error);
-      const axiosError = error as { response?: { data?: { message?: string } } };
+      console.error("Get api information error:", error);
+      const axiosError = error as {
+        response?: { data?: { message?: string } };
+      };
       return {
         success: false,
-        message: axiosError.response?.data?.message || "Failed to get system information",
+        message:
+          axiosError.response?.data?.message || "Failed to get api information",
       };
     }
   }
 
   // Generate new API key
-  async generateApiKey(): Promise<{ success: boolean; apiKey?: string; message?: string }> {
+  async generateApiKey(): Promise<{
+    success: boolean;
+    apiKey?: string;
+    message?: string;
+  }> {
     try {
       const response = await this.client.post("/api/auth/generate-api-key");
-      return response.data;
+      return response.data.data;
     } catch (error: unknown) {
       console.error("Generate API key error:", error);
-      const axiosError = error as { response?: { data?: { message?: string } } };
+      const axiosError = error as {
+        response?: { data?: { message?: string } };
+      };
       return {
         success: false,
-        message: axiosError.response?.data?.message || "Failed to generate API key",
+        message:
+          axiosError.response?.data?.message || "Failed to generate API key",
       };
     }
   }

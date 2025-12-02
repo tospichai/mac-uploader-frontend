@@ -201,6 +201,37 @@
     "noApiKey": "Chưa có API Key",
     "copyToClipboard": "Sao chép vào clipboard"
   },
+  "galleryModal": {
+    "title": "Thư viện {eventTitle}",
+    "scanQR": "Quét mã QR để truy cập thư viện",
+    "generatingQR": "Đang tạo mã QR...",
+    "qrError": "Không thể tạo mã QR",
+    "downloadQR": "Tải xuống mã QR",
+    "galleryLink": "Liên kết thư viện",
+    "copyLink": "Sao chép liên kết",
+    "openGallery": "Mở thư viện"
+  },
+  "viewEditEventModal": {
+    "title": "Xem/Chỉnh sửa Sự kiện",
+    "loadingEventData": "Đang tải dữ liệu sự kiện...",
+    "eventNamePlaceholder": "Nhập tên sự kiện",
+    "eventSubtitlePlaceholder": "Nhập tiêu đề phụ sự kiện (nếu có)",
+    "eventDescriptionPlaceholder": "Nhập mô tả sự kiện (nếu có)",
+    "folderNamePlaceholder": "Tên thư mục (chỉ tiếng Anh)",
+    "folderNameHelp": "Chỉ sử dụng chữ cái tiếng Anh, số, dấu gạch ngang (-) và dấu gạch dưới (_)",
+    "datePlaceholder": "NG/TH/NĂM",
+    "additionalInfo": "Thông tin bổ sung",
+    "eventId": "ID Sự kiện",
+    "createdAt": "Ngày tạo",
+    "photoCount": "Số lượng ảnh",
+    "updating": "Đang cập nhật...",
+    "updateEvent": "Cập nhật sự kiện",
+    "loadEventError": "Không thể tải dữ liệu sự kiện",
+    "updateEventError": "Không thể cập nhật sự kiện. Vui lòng thử lại.",
+    "updateEventGenericError": "Đã xảy ra lỗi khi cập nhật sự kiện. Vui lòng thử lại.",
+    "eventNameMaxLength": "Tên sự kiện không được vượt quá 200 ký tự",
+    "folderNameLength": "Tên thư mục phải có độ dài từ 3-100 ký tự"
+  },
   "common": {
     "photoGallery": "Thư viện Ảnh",
     "loading": "Đang tải..."

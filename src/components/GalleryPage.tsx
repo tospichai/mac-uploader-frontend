@@ -10,6 +10,7 @@ import { useSelection } from "@/contexts/SelectionContext";
 import { useGridView } from "@/contexts/GridViewContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import Image from "next/image";
+import Footer from "./Footer";
 import {
   Images,
   X,
@@ -170,8 +171,8 @@ export default function GalleryPage({
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA]">
-      <div className="mx-auto px-2 sm:px-4 py-8">
+    <div className="min-h-screen bg-linear-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA] flex flex-col">
+      <div className="flex-grow mx-auto px-2 sm:px-4 py-8">
         {/* Header with Selection Controls */}
         <header className="text-center">
           <div className="mx-auto container flex flex-col sm:flex-row justify-center gap-4 items-center mb-6">
@@ -281,19 +282,10 @@ export default function GalleryPage({
 
         {/* Main Content */}
         <main>{RenderContent()}</main>
-
-        {/* Footer */}
-        <footer className="flex justify-center flex-col items-center mt-4 mb-24 text-[#00C7A5] text-sm">
-          <Image
-            src="/logo.png"
-            alt="logo"
-            width={42}
-            height={42}
-            className="mb-2"
-          />
-          <p>© 2025 Live Moments Gallery | All Rights Reserved.</p>
-        </footer>
       </div>
+
+      {/* Footer */}
+      <Footer className="mt-4 mb-24" />
 
       {/* Image Modal */}
       {selectedImage && (
@@ -303,7 +295,7 @@ export default function GalleryPage({
           onClose={closeModal}
           onDownloadPhoto={onDownloadPhoto}
           onToggleFavorite={(photo) => toggleFavorite(eventCode, photo)}
-          isFavorite={(photo) => isFavorite(eventCode, photo.photoId)}
+          isFavorite={(photo) => isFavorite(eventCode, photo.id)}
           eventCode={eventCode}
         />
       )}
