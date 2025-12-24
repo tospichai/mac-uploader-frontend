@@ -6,7 +6,7 @@ import GalleryPage from "@/components/GalleryPage";
 import TabMenu from "@/components/TabMenu";
 import { Photo, GalleryEventDetails, Pagination } from "@/types";
 import apiClient from "@/lib/api/client";
-import { createSSEClient } from "@/lib/api/sse";
+import { createWebSocketClient } from "@/lib/api/socket";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export default function GalleryRoute() {
@@ -33,30 +33,44 @@ export default function GalleryRoute() {
     loadPhotos(currentPage);
   }, [eventCode, currentPage]);
 
-  // Set up SSE connection
+  // Set up WebSocket connection
   useEffect(() => {
     if (!eventCode) return;
 
-    const sseClient = createSSEClient(
+    // We assume getEventStreamUrl returns the path to the stream endpoint.
+    // We need to change 'stream' to 'ws' in the path if we are changing the endpoint URL on backend.
+    // The backend endpoint changed from /:eventCode/photos/stream to /:eventCode/photos/ws
+    const streamUrl = apiClient.getEventStreamUrl(eventCode).replace("/stream", "/ws");
+
+    const socketClient = createWebSocketClient(
       eventCode,
-      apiClient.getEventStreamUrl(eventCode)
+      streamUrl
     );
 
-    sseClient.onMessage((message) => {
-      if (message.type === "photo_update" && message.photo) {
+    socketClient.onMessage((message) => {
+      // Handle "connected" message
+      if ((message as any).type === "connected") {
+        console.log("WebSocket connected to event:", (message as any).data.eventCode);
+        return;
+      }
+
+      // Start: Add photo logic (same as before)
+      if (message.type === "photo_update" && (message as any).data?.photo) {
+        const photoData = (message as any).data.photo;
+
         // Add new photo to the beginning of the list
         setPhotos((prevPhotos) => {
           // Check if photo already exists to avoid duplicates
-          if (prevPhotos.some(p => p.id === message.photo!.photoId)) {
+          if (prevPhotos.some(p => p.id === photoData.photoId)) {
             return prevPhotos;
           }
 
           const newPhoto: Photo = {
-            id: message.photo!.photoId,
-            originalName: message.photo!.originalName,
-            lastModified: message.photo!.lastModified,
-            originalUrl: message.photo!.downloadUrl,
-            thumbnailUrl: message.photo!.displayUrl,
+            id: photoData.photoId,
+            originalName: photoData.originalName,
+            lastModified: photoData.lastModified,
+            originalUrl: photoData.downloadUrl,
+            thumbnailUrl: photoData.displayUrl,
           };
           return [newPhoto, ...prevPhotos];
         });
@@ -73,18 +87,18 @@ export default function GalleryRoute() {
       }
     });
 
-    sseClient.onConnect(() => {
-      console.log("SSE connected for event:", eventCode);
+    socketClient.onConnect(() => {
+      console.log("WebSocket connected for event:", eventCode);
     });
 
-    sseClient.onError((error) => {
-      console.error("SSE connection error:", error);
+    socketClient.onError((error) => {
+      console.error("WebSocket connection error:", error);
     });
 
-    sseClient.connect();
+    socketClient.connect();
 
     return () => {
-      sseClient.disconnect();
+      socketClient.disconnect();
     };
   }, [eventCode]);
 
