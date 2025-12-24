@@ -60,8 +60,8 @@ USER nextjs
 # Expose port 3000 for Portainer
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
 # Start the application
 CMD ["node", "server.js"]
