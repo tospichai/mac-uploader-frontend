@@ -365,7 +365,7 @@ export default function GalleryModal({
                     {photos.map((photo) => (
                       <div key={photo.id} className="relative group">
                         <img
-                          src={photo.url}
+                          src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${photo.url}`}
                           alt={photo.originalFilename || photo.id}
                           className="w-full h-32 object-cover rounded-lg"
                         />
