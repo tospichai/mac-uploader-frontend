@@ -45,16 +45,25 @@ export default function GalleryRoute() {
     sseClient.onMessage((message) => {
       if (message.type === "photo_update" && message.photo) {
         // Add new photo to the beginning of the list
-        setPhotos((prevPhotos) => [message.photo!, ...prevPhotos]);
+        setPhotos((prevPhotos) => {
+          const newPhoto: Photo = {
+            id: message.photo!.photoId,
+            originalName: message.photo!.originalName,
+            lastModified: message.photo!.lastModified,
+            originalUrl: message.photo!.downloadUrl,
+            thumbnailUrl: message.photo!.displayUrl,
+          };
+          return [newPhoto, ...prevPhotos];
+        });
 
         // Update total count in event info
         if (eventInfo) {
           setEventInfo((prev) =>
             prev
               ? {
-                  ...prev,
-                  totalPhotos: prev.totalPhotos + 1,
-                }
+                ...prev,
+                totalPhotos: prev.totalPhotos + 1,
+              }
               : null
           );
         }
@@ -107,9 +116,9 @@ export default function GalleryRoute() {
           setEventInfo((prev) =>
             prev
               ? {
-                  ...prev,
-                  totalPhotos: response.data.pagination.totalPhotos,
-                }
+                ...prev,
+                totalPhotos: response.data.pagination.totalPhotos,
+              }
               : null
           );
         }
