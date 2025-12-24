@@ -30,7 +30,7 @@ RUN printf "NEXT_PUBLIC_API_BASE_URL=%s\nNEXT_PUBLIC_STORAGE_MODE=%s\n" \
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-COPY env.production .env
+COPY env.production .env.local
 RUN cat .env
 
 # Build the application
