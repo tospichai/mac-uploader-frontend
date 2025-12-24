@@ -34,11 +34,59 @@ export default function GalleryRoute() {
   }, [eventCode, currentPage]);
 
   // Set up SSE connection
-  // ... (SSE code remains same, referencing eventInfo) ... 
-  // Wait, SSE uses setEventInfo(prev => ... totalPhotos ...)
-  // I need to be careful about setEventInfo structure.
+  useEffect(() => {
+    if (!eventCode) return;
 
-  // ... 
+    const sseClient = createSSEClient(
+      eventCode,
+      apiClient.getEventStreamUrl(eventCode)
+    );
+
+    sseClient.onMessage((message) => {
+      if (message.type === "photo_update" && message.photo) {
+        // Add new photo to the beginning of the list
+        setPhotos((prevPhotos) => {
+          // Check if photo already exists to avoid duplicates
+          if (prevPhotos.some(p => p.id === message.photo!.photoId)) {
+            return prevPhotos;
+          }
+
+          const newPhoto: Photo = {
+            id: message.photo!.photoId,
+            originalName: message.photo!.originalName,
+            lastModified: message.photo!.lastModified,
+            originalUrl: message.photo!.downloadUrl,
+            thumbnailUrl: message.photo!.displayUrl,
+          };
+          return [newPhoto, ...prevPhotos];
+        });
+
+        // Update pagination total count if available
+        setPagination((prev) =>
+          prev
+            ? {
+              ...prev,
+              totalPhotos: prev.totalPhotos + 1
+            }
+            : null
+        );
+      }
+    });
+
+    sseClient.onConnect(() => {
+      console.log("SSE connected for event:", eventCode);
+    });
+
+    sseClient.onError((error) => {
+      console.error("SSE connection error:", error);
+    });
+
+    sseClient.connect();
+
+    return () => {
+      sseClient.disconnect();
+    };
+  }, [eventCode]);
 
   const loadEventData = async () => {
     try {
