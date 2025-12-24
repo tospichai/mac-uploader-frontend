@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Photo, EventInfo, Pagination } from "@/types";
+import { Photo, GalleryEventDetails, Pagination } from "@/types";
 import PhotoGrid from "./PhotoGrid";
 import ImageModal from "./ImageModal";
 import NotificationAlert from "./NotificationAlert";
@@ -17,12 +17,13 @@ import {
   MousePointer2,
   Columns,
   Rows,
+  Globe,
 } from "lucide-react";
-import { siFacebook, siInstagram } from "simple-icons";
+import { siFacebook, siInstagram, siX } from "simple-icons";
 import SimpleIcon from "./SimpleIcon";
 
 interface GalleryPageProps {
-  eventInfo: EventInfo | null;
+  eventInfo: GalleryEventDetails | null;
   photos: Photo[];
   pagination: Pagination | null;
   loading: boolean;
@@ -135,11 +136,10 @@ export default function GalleryPage({
                   <button
                     key={p.number}
                     onClick={() => onPageChange(p.number)}
-                    className={`px-3 py-2 rounded-md text-sm font-thai-medium ${
-                      p.active
-                        ? "bg-blue-500 text-white"
-                        : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-                    }`}
+                    className={`px-3 py-2 rounded-md text-sm font-thai-medium ${p.active
+                      ? "bg-blue-500 text-white"
+                      : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                      }`}
                   >
                     {p.number}
                   </button>
@@ -178,53 +178,80 @@ export default function GalleryPage({
           <div className="mx-auto container flex flex-col sm:flex-row justify-center gap-4 items-center mb-6">
             <div className="flex justify-center rounded-xl">
               <Image
-                src="/khai.jpg"
+                src={eventInfo?.photographer.logoUrl ? `${process.env.NEXT_PUBLIC_API_BASE_URL}${eventInfo.photographer.logoUrl}` : "/logo.png"}
                 alt="logo"
                 width={150}
                 height={150}
-                className="rounded-full border-4 border-white shadow-md"
+                className={`${eventInfo?.photographer.logoUrl ? "" : "p-10"} rounded-full border-4 border-white shadow-md mb-4 sm:mb-0`}
               />
             </div>
             <div>
               <h1 className="text-2xl font-thai-bold text-gray-800 thai-text">
-                {eventInfo?.title || 'Event Name'}
+                {eventInfo?.event.title || 'Event Name'}
                 <br />
               </h1>
-              {eventInfo?.subtitle && (
+              {eventInfo?.event.subtitle && (
                 <p className="text-gray-500 text-lg mt-1 thai-text">
-                  <span className="font-thai-semibold">{eventInfo.subtitle}</span>
+                  <span className="font-thai-semibold">{eventInfo.event.subtitle}</span>
                 </p>
               )}
-              {eventInfo?.eventDate && (
+              {eventInfo?.event.eventDate && (
                 <p className="text-gray-500 text-sm mt-1 thai-text">
-                  {t("gallery.eventDetails.date")}: {new Date(eventInfo.eventDate).toLocaleDateString('th-TH')}
+                  {t("gallery.eventDetails.date")}: {new Date(eventInfo.event.eventDate).toLocaleDateString('th-TH')}
                 </p>
               )}
-              {eventInfo?.description && (
+              {eventInfo?.event.description && (
                 <p className="text-gray-600 text-sm mt-2 thai-text max-w-md">
-                  {eventInfo.description}
+                  {eventInfo.event.description}
                 </p>
               )}
+
               {/* Social Media Icons */}
               <div className="flex items-center gap-3 mt-3 justify-center">
-                <a
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                  aria-label="Facebook"
-                >
-                  <SimpleIcon icon={siFacebook} size={26} />
-                </a>
-                <a
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                  aria-label="Instagram"
-                >
-                  <SimpleIcon icon={siInstagram} size={26} />
-                </a>
+                {eventInfo?.photographer.facebookUrl && (
+                  <a
+                    href={eventInfo.photographer.facebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    aria-label="Facebook"
+                  >
+                    <SimpleIcon icon={siFacebook} size={26} />
+                  </a>
+                )}
+                {eventInfo?.photographer.instagramUrl && (
+                  <a
+                    href={eventInfo.photographer.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    aria-label="Instagram"
+                  >
+                    <SimpleIcon icon={siInstagram} size={26} />
+                  </a>
+                )}
+                {eventInfo?.photographer.twitterUrl && (
+                  <a
+                    href={eventInfo.photographer.twitterUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    aria-label="Twitter/X"
+                  >
+                    <SimpleIcon icon={siX} size={26} />
+                  </a>
+                )}
+                {eventInfo?.photographer.websiteUrl && (
+                  <a
+                    href={eventInfo.photographer.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    aria-label="Website"
+                  >
+                    <Globe size={26} className="text-[#5ea9dd]" />
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -236,11 +263,10 @@ export default function GalleryPage({
           {isMobile ? (
             <button
               onClick={toggleGridView}
-              className={`px-4 py-2 rounded-xl border backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5 font-semibold bg-white/70 ${
-                isSingleColumn
-                  ? "bg-gray-200 border-transparent ring-2 ring-[#00C7A5]/60 text-[#00C7A5]"
-                  : "border-white/60 text-gray-700"
-              }`}
+              className={`px-4 py-2 rounded-xl border backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5 font-semibold bg-white/70 ${isSingleColumn
+                ? "bg-gray-200 border-transparent ring-2 ring-[#00C7A5]/60 text-[#00C7A5]"
+                : "border-white/60 text-gray-700"
+                }`}
               title={
                 isSingleColumn
                   ? t("gallery.doubleColumn")

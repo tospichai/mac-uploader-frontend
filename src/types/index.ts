@@ -24,7 +24,7 @@ export interface Pagination {
 export interface PhotosResponse {
   success: boolean;
   message: string;
-  data:{
+  data: {
     photos: Photo[];
     pagination: Pagination;
   }
@@ -50,6 +50,31 @@ export interface EventInfo {
   createdAt: string;
   totalPhotos: number;
   totalSize?: number;
+}
+
+export interface PhotographerProfile {
+  displayName: string | null;
+  facebookUrl: string | null;
+  instagramUrl: string | null;
+  twitterUrl: string | null;
+  websiteUrl: string | null;
+  logoUrl: string | null;
+}
+
+export interface GalleryEventDetails {
+  event: {
+    title: string;
+    subtitle: string | null;
+    description: string | null;
+    eventDate: string;
+    folderName: string;
+  };
+  photographer: PhotographerProfile;
+}
+
+export interface GalleryEventResponse {
+  success: boolean;
+  data: GalleryEventDetails;
 }
 
 export interface EventResponse {

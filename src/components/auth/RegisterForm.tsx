@@ -20,10 +20,6 @@ export default function RegisterForm() {
     email: "",
     password: "",
     displayName: "",
-    facebookUrl: "",
-    instagramUrl: "",
-    twitterUrl: "",
-    websiteUrl: "",
   });
 
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -142,9 +138,8 @@ export default function RegisterForm() {
                     type="text"
                     value={formData.username}
                     onChange={handleInputChange}
-                    className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                      errors.username ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.username ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder={t("auth.username")}
                     disabled={isLoading}
                   />
@@ -169,9 +164,8 @@ export default function RegisterForm() {
                     type="text"
                     value={formData.displayName}
                     onChange={handleInputChange}
-                    className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                      errors.displayName ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.displayName ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder={t("auth.displayName")}
                     disabled={isLoading}
                   />
@@ -197,9 +191,8 @@ export default function RegisterForm() {
                   type="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`block w-full pl-10 pr-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.email ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder={t("auth.email")}
                   disabled={isLoading}
                 />
@@ -226,9 +219,8 @@ export default function RegisterForm() {
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={handleInputChange}
-                    className={`block w-full pl-10 pr-10 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                      errors.password ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`block w-full pl-10 pr-10 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.password ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder={t("auth.password")}
                     disabled={isLoading}
                   />
@@ -264,9 +256,8 @@ export default function RegisterForm() {
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={handleInputChange}
-                    className={`block w-full pl-10 pr-10 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                      errors.confirmPassword ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`block w-full pl-10 pr-10 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.confirmPassword ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder={t("auth.confirmPassword")}
                     disabled={isLoading}
                   />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { EventInfo } from "@/types";
+import { GalleryEventDetails } from "@/types";
 import PhotoGrid from "./PhotoGrid";
 import ImageModal from "./ImageModal";
 import NotificationAlert from "./NotificationAlert";
@@ -18,13 +18,14 @@ import {
   Columns,
   Rows,
   CheckSquare,
+  Globe,
 } from "lucide-react";
-import { siFacebook, siInstagram } from "simple-icons";
+import { siFacebook, siInstagram, siX } from "simple-icons";
 import SimpleIcon from "./SimpleIcon";
 import Image from "next/image";
 
 interface FavoritesPageProps {
-  eventInfo: EventInfo | null;
+  eventInfo: GalleryEventDetails | null;
   eventCode: string;
   onDownloadPhoto: (id: string) => void;
 }
@@ -70,7 +71,7 @@ export default function FavoritesPage({
     originalUrl: fav.originalUrl,
     thumbnailUrl: fav.thumbnailUrl,
   }));
-console.log('favoritePhotos', favoritePhotos)
+  console.log('favoritePhotos', favoritePhotos)
   // Set the download function in the context when component mounts or when onDownloadPhoto changes
   useEffect(() => {
     setDownloadFunction(async (id: string) => {
@@ -191,41 +192,79 @@ console.log('favoritePhotos', favoritePhotos)
           <div className="mx-auto container flex flex-col sm:flex-row justify-center gap-4 items-center">
             <div className="flex justify-center rounded-xl">
               <Image
-                src="/khai.jpg"
+                src={eventInfo?.photographer.logoUrl ? `${process.env.NEXT_PUBLIC_API_BASE_URL}${eventInfo.photographer.logoUrl}` : "/logo.png"}
                 alt="logo"
                 width={150}
                 height={150}
-                className="rounded-full border-4 border-white shadow-md"
+                className={`${eventInfo?.photographer.logoUrl ? "" : "p-10"} rounded-full border-4 border-white shadow-md mb-4 sm:mb-0`}
               />
             </div>
             <div>
               <h1 className="text-2xl font-thai-bold text-gray-800 thai-text">
-                Wedding 23.11.25
+                {eventInfo?.event.title || 'Event Name'}
                 <br />
               </h1>
-              <p className="text-gray-500 text-lg mt-1 thai-text">
-                <span className="font-thai-semibold">H&N @Leaf Garden</span>
-              </p>
+              {eventInfo?.event.subtitle && (
+                <p className="text-gray-500 text-lg mt-1 thai-text">
+                  <span className="font-thai-semibold">{eventInfo.event.subtitle}</span>
+                </p>
+              )}
+              {eventInfo?.event.eventDate && (
+                <p className="text-gray-500 text-sm mt-1 thai-text">
+                  {t("gallery.eventDetails.date")}: {new Date(eventInfo.event.eventDate).toLocaleDateString('th-TH')}
+                </p>
+              )}
+              {eventInfo?.event.description && (
+                <p className="text-gray-600 text-sm mt-2 thai-text max-w-md">
+                  {eventInfo.event.description}
+                </p>
+              )}
               {/* Social Media Icons */}
               <div className="flex items-center gap-3 mt-3 justify-center">
-                <a
-                  href="https://simpleicons.org/?q=facebook"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                  aria-label="Facebook"
-                >
-                  <SimpleIcon icon={siFacebook} size={26} />
-                </a>
-                <a
-                  href="https://simpleicons.org/?q=instagram"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                  aria-label="Instagram"
-                >
-                  <SimpleIcon icon={siInstagram} size={26} />
-                </a>
+                {eventInfo?.photographer.facebookUrl && (
+                  <a
+                    href={eventInfo.photographer.facebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    aria-label="Facebook"
+                  >
+                    <SimpleIcon icon={siFacebook} size={26} />
+                  </a>
+                )}
+                {eventInfo?.photographer.instagramUrl && (
+                  <a
+                    href={eventInfo.photographer.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    aria-label="Instagram"
+                  >
+                    <SimpleIcon icon={siInstagram} size={26} />
+                  </a>
+                )}
+                {eventInfo?.photographer.twitterUrl && (
+                  <a
+                    href={eventInfo.photographer.twitterUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    aria-label="Twitter/X"
+                  >
+                    <SimpleIcon icon={siX} size={26} />
+                  </a>
+                )}
+                {eventInfo?.photographer.websiteUrl && (
+                  <a
+                    href={eventInfo.photographer.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                    aria-label="Website"
+                  >
+                    <Globe size={26} className="text-[#5ea9dd]" />
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -238,126 +277,62 @@ console.log('favoritePhotos', favoritePhotos)
             <Heart className="text-red-500 fill-red-500" size={32} />
           </h1>
           {/* Grid View and Selection Controls */}
-          <div className="sticky top-0 z-10 bg-white/60 backdrop-blur-md py-3 -mx-2 sm:-mx-4 px-4 border-b border-white/20 mb-4">
-            {isMobile ? (
-              // Mobile Layout: Two rows
-              <div className="flex flex-col gap-3">
-                {/* Top row: View button (left) + Select/Cancel button (right) */}
-                <div className="flex justify-between items-center">
-                  {/* Grid View Toggle Button */}
-                  <button
-                    onClick={toggleGridView}
-                    className={`px-4 py-2 rounded-xl border backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5 font-semibold bg-white/70 ${
-                      isSingleColumn
+          {favorites.length > 0 && (
+            <div className="sticky top-0 z-10 bg-white/60 backdrop-blur-md py-3 -mx-2 sm:-mx-4 px-4 border-b border-white/20 mb-4">
+              {isMobile ? (
+                // Mobile Layout: Two rows
+                <div className="flex flex-col gap-3">
+                  {/* Top row: View button (left) + Select/Cancel button (right) */}
+                  <div className="flex justify-between items-center">
+                    {/* Grid View Toggle Button */}
+                    <button
+                      onClick={toggleGridView}
+                      className={`px-4 py-2 rounded-xl border backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5 font-semibold bg-white/70 ${isSingleColumn
                         ? "bg-gray-200 border-transparent ring-2 ring-[#00C7A5]/60 text-[#00C7A5]"
                         : "border-white/60 text-gray-700"
-                    }`}
-                    title={
-                      isSingleColumn
-                        ? t("favorites.doubleColumn")
-                        : t("favorites.singleColumn")
-                    }
-                  >
-                    {isSingleColumn ? (
-                      <Columns size={16} />
-                    ) : (
-                      <Rows size={16} />
-                    )}{" "}
-                    {t("favorites.view")}
-                  </button>
-
-                  {/* Selection Controls - Top Row */}
-                  {favoritePhotos.length && (
-                    <div className="flex items-center gap-3">
-                      {!isSelectionMode ? (
-                        <button
-                          onClick={toggleSelectionMode}
-                          className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] flex items-center gap-2 cursor-pointer h-10.5 font-bold"
-                        >
-                          <MousePointer2 size={18} />
-                          {t("favorites.select")}
-                        </button>
+                        }`}
+                      title={
+                        isSingleColumn
+                          ? t("favorites.doubleColumn")
+                          : t("favorites.singleColumn")
+                      }
+                    >
+                      {isSingleColumn ? (
+                        <Columns size={16} />
                       ) : (
-                        <button
-                          onClick={toggleSelectionMode}
-                          className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 flex items-center gap-2 cursor-pointer font-bold"
-                        >
-                          <X size={18} />
-                          {t("favorites.cancel")}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
+                        <Rows size={16} />
+                      )}{" "}
+                      {t("favorites.view")}
+                    </button>
 
-                {/* Bottom row: Delete Selected + Select All (right-aligned) */}
-                {isSelectionMode && (
-                  <div className="flex justify-between items-center gap-3">
-                    {selectedCount > 0 ? (
-                      <button
-                        onClick={handleDeleteSelected}
-                        className="px-4 py-2 bg-red-500 text-white rounded-xl shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:bg-red-600 hover:shadow-[0_6px_16px_rgba(239,68,68,0.4)] flex items-center gap-2 cursor-pointer font-thai-medium"
-                      >
-                        <Trash2 size={16} />
-                        {t("favorites.deleteSelected")}
-                      </button>
-                    ) : (
-                      <div></div>
-                    )}
-                    {favorites.length > 0 && (
-                      <button
-                        onClick={handleSelectAll}
-                        className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 flex items-center gap-2 cursor-pointer font-bold"
-                      >
-                        <CheckSquare size={18} />
-                        {selectedCount === favorites.length
-                          ? t("favorites.deselectAll")
-                          : t("favorites.selectAll")}
-                      </button>
+                    {/* Selection Controls - Top Row */}
+                    {favoritePhotos.length && (
+                      <div className="flex items-center gap-3">
+                        {!isSelectionMode ? (
+                          <button
+                            onClick={toggleSelectionMode}
+                            className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] flex items-center gap-2 cursor-pointer h-10.5 font-bold"
+                          >
+                            <MousePointer2 size={18} />
+                            {t("favorites.select")}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={toggleSelectionMode}
+                            className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 flex items-center gap-2 cursor-pointer font-bold"
+                          >
+                            <X size={18} />
+                            {t("favorites.cancel")}
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
-            ) : (
-              // Desktop Layout: Single row
-              <div className="flex justify-between items-center gap-4">
-                {/* Grid View Toggle Button - Desktop Only */}
-                <div className="flex justify-center rounded-xl">
-                  <button
-                    onClick={toggleGridView}
-                    className={`px-4 py-2 rounded-xl border backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5 font-semibold bg-white/70 ${
-                      isSingleColumn
-                        ? "bg-gray-200 border-transparent ring-2 ring-[#00C7A5]/60 text-[#00C7A5]"
-                        : "border-white/60 text-gray-700"
-                    }`}
-                    title={
-                      isSingleColumn
-                        ? t("favorites.doubleColumn")
-                        : t("favorites.singleColumn")
-                    }
-                  >
-                    {isSingleColumn ? (
-                      <Columns size={16} />
-                    ) : (
-                      <Rows size={16} />
-                    )}{" "}
-                    {t("favorites.view")}
-                  </button>
-                </div>
 
-                {/* Selection Controls - Desktop */}
-                <div className="flex items-center gap-4">
-                  {!isSelectionMode ? (
-                    <button
-                      onClick={toggleSelectionMode}
-                      className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] flex items-center gap-2 cursor-pointer h-10.5 font-bold"
-                    >
-                      <MousePointer2 size={18} />
-                      {t("favorites.select")}
-                    </button>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      {selectedCount > 0 && (
+                  {/* Bottom row: Delete Selected + Select All (right-aligned) */}
+                  {isSelectionMode && (
+                    <div className="flex justify-between items-center gap-3">
+                      {selectedCount > 0 ? (
                         <button
                           onClick={handleDeleteSelected}
                           className="px-4 py-2 bg-red-500 text-white rounded-xl shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:bg-red-600 hover:shadow-[0_6px_16px_rgba(239,68,68,0.4)] flex items-center gap-2 cursor-pointer font-thai-medium"
@@ -365,6 +340,8 @@ console.log('favoritePhotos', favoritePhotos)
                           <Trash2 size={16} />
                           {t("favorites.deleteSelected")}
                         </button>
+                      ) : (
+                        <div></div>
                       )}
                       {favorites.length > 0 && (
                         <button
@@ -377,19 +354,81 @@ console.log('favoritePhotos', favoritePhotos)
                             : t("favorites.selectAll")}
                         </button>
                       )}
-                      <button
-                        onClick={toggleSelectionMode}
-                        className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 flex items-center gap-2 cursor-pointer font-bold"
-                      >
-                        <X size={18} />
-                        {t("favorites.cancel")}
-                      </button>
                     </div>
                   )}
                 </div>
-              </div>
-            )}
-          </div>
+              ) : (
+                // Desktop Layout: Single row
+                <div className="flex justify-between items-center gap-4">
+                  {/* Grid View Toggle Button - Desktop Only */}
+                  <div className="flex justify-center rounded-xl">
+                    <button
+                      onClick={toggleGridView}
+                      className={`md:hidden px-4 py-2 rounded-xl border backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] transition-all duration-200 flex items-center gap-2 cursor-pointer h-10.5 font-semibold bg-white/70 ${isSingleColumn
+                        ? "bg-gray-200 border-transparent ring-2 ring-[#00C7A5]/60 text-[#00C7A5]"
+                        : "border-white/60 text-gray-700"
+                        }`}
+                      title={
+                        isSingleColumn
+                          ? t("favorites.doubleColumn")
+                          : t("favorites.singleColumn")
+                      }
+                    >
+                      {isSingleColumn ? (
+                        <Columns size={16} />
+                      ) : (
+                        <Rows size={16} />
+                      )}{" "}
+                      {t("favorites.view")}
+                    </button>
+                  </div>
+
+                  {/* Selection Controls - Desktop */}
+                  <div className="flex items-center gap-4">
+                    {!isSelectionMode ? (
+                      <button
+                        onClick={toggleSelectionMode}
+                        className="px-4 py-2 bg-[#00C7A5] text-white rounded-xl shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] flex items-center gap-2 cursor-pointer h-10.5 font-bold"
+                      >
+                        <MousePointer2 size={18} />
+                        {t("favorites.select")}
+                      </button>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        {selectedCount > 0 && (
+                          <button
+                            onClick={handleDeleteSelected}
+                            className="px-4 py-2 bg-red-500 text-white rounded-xl shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:bg-red-600 hover:shadow-[0_6px_16px_rgba(239,68,68,0.4)] flex items-center gap-2 cursor-pointer font-thai-medium"
+                          >
+                            <Trash2 size={16} />
+                            {t("favorites.deleteSelected")}
+                          </button>
+                        )}
+                        {favorites.length > 0 && (
+                          <button
+                            onClick={handleSelectAll}
+                            className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 flex items-center gap-2 cursor-pointer font-bold"
+                          >
+                            <CheckSquare size={18} />
+                            {selectedCount === favorites.length
+                              ? t("favorites.deselectAll")
+                              : t("favorites.selectAll")}
+                          </button>
+                        )}
+                        <button
+                          onClick={toggleSelectionMode}
+                          className="px-4 py-2 bg-white/70 text-gray-700 rounded-xl border border-white/60 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.1)] hover:bg-white hover:text-gray-900 flex items-center gap-2 cursor-pointer font-bold"
+                        >
+                          <X size={18} />
+                          {t("favorites.cancel")}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           {RenderContent()}
         </main>
       </div>

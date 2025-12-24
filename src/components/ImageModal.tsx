@@ -31,7 +31,7 @@ export default function ImageModal({
   // Get current photo URL
   const getCurrentPhotoUrl = () => {
     const photo = photos[currentImageIndex];
-    return photo?.originalUrl || photo?.thumbnailUrl || '';
+    return `${process.env.NEXT_PUBLIC_API_BASE_URL}${photo?.originalUrl}` || `${process.env.NEXT_PUBLIC_API_BASE_URL}${photo?.thumbnailUrl}` || '';
   };
 
   // Navigate to previous image
@@ -170,11 +170,10 @@ export default function ImageModal({
           >
             <Heart
               size={20}
-              className={`transition-colors duration-200 ${
-                checkIsFavorite()
+              className={`transition-colors duration-200 ${checkIsFavorite()
                   ? "fill-red-500 text-red-500"
                   : "text-white"
-              }`}
+                }`}
             />
           </button>
         )}
@@ -243,11 +242,10 @@ export default function ImageModal({
             <button
               key={index}
               onClick={() => setCurrentImageIndex(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                index === currentImageIndex
+              className={`w-2 h-2 rounded-full transition-all duration-200 ${index === currentImageIndex
                   ? 'bg-white w-8'
                   : 'bg-white/50 hover:bg-white/70'
-              }`}
+                }`}
               aria-label={`Go to image ${index + 1}`}
             />
           ))}

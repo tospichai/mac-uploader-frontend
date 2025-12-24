@@ -41,9 +41,11 @@ export interface RegisterRequest {
 
 export interface RegisterResponse {
   success: boolean;
-  message: string;
-  user?: Photographer;
-  token?: string;
+  data: {
+    message: string;
+    user?: Photographer;
+    token?: string;
+  };
 }
 
 export interface ProfileUpdateRequest {

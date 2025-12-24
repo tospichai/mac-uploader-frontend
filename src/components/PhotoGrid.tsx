@@ -68,26 +68,23 @@ export default function PhotoGrid({
 
   return (
     <div
-      className={`grid mb-8 gap-2 sm:gap-4 ${
-        isSingleColumn && isMobile
-          ? "grid-cols-1"
-          : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4"
-      }`}
+      className={`grid mb-8 gap-2 sm:gap-4 ${isSingleColumn && isMobile
+        ? "grid-cols-1"
+        : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4"
+        }`}
     >
       {photos.map((photo, index) => (
         <div
           key={photo.id}
           ref={index === 0 ? newPhotoRef : null}
-          className={`relative rounded-lg shadow-md overflow-hidden hover:shadow-lg${
-            isPhotoSelected(photo.id)
-              ? "ring-3 sm:ring-4 ring-[#00C7A5] ring-opacity-50 shadow-lg"
-              : ""
-          }`}
+          className={`relative rounded-lg shadow-md overflow-hidden hover:shadow-lg${isPhotoSelected(photo.id)
+            ? "ring-3 sm:ring-4 ring-[#00C7A5] ring-opacity-50 shadow-lg"
+            : ""
+            }`}
         >
           <div
-            className={`aspect-3/2 relative group cursor-pointer rounded-lg overflow-hidden ${
-              isSelectionMode ? "cursor-pointer" : ""
-            }`}
+            className={`aspect-3/2 relative group cursor-pointer rounded-lg overflow-hidden ${isSelectionMode ? "cursor-pointer" : ""
+              }`}
             onClick={() => {
               if (isSelectionMode) {
                 togglePhotoSelection(photo.id, handleSelectionLimit);
@@ -119,7 +116,7 @@ export default function PhotoGrid({
                     loading="lazy"
                   /> */}
                   <img
-                    src={url}
+                    src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`}
                     alt={`Photo ${photo.id}`}
                     className="w-full h-full object-cover"
                   />
@@ -134,11 +131,10 @@ export default function PhotoGrid({
                           handleSelectionLimit
                         );
                       }}
-                      className={`absolute top-2 right-2 w-9.5 h-9.5 rounded-xl border-2 flex items-center justify-center cursor-pointer z-9 ${
-                        isPhotoSelected(photo.id)
-                          ? "bg-[#00C7A5] border-[#00C7A5] shadow-[0_2px_8px_rgba(0,199,165,0.4)]"
-                          : "backdrop-blur-sm border-gray-300 group-hover:border-[#00C7A5] hover:bg-white/20"
-                      }`}
+                      className={`absolute top-2 right-2 w-9.5 h-9.5 rounded-xl border-2 flex items-center justify-center cursor-pointer z-9 ${isPhotoSelected(photo.id)
+                        ? "bg-[#00C7A5] border-[#00C7A5] shadow-[0_2px_8px_rgba(0,199,165,0.4)]"
+                        : "backdrop-blur-sm border-gray-300 group-hover:border-[#00C7A5] hover:bg-white/20"
+                        }`}
                     >
                       {isPhotoSelected(photo.id) && (
                         <Check size={22} className="text-white" />
@@ -179,11 +175,10 @@ export default function PhotoGrid({
               >
                 <Heart
                   size={22}
-                  className={` ${
-                    isFavorite(eventCode, photo.id)
-                      ? "fill-red-500 text-red-500"
-                      : "text-gray-100"
-                  }`}
+                  className={` ${isFavorite(eventCode, photo.id)
+                    ? "fill-red-500 text-red-500"
+                    : "text-gray-100"
+                    }`}
                 />
               </button>
             </div>

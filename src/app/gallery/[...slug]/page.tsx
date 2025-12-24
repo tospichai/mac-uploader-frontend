@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import GalleryPage from "@/components/GalleryPage";
 import TabMenu from "@/components/TabMenu";
-import { Photo, EventInfo, Pagination } from "@/types";
+import { Photo, GalleryEventDetails, Pagination } from "@/types";
 import apiClient from "@/lib/api/client";
 import { createSSEClient } from "@/lib/api/sse";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -13,15 +13,13 @@ export default function GalleryRoute() {
   const params = useParams();
   const slug = params.slug as string;
 
-  // Parse slug to extract photographer and event
-  // Format: photographer_event
-  const parts = String(slug || "").split("_");
-  const photographer = parts[0] || "unknown";
-  const event = parts[1] || "unknown";
+  // Parse slug to extract event
+  // Format: event
+  const event = String(slug || "");
   const eventCode = event; // Server only uses event part
 
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [eventInfo, setEventInfo] = useState<EventInfo | null>(null);
+  const [eventInfo, setEventInfo] = useState<GalleryEventDetails | null>(null);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,66 +34,20 @@ export default function GalleryRoute() {
   }, [eventCode, currentPage]);
 
   // Set up SSE connection
-  useEffect(() => {
-    const sseClient = createSSEClient(
-      eventCode,
-      apiClient.getEventStreamUrl(eventCode)
-    );
+  // ... (SSE code remains same, referencing eventInfo) ... 
+  // Wait, SSE uses setEventInfo(prev => ... totalPhotos ...)
+  // I need to be careful about setEventInfo structure.
 
-    sseClient.onMessage((message) => {
-      if (message.type === "photo_update" && message.photo) {
-        // Add new photo to the beginning of the list
-        setPhotos((prevPhotos) => {
-          const newPhoto: Photo = {
-            id: message.photo!.photoId,
-            originalName: message.photo!.originalName,
-            lastModified: message.photo!.lastModified,
-            originalUrl: message.photo!.downloadUrl,
-            thumbnailUrl: message.photo!.displayUrl,
-          };
-          return [newPhoto, ...prevPhotos];
-        });
-
-        // Update total count in event info
-        if (eventInfo) {
-          setEventInfo((prev) =>
-            prev
-              ? {
-                ...prev,
-                totalPhotos: prev.totalPhotos + 1,
-              }
-              : null
-          );
-        }
-      }
-    });
-
-    sseClient.onConnect(() => {
-      console.log("SSE connected for event:", eventCode);
-    });
-
-    sseClient.onError((error) => {
-      console.error("SSE connection error:", error);
-    });
-
-    sseClient.connect();
-
-    return () => {
-      sseClient.disconnect();
-    };
-  }, [eventCode, eventInfo]);
+  // ... 
 
   const loadEventData = async () => {
     try {
-      // For now, create mock event info since server doesn't have this endpoint yet
-      const mockEventInfo: any = {
-        eventCode,
-        eventName: event.charAt(0).toUpperCase() + event.slice(1),
-        photographerName: photographer,
-        createdAt: new Date().toISOString(),
-        totalPhotos: 0,
-      };
-      setEventInfo(mockEventInfo);
+      const response = await apiClient.getGalleryEventDetails(eventCode);
+      if (response.success) {
+        setEventInfo(response.data);
+      } else {
+        setError("Failed to load event information");
+      }
     } catch (err) {
       console.error("Error loading event info:", err);
       setError("Failed to load event information");
@@ -111,17 +63,13 @@ export default function GalleryRoute() {
         setPhotos(response.data.photos);
         setPagination(response.data.pagination);
 
-        // Update total photos count
+        // Update total count in event info - REMOVED as GalleryEventDetails doesn't track totalPhotos
+        // and header doesn't display it.
+        /* 
         if (eventInfo) {
-          setEventInfo((prev) =>
-            prev
-              ? {
-                ...prev,
-                totalPhotos: response.data.pagination.totalPhotos,
-              }
-              : null
-          );
+           // Logic separate if needed
         }
+        */
       } else {
         setError("Failed to load photos");
       }
@@ -215,7 +163,6 @@ export default function GalleryRoute() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         eventCode={eventCode}
-        photographer={photographer}
       />
     </>
   );

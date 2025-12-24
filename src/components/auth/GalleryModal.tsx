@@ -61,7 +61,7 @@ export default function GalleryModal({
     });
 
   // Generate gallery URL
-  const galleryUrl = `${window.location.origin}/gallery/${prefix}_${folderName}`;
+  const galleryUrl = `${window.location.origin}/gallery/${folderName}`;
 
   // Generate QR code when modal opens
   useEffect(() => {
@@ -229,21 +229,19 @@ export default function GalleryModal({
         <div className="flex border-b border-gray-200">
           <button
             onClick={() => setActiveTab("management")}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors duration-200 ${
-              activeTab === "management"
-                ? "text-[#00C7A5] border-b-2 border-[#00C7A5]"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors duration-200 ${activeTab === "management"
+              ? "text-[#00C7A5] border-b-2 border-[#00C7A5]"
+              : "text-gray-500 hover:text-gray-700"
+              }`}
           >
             {t("galleryModal.managementTab")}
           </button>
           <button
             onClick={() => setActiveTab("qr")}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors duration-200 ${
-              activeTab === "qr"
-                ? "text-[#00C7A5] border-b-2 border-[#00C7A5]"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors duration-200 ${activeTab === "qr"
+              ? "text-[#00C7A5] border-b-2 border-[#00C7A5]"
+              : "text-gray-500 hover:text-gray-700"
+              }`}
           >
             {t("galleryModal.qrTab")}
           </button>
@@ -375,11 +373,10 @@ export default function GalleryModal({
                           <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40  transition-all duration-200 rounded-lg">
                             <button
                               onClick={() => togglePhotoSelection(photo.id)}
-                              className={`absolute top-2 left-2 w-6 h-6 rounded-full border-2 transition-all duration-200 ${
-                                selectedPhotos.has(photo.id)
-                                  ? "bg-[#00C7A5] border-[#00C7A5]"
-                                  : "bg-white border-gray-300"
-                              }`}
+                              className={`absolute top-2 left-2 w-6 h-6 rounded-full border-2 transition-all duration-200 ${selectedPhotos.has(photo.id)
+                                ? "bg-[#00C7A5] border-[#00C7A5]"
+                                : "bg-white border-gray-300"
+                                }`}
                             >
                               {selectedPhotos.has(photo.id) && (
                                 <svg

@@ -10,10 +10,9 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "3001",
-        pathname: "/api/files/events/**",
+        protocol: "https",
+        hostname: "api.digiceb.com",
+        pathname: "/files/**",
       },
     ],
   },

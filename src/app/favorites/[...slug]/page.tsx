@@ -14,14 +14,12 @@ export default function FavoritesRoute() {
   const slug = params.slug as string;
   const { t } = useTranslation();
 
-  // Parse slug to extract photographer and event
-  // Format: photographer_event
-  const parts = String(slug || "").split("_");
-  const photographer = parts[0] || "unknown";
-  const event = parts[1] || "unknown";
+  // Parse slug to extract event
+  // Format: event
+  const event = String(slug || "");
   const eventCode = event; // Server only uses event part
 
-  const [eventInfo, setEventInfo] = useState<EventInfo | null>(null);
+  const [eventInfo, setEventInfo] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("favorites");
@@ -33,15 +31,12 @@ export default function FavoritesRoute() {
 
   const loadEventData = async () => {
     try {
-      // For now, create mock event info since server doesn't have this endpoint yet
-      const mockEventInfo: any = {
-        eventCode,
-        eventName: event.charAt(0).toUpperCase() + event.slice(1),
-        photographerName: photographer,
-        createdAt: new Date().toISOString(),
-        totalPhotos: 0,
-      };
-      setEventInfo(mockEventInfo);
+      const response = await apiClient.getGalleryEventDetails(eventCode);
+      if (response.success) {
+        setEventInfo(response.data);
+      } else {
+        setError("Failed to load event information");
+      }
     } catch (err) {
       console.error("Error loading event info:", err);
       setError("Failed to load event information");
@@ -127,7 +122,6 @@ export default function FavoritesRoute() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         eventCode={eventCode}
-        photographer={photographer}
       />
     </>
   );

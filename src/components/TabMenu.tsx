@@ -20,14 +20,12 @@ interface TabMenuProps {
   activeTab: string;
   onTabChange?: (tabId: string) => void;
   eventCode?: string;
-  photographer?: string;
 }
 
 export default function TabMenu({
   activeTab,
   onTabChange,
   eventCode,
-  photographer,
 }: TabMenuProps) {
   const router = useRouter();
   const { t, currentLanguage, setLanguage } = useTranslation();
@@ -47,8 +45,8 @@ export default function TabMenu({
       label: t("tabs.gallery"),
       icon: <Images size={24} />,
       onClick: () => {
-        if (eventCode && photographer) {
-          router.push(`/gallery/${photographer}_${eventCode}`);
+        if (eventCode) {
+          router.push(`/gallery/${eventCode}`);
         } else {
           router.push("/gallery");
         }
@@ -67,8 +65,8 @@ export default function TabMenu({
       label: t("tabs.favorites"),
       icon: <Heart size={24} />,
       onClick: () => {
-        if (eventCode && photographer) {
-          router.push(`/favorites/${photographer}_${eventCode}`);
+        if (eventCode) {
+          router.push(`/favorites/${eventCode}`);
         } else {
           router.push("/favorites");
         }
@@ -131,11 +129,10 @@ export default function TabMenu({
               <button
                 onClick={handleBatchDownload}
                 disabled={selectedCount === 0 || isDownloading}
-                className={`flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200 ${
-                  selectedCount > 0 && !isDownloading
-                    ? "bg-[#00C7A5] shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] cursor-pointer"
-                    : "cursor-not-allowed"
-                }`}
+                className={`flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200 ${selectedCount > 0 && !isDownloading
+                  ? "bg-[#00C7A5] shadow-[0_4px_12px_rgba(0,199,165,0.3)] hover:bg-[#00B595] hover:shadow-[0_6px_16px_rgba(0,199,165,0.4)] cursor-pointer"
+                  : "cursor-not-allowed"
+                  }`}
                 title={t("gallery.downloadSelected")}
               >
                 {isDownloading ? (
@@ -159,21 +156,19 @@ export default function TabMenu({
                   <button
                     onClick={() => tab.onClick ? tab.onClick() : tab.path && router.push(tab.path)}
                     className={`group relative overflow-hidden flex flex-col items-center gap-1 rounded-xl
-                      px-3 pt-1 pb-2 transition-colors duration-200 cursor-pointer min-w-16 thai-text ${
-                        activeTab === tab.id && tab.id !== "language"
-                          ? " text-gray-900"
-                          : "text-gray-500 hover:text-gray-900"
+                      px-3 pt-1 pb-2 transition-colors duration-200 cursor-pointer min-w-16 thai-text ${activeTab === tab.id && tab.id !== "language"
+                        ? " text-gray-900"
+                        : "text-gray-500 hover:text-gray-900"
                       }`}
                   >
                     {tab.icon}
                     <span>{tab.label}</span>
                     {tab.id !== "language" && (
                       <span
-                        className={`absolute bottom-[-4.5px] h-2 w-12 bg-[#00C7A5] transition-opacity ${
-                          activeTab === tab.id
-                            ? "opacity-100"
-                            : "opacity-0 group-hover:opacity-0"
-                        }`}
+                        className={`absolute bottom-[-4.5px] h-2 w-12 bg-[#00C7A5] transition-opacity ${activeTab === tab.id
+                          ? "opacity-100"
+                          : "opacity-0 group-hover:opacity-0"
+                          }`}
                       ></span>
                     )}
                   </button>

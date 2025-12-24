@@ -88,11 +88,11 @@ class AuthApiClient {
     } catch (error: unknown) {
       console.error("Login error:", error);
       const axiosError = error as {
-        response?: { data?: { message?: string } };
+        response?: { data?: { message?: string; error?: string } };
       };
       return {
         success: false,
-        message: axiosError.response?.data?.message || "Login failed",
+        message: axiosError.response?.data?.message || axiosError.response?.data?.error || "Login failed",
       };
     }
   }
@@ -104,11 +104,13 @@ class AuthApiClient {
     } catch (error: unknown) {
       console.error("Registration error:", error);
       const axiosError = error as {
-        response?: { data?: { message?: string } };
+        response?: { data?: { message?: string; error?: string } };
       };
       return {
         success: false,
-        message: axiosError.response?.data?.message || "Registration failed",
+        data: {
+          message: axiosError.response?.data?.message || axiosError.response?.data?.error || "Registration failed",
+        }
       };
     }
   }
@@ -120,11 +122,11 @@ class AuthApiClient {
     } catch (error: unknown) {
       console.error("Get profile error:", error);
       const axiosError = error as {
-        response?: { data?: { message?: string } };
+        response?: { data?: { message?: string; error?: string } };
       };
       return {
         success: false,
-        message: axiosError.response?.data?.message || "Failed to get profile",
+        message: axiosError.response?.data?.message || axiosError.response?.data?.error || "Failed to get profile",
       };
     }
   }
@@ -137,10 +139,10 @@ class AuthApiClient {
       const config =
         userData instanceof FormData
           ? {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
           : {};
 
       const response = await this.client.put(
@@ -152,12 +154,12 @@ class AuthApiClient {
     } catch (error: unknown) {
       console.error("Update profile error:", error);
       const axiosError = error as {
-        response?: { data?: { message?: string } };
+        response?: { data?: { message?: string; error?: string } };
       };
       return {
         success: false,
         message:
-          axiosError.response?.data?.message || "Failed to update profile",
+          axiosError.response?.data?.message || axiosError.response?.data?.error || "Failed to update profile",
       };
     }
   }
@@ -190,12 +192,12 @@ class AuthApiClient {
     } catch (error: unknown) {
       console.error("Get api information error:", error);
       const axiosError = error as {
-        response?: { data?: { message?: string } };
+        response?: { data?: { message?: string; error?: string } };
       };
       return {
         success: false,
         message:
-          axiosError.response?.data?.message || "Failed to get api information",
+          axiosError.response?.data?.message || axiosError.response?.data?.error || "Failed to get api information",
       };
     }
   }
@@ -212,12 +214,12 @@ class AuthApiClient {
     } catch (error: unknown) {
       console.error("Generate API key error:", error);
       const axiosError = error as {
-        response?: { data?: { message?: string } };
+        response?: { data?: { message?: string; error?: string } };
       };
       return {
         success: false,
         message:
-          axiosError.response?.data?.message || "Failed to generate API key",
+          axiosError.response?.data?.message || axiosError.response?.data?.error || "Failed to generate API key",
       };
     }
   }

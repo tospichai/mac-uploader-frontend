@@ -92,14 +92,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const response = await authApiClient.register(userData);
 
-      if (response.success && response.token && response.user) {
+      if (response.success && response.data.token && response.data.user) {
         // After successful registration, automatically log in the user
-        setToken(response.token);
-        setUser(response.user);
+        setToken(response.data.token);
+        setUser(response.data.user);
         // Store the token
-        authApiClient.setToken(response.token);
+        authApiClient.setToken(response.data.token);
       } else {
-        throw new Error(response.message || "Registration failed");
+        throw new Error(response.data.message || "Registration failed");
       }
     } catch (error) {
       console.error("Registration error:", error);

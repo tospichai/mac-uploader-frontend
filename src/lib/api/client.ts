@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { PhotosResponse, PhotoResponse, EventResponse } from "@/types";
+import { PhotosResponse, PhotoResponse, EventResponse, GalleryEventResponse } from "@/types";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
@@ -34,6 +34,11 @@ class ApiClient {
   // Event endpoints
   async getEvent(eventCode: string): Promise<EventResponse> {
     const response = await this.client.get(`/api/events/${eventCode}`);
+    return response.data;
+  }
+
+  async getGalleryEventDetails(eventCode: string): Promise<GalleryEventResponse> {
+    const response = await this.client.get(`/api/gallery/${eventCode}`);
     return response.data;
   }
 
@@ -93,7 +98,7 @@ class ApiClient {
   ): Promise<string> {
     if (STORAGE_MODE === "local") {
       // For local storage, fetch the image from URL and convert to base64
-      const imageUrl = `${API_BASE_URL}/api/files/events/${eventCode}/${photoId}_original.jpg`;
+      const imageUrl = `${API_BASE_URL}/files/events/${eventCode}/${photoId}_original.jpg`;
 
       try {
         const response = await fetch(imageUrl);
