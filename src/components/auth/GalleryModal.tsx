@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import QRCode from "qrcode";
 import {
   X,
   ExternalLink,
@@ -152,11 +153,16 @@ export default function GalleryModal({
   const generateQRCode = async () => {
     setIsGeneratingQR(true);
     try {
-      // Using a free QR code API
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-        galleryUrl
-      )}`;
-      setQrCodeUrl(qrApiUrl);
+      // Generate QR code locally
+      const qrDataUrl = await QRCode.toDataURL(galleryUrl, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+      setQrCodeUrl(qrDataUrl);
     } catch (error) {
       console.error("Error generating QR code:", error);
     } finally {
@@ -165,6 +171,7 @@ export default function GalleryModal({
   };
 
   const downloadQRCode = () => {
+    // Create a temporary link element to download the QR code
     const link = document.createElement("a");
     link.href = qrCodeUrl;
     link.download = `qrcode-${folderName}.png`;
