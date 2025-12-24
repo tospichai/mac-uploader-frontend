@@ -57,10 +57,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
-# Expose port 7002 for Portainer
-EXPOSE 7002
+# Expose port 3000 for Portainer
+EXPOSE 3000
 
-ENV PORT 7002
+ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
 # Start the application
