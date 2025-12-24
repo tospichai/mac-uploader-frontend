@@ -12,12 +12,12 @@ export class SSEClient {
   constructor(
     private eventCode: string,
     private streamUrl: string
-  ) {}
+  ) { }
 
   connect(): void {
     console.log('Connecting to SSE stream:', this.streamUrl);
 
-    this.eventSource = new EventSource(this.streamUrl);
+    this.eventSource = new EventSource(this.streamUrl, { withCredentials: true });
 
     this.eventSource.onopen = (event) => {
       console.log('SSE connection opened');

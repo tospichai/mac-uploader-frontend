@@ -115,7 +115,7 @@ class GalleryApiClient {
   // Method to create SSE connection for real-time updates
   createEventStream(eventCode: string): EventSource {
     const url = `${API_BASE_URL}/api/gallery/${eventCode}/photos/stream`;
-    return new EventSource(url);
+    return new EventSource(url, { withCredentials: true });
   }
 }
 
