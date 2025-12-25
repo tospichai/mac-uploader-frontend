@@ -37,10 +37,7 @@ export default function GalleryRoute() {
   useEffect(() => {
     if (!eventCode) return;
 
-    // We assume getEventStreamUrl returns the path to the stream endpoint.
-    // We need to change 'stream' to 'ws' in the path if we are changing the endpoint URL on backend.
-    // The backend endpoint changed from /:eventCode/photos/stream to /:eventCode/photos/ws
-    const streamUrl = apiClient.getEventStreamUrl(eventCode).replace("/stream", "/ws");
+    const streamUrl = apiClient.getEventStreamUrl(eventCode);
 
     const socketClient = createWebSocketClient(
       eventCode,

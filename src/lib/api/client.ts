@@ -62,7 +62,7 @@ class ApiClient {
 
   // SSE endpoint for real-time updates
   getEventStreamUrl(eventCode: string): string {
-    return `${API_BASE_URL}/api/gallery/${eventCode}/photos/stream`;
+    return `${API_BASE_URL}/api/gallery/${eventCode}/ws/photos`;
   }
 
   // Utility method to download photo as base64 (for S3 mode)
