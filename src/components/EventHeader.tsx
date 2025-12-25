@@ -18,7 +18,7 @@ export default function EventHeader({ eventInfo }: EventHeaderProps) {
     return (
         <header className="w-full mb-8">
             <div className="container mx-auto max-w-4xl">
-                <div className="bg-[#E8F1F4]/50 rounded-3xl p-6 flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12">
+                <div className="rounded-3xl flex flex-col md:flex-row items-center gap-8 md:gap-12">
                     {/* Left Column: Photographer Logo */}
                     <div className="shrink-0 flex flex-col items-center gap-4">
                         <div className="relative w-32 h-32 sm:w-40 sm:h-40">
@@ -29,8 +29,8 @@ export default function EventHeader({ eventInfo }: EventHeaderProps) {
                                             ? `${process.env.NEXT_PUBLIC_API_BASE_URL}${eventInfo.photographer.logoUrl}`
                                             : "/logo.png"
                                     }
-                                    width={150}
-                                    height={150}
+                                    width={180}
+                                    height={180}
                                     alt={eventInfo.photographer.displayName || "Photographer Logo"}
                                     className={`${eventInfo.photographer.logoUrl ? "" : "p-6 opacity-50"
                                         }`}
@@ -88,7 +88,7 @@ export default function EventHeader({ eventInfo }: EventHeaderProps) {
                     </div>
 
                     {/* Right Column: Event Details */}
-                    <div className="flex-1 text-center md:text-left flex flex-col items-center md:items-start">
+                    <div className="flex-1 text-center md:text-left flex flex-col items-center md:items-start bg-[#E8F1F4]/50 p-6 rounded-xl">
                         <h1 className="text-2xl sm:text-3xl font-thai-bold text-gray-900 mb-2 leading-tight">
                             {eventInfo.event.title}
                         </h1>

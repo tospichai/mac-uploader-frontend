@@ -28,16 +28,41 @@ body {
 }
 
 /* Font weight utilities for IBM Plex Sans Thai */
-.font-thai-thin { font-weight: 100; }
-.font-thai-extralight { font-weight: 200; }
-.font-thai-light { font-weight: 300; }
-.font-thai-regular { font-weight: 400; }
-.font-thai-medium { font-weight: 500; }
-.font-thai-semibold { font-weight: 600; }
-.font-thai-bold { font-weight: 700; }
+.font-thai-thin {
+  font-weight: 100;
+}
+
+.font-thai-extralight {
+  font-weight: 200;
+}
+
+.font-thai-light {
+  font-weight: 300;
+}
+
+.font-thai-regular {
+  font-weight: 400;
+}
+
+.font-thai-medium {
+  font-weight: 500;
+}
+
+.font-thai-semibold {
+  font-weight: 600;
+}
+
+.font-thai-bold {
+  font-weight: 700;
+}
 
 /* Enhanced text styling for better readability */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   line-height: 1.3;
 }
@@ -93,7 +118,8 @@ input[type="email"],
 input[type="password"],
 input[type="url"],
 input[type="date"],
-textarea,select {
+textarea,
+select {
   color: #1f2937 !important;
   font-weight: 500 !important;
 }
@@ -121,6 +147,7 @@ input:focus {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -130,6 +157,7 @@ input:focus {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
@@ -140,6 +168,7 @@ input:focus {
     opacity: 0;
     transform: translateY(20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -151,6 +180,7 @@ input:focus {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+
   to {
     opacity: 0;
     transform: translateY(20px) scale(0.95);
@@ -175,9 +205,12 @@ input:focus {
 }
 
 @keyframes badge-fade {
-  0%, 50% {
+
+  0%,
+  66.66% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
   }

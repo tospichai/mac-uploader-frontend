@@ -77,7 +77,7 @@ export default function PhotoGrid({
           >
             {newPhotoIds.has(photo.id) && (
               <div
-                className="absolute top-2 left-2 z-20 bg-[#00C7A5] text-white text-xs font-bold px-2 py-1 rounded-md animate-[badge-fade_2s_ease-out_forwards]"
+                className="absolute top-2 left-2 z-20 bg-[#00C7A5] text-white text-xs font-bold px-2 py-1 rounded-md animate-[badge-fade_4s_ease-out_forwards]"
                 onAnimationEnd={(e) => {
                   // Optional: You could remove it from state here if you wanted it to disappear strictly after animation
                   // But CSS 'forwards' keeps it at 0 opacity, effectively hidden.
@@ -85,7 +85,7 @@ export default function PhotoGrid({
                   // For now, visual hiding is sufficient.
                 }}
               >
-                New
+                ใหม่
               </div>
             )}
             {(() => {
