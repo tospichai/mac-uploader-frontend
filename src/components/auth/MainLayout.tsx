@@ -38,7 +38,7 @@ export default function MainLayout({ activeTab, children }: MainLayoutProps) {
       </div>
 
       {/* Footer */}
-      <Footer className="mt-12" />
+      <Footer className="mt-12 mb-8" />
     </div>
   );
 }

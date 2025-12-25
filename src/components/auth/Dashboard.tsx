@@ -51,7 +51,7 @@ export default function Dashboard() {
       </div>
 
       {/* Footer */}
-      <Footer className="mt-12" />
+      <Footer className="mt-12 mb-32" />
     </div>
   );
 }

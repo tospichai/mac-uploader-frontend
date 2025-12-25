@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { X, Save } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useModalAnimation } from "@/hooks/useModalAnimation";
-import { eventApiClient } from "@/lib/api/events";
-import { EventInfo, EventUpdateRequest } from "@/types";
+import { EventUpdateRequest } from "@/types";
+import { useEvent, useUpdateEvent } from "@/hooks/useEvents";
 
 interface ViewEditEventModalProps {
   isOpen: boolean;
@@ -22,6 +22,15 @@ export default function ViewEditEventModal({
 }: ViewEditEventModalProps) {
   const { t } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
+
+  // React Query hooks
+  const {
+    data: eventData,
+    isLoading: isLoadingEvent,
+    isError: isEventError
+  } = useEvent(eventId, isOpen);
+
+  const { mutate: updateEvent, isPending: isSubmitting } = useUpdateEvent();
 
   // Use the modal animation hook
   const { isClosing, handleClose, getModalStyle, getBackdropStyle } =
@@ -41,81 +50,38 @@ export default function ViewEditEventModal({
     isPublished: true,
   });
 
-  // Original event data
-  const [originalData, setOriginalData] = useState<EventInfo | null>(null);
-
   // Validation state
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Load event data when modal opens
+  // Update form data when eventData is loaded
   useEffect(() => {
-    if (isOpen && eventId) {
-      loadEventData();
-    }
-  }, [isOpen, eventId]);
-
-  const loadEventData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await eventApiClient.getEvent(eventId);
-      console.log("Event response:", response); // Debug log
-      if (response.success) {
-        // Ensure required fields are present before creating the event object
-        const data = response.data
-        const event: EventInfo = {
-          id: data.id,
-          title: data.title || "",
-          eventDate: data.eventDate || "",
-          subtitle: data.subtitle,
-          description: data.description,
-          folderName: data.folderName || "",
-          defaultLanguage: data.defaultLanguage || "th",
-          isPublished: data.isPublished || false,
-          photographerName: data.photographerName || "",
-          createdAt: data.createdAt || new Date().toISOString(),
-          totalPhotos: data.totalPhotos || 0,
-          totalSize: data.totalSize,
-        };
-        console.log("Event data:", event); // Debug log
-        setOriginalData(event);
-
-        // Format the date for the date input field (YYYY-MM-DD)
-        let formattedDate = "";
-        if (event.eventDate) {
-          try {
-            const date = new Date(event.eventDate);
-            // Check if the date is valid
-            if (!isNaN(date.getTime())) {
-              // Format as YYYY-MM-DD for the input field
-              formattedDate = date.toISOString().split('T')[0];
-            }
-          } catch (error) {
-            console.error("Error formatting date:", error);
+    if (eventData) {
+      // Format the date for the date input field (YYYY-MM-DD)
+      let formattedDate = "";
+      if (eventData.eventDate) {
+        try {
+          const date = new Date(eventData.eventDate);
+          if (!isNaN(date.getTime())) {
+            formattedDate = date.toISOString().split('T')[0];
           }
+        } catch (error) {
+          console.error("Error formatting date:", error);
         }
-
-        setFormData({
-          title: event.title,
-          eventDate: formattedDate,
-          subtitle: event.subtitle || "",
-          description: event.description || "",
-          folderName: event.folderName,
-          defaultLanguage: event.defaultLanguage,
-          isPublished: event.isPublished,
-        });
-      } else {
-        setSubmitError(t("viewEditEventModal.loadEventError"));
       }
-    } catch (error) {
-      console.error("Error loading event data:", error);
-      setSubmitError(t("viewEditEventModal.loadEventError"));
-    } finally {
-      setIsLoading(false);
+
+      setFormData({
+        title: eventData.title || "",
+        eventDate: formattedDate,
+        subtitle: eventData.subtitle,
+        description: eventData.description,
+        folderName: eventData.folderName || "",
+        defaultLanguage: eventData.defaultLanguage || "th",
+        isPublished: eventData.isPublished || false,
+      });
     }
-  };
+  }, [eventData]);
+
 
   // Close modal when clicking outside
   useEffect(() => {
@@ -193,40 +159,23 @@ export default function ViewEditEventModal({
       return;
     }
 
-    setIsSubmitting(true);
     setSubmitError(null);
 
-    try {
-      // Convert the date from YYYY-MM-DD to ISO-8601 format for the backend
-      const updatedFormData = {
-        ...formData,
-        eventDate: formData.eventDate ? new Date(formData.eventDate).toISOString() : formData.eventDate,
-      };
+    // Convert the date from YYYY-MM-DD to ISO-8601 format for the backend
+    const updatedFormData = {
+      ...formData,
+      eventDate: formData.eventDate ? new Date(formData.eventDate).toISOString() : formData.eventDate,
+    };
 
-      const response = await eventApiClient.updateEvent(eventId, updatedFormData);
-      if (response.success) {
+    updateEvent({ eventCode: eventId, eventData: updatedFormData }, {
+      onSuccess: () => {
         onEventUpdated();
         handleClose();
-      } else {
-        setSubmitError(t("viewEditEventModal.updateEventError"));
+      },
+      onError: (error) => {
+        setSubmitError(error.message || t("viewEditEventModal.updateEventGenericError"));
       }
-    } catch (error: unknown) {
-      console.error("Error updating event:", error);
-      if (error && typeof error === "object" && "response" in error) {
-        const axiosError = error as {
-          response?: { data?: { message?: string } };
-        };
-        if (axiosError.response?.data?.message) {
-          setSubmitError(axiosError.response.data.message);
-        } else {
-          setSubmitError(t("viewEditEventModal.updateEventGenericError"));
-        }
-      } else {
-        setSubmitError(t("viewEditEventModal.updateEventGenericError"));
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   };
 
   const handleInputChange = (
@@ -267,7 +216,7 @@ export default function ViewEditEventModal({
     }
   };
 
-  // if (isLoading) {
+  // if (isLoadingEvent) {
   //   return (
   //     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
   //       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
@@ -297,7 +246,7 @@ export default function ViewEditEventModal({
         style={getModalStyle()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0 ">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 shrink-0 ">
           <h2 className="text-xl font-thai-semibold text-gray-900 thai-text">
             {t("viewEditEventModal.title")}
           </h2>
@@ -312,172 +261,181 @@ export default function ViewEditEventModal({
 
         {/* Scrollable Form Content */}
         <div className="flex-1 overflow-y-auto">
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
-            {/* Event Date */}
-            <div className="mb-4">
-              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-                {t("events.eventDate")} <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                name="eventDate"
-                value={formData.eventDate}
-                onChange={(e) => {
-                  const dateValue = e.target.value;
-                  setFormData((prev) => ({
-                    ...prev,
-                    eventDate: dateValue,
-                  }));
-                  if (errors.eventDate) {
-                    setErrors((prev) => ({
+          {isLoadingEvent ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-l-2 border-[#00C7A5]"></div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              {/* Event Date */}
+              <div className="mb-4">
+                <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                  {t("events.eventDate")} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  name="eventDate"
+                  value={formData.eventDate}
+                  onChange={(e) => {
+                    const dateValue = e.target.value;
+                    setFormData((prev) => ({
                       ...prev,
-                      eventDate: "",
+                      eventDate: dateValue,
                     }));
-                  }
-                }}
-                className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                  errors.eventDate ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder={t("viewEditEventModal.datePlaceholder")}
-              />
-              {errors.eventDate && (
-                <p className="mt-1 text-sm text-red-500 thai-text">
-                  {errors.eventDate}
-                </p>
-              )}
-            </div>
-
-            {/* Event Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-                {t("events.eventName")} <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                  errors.title ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder={t("viewEditEventModal.eventNamePlaceholder")}
-              />
-              {errors.title && (
-                <p className="mt-1 text-sm text-red-500 thai-text">
-                  {errors.title}
-                </p>
-              )}
-            </div>
-
-            {/* Event Subtitle (Optional) */}
-            <div className="mb-4">
-              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-                {t("events.eventSubtitle")}
-              </label>
-              <input
-                type="text"
-                name="subtitle"
-                value={formData.subtitle}
-                onChange={handleInputChange}
-                className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
-                placeholder={t("viewEditEventModal.eventSubtitlePlaceholder")}
-                maxLength={200}
-              />
-            </div>
-
-            {/* Event Description (Optional) */}
-            <div className="mb-4">
-              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-                {t("events.eventDescription")}
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text resize-none"
-                placeholder={t("viewEditEventModal.eventDescriptionPlaceholder")}
-                rows={3}
-                maxLength={5000}
-              />
-            </div>
-
-            {/* Folder Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-                {t("events.folderName")} <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="folderName"
-                value={formData.folderName}
-                onChange={handleInputChange}
-                className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                  errors.folderName ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder={t("viewEditEventModal.folderNamePlaceholder")}
-              />
-              {errors.folderName && (
-                <p className="mt-1 text-sm text-red-500 thai-text">
-                  {errors.folderName}
-                </p>
-              )}
-              <p className="mt-1 text-xs text-gray-500 thai-text">
-                {t("viewEditEventModal.folderNameHelp")}
-              </p>
-            </div>
-
-            {/* Default Language */}
-            <div className="mb-4">
-              <label className="block text-sm font-thai-medium text-gray-900 mb-2 thai-text">
-                {t("events.defaultLanguage")}{" "}
-                <span className="text-red-500">*</span>
-              </label>
-              <select
-                name="defaultLanguage"
-                value={formData.defaultLanguage}
-                onChange={handleInputChange}
-                className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text text-gray-900 ${
-                  errors.defaultLanguage ? "border-red-500" : "border-gray-300"
-                }`}
-              >
-                <option value="th">ไทย</option>
-                <option value="en">English</option>
-                <option value="cn">中文</option>
-                <option value="vn">Tiếng Việt</option>
-              </select>
-              {errors.defaultLanguage && (
-                <p className="mt-1 text-sm text-red-500 thai-text">
-                  {errors.defaultLanguage}
-                </p>
-              )}
-            </div>
-
-            {/* Event Info Display */}
-            {originalData && (
-              <div className="mb-4 p-4 bg-gray-50 rounded-xl">
-                <h3 className="text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-                  {t("viewEditEventModal.additionalInfo")}
-                </h3>
-                <div className="space-y-1 text-sm text-gray-600 thai-text">
-                  <p>{t("viewEditEventModal.eventId")}: {originalData.id}</p>
-                  <p>
-                    {t("viewEditEventModal.createdAt")}:{" "}
-                    {new Date(originalData.createdAt).toLocaleDateString(
-                      "th-TH"
-                    )}
+                    if (errors.eventDate) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        eventDate: "",
+                      }));
+                    }
+                  }}
+                  className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.eventDate ? "border-red-500" : "border-gray-300"
+                    }`}
+                  placeholder={t("viewEditEventModal.datePlaceholder")}
+                />
+                {errors.eventDate && (
+                  <p className="mt-1 text-sm text-red-500 thai-text">
+                    {errors.eventDate}
                   </p>
-                  <p>{t("viewEditEventModal.photoCount")}: {originalData.totalPhotos} รูป</p>
-                </div>
+                )}
               </div>
-            )}
 
-            {/* Submit Error */}
-            {submitError && (
-              <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-xl">
-                <p className="text-sm text-red-700 thai-text">{submitError}</p>
+              {/* Event Name */}
+              <div className="mb-4">
+                <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                  {t("events.eventName")} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.title ? "border-red-500" : "border-gray-300"
+                    }`}
+                  placeholder={t("viewEditEventModal.eventNamePlaceholder")}
+                />
+                {errors.title && (
+                  <p className="mt-1 text-sm text-red-500 thai-text">
+                    {errors.title}
+                  </p>
+                )}
               </div>
-            )}
-          </form>
+
+              {/* Event Subtitle (Optional) */}
+              <div className="mb-4">
+                <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                  {t("events.eventSubtitle")}
+                </label>
+                <input
+                  type="text"
+                  name="subtitle"
+                  value={formData.subtitle}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
+                  placeholder={t("viewEditEventModal.eventSubtitlePlaceholder")}
+                  maxLength={200}
+                />
+              </div>
+
+              {/* Event Description (Optional) */}
+              <div className="mb-4">
+                <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                  {t("events.eventDescription")}
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text resize-none"
+                  placeholder={t("viewEditEventModal.eventDescriptionPlaceholder")}
+                  rows={3}
+                  maxLength={5000}
+                />
+              </div>
+
+              {/* Folder Name */}
+              <div className="mb-4">
+                <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                  {t("events.folderName")} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="folderName"
+                  value={formData.folderName}
+                  onChange={handleInputChange}
+                  className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.folderName ? "border-red-500" : "border-gray-300"
+                    }`}
+                  placeholder={t("viewEditEventModal.folderNamePlaceholder")}
+                />
+                {errors.folderName && (
+                  <p className="mt-1 text-sm text-red-500 thai-text">
+                    {errors.folderName}
+                  </p>
+                )}
+                <p className="mt-1 text-xs text-gray-500 thai-text">
+                  {t("viewEditEventModal.folderNameHelp")}
+                </p>
+              </div>
+
+              {/* Default Language */}
+              <div className="mb-4">
+                <label className="block text-sm font-thai-medium text-gray-900 mb-2 thai-text">
+                  {t("events.defaultLanguage")}{" "}
+                  <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="defaultLanguage"
+                  value={formData.defaultLanguage}
+                  onChange={handleInputChange}
+                  className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text text-gray-900 ${errors.defaultLanguage ? "border-red-500" : "border-gray-300"
+                    }`}
+                >
+                  <option value="th">ไทย</option>
+                  <option value="en">English</option>
+                  <option value="cn">中文</option>
+                  <option value="vn">Tiếng Việt</option>
+                </select>
+                {errors.defaultLanguage && (
+                  <p className="mt-1 text-sm text-red-500 thai-text">
+                    {errors.defaultLanguage}
+                  </p>
+                )}
+              </div>
+
+              {/* Event Info Display */}
+              {eventData && (
+                <div className="mb-4 p-4 bg-gray-50 rounded-xl">
+                  <h3 className="text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                    {t("viewEditEventModal.additionalInfo")}
+                  </h3>
+                  <div className="space-y-1 text-sm text-gray-600 thai-text">
+                    <p>{t("viewEditEventModal.eventId")}: {eventData.id}</p>
+                    <p>
+                      {t("viewEditEventModal.createdAt")}:{" "}
+                      {new Date(eventData.createdAt).toLocaleDateString(
+                        "th-TH"
+                      )}
+                    </p>
+                    <p>{t("viewEditEventModal.photoCount")}: {eventData.totalPhotos} รูป</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Load Error */}
+              {isEventError && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-xl">
+                  <p className="text-sm text-red-700 thai-text">{t("viewEditEventModal.loadEventError")}</p>
+                </div>
+              )}
+
+              {/* Submit Error */}
+              {submitError && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-xl">
+                  <p className="text-sm text-red-700 thai-text">{submitError}</p>
+                </div>
+              )}
+            </form>
+          )}
         </div>
 
         {/* Fixed Submit Button */}
@@ -530,7 +488,7 @@ export default function ViewEditEventModal({
             {/* Update Button */}
             <button
               type="button"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoadingEvent}
               onClick={async (e) => {
                 e.preventDefault();
                 const syntheticEvent = new Event("submit", {

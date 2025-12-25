@@ -5,6 +5,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useModalAnimation } from "@/hooks/useModalAnimation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Photographer, ProfileUpdateRequest } from "@/types/auth";
+import { useUpdateProfile } from "@/hooks/useProfile";
 import {
   X,
   Save,
@@ -29,7 +30,8 @@ export default function ProfileEdit({
   onProfileUpdated,
 }: ProfileEditProps) {
   const { t } = useTranslation();
-  const { updateProfile, isLoading } = useAuth();
+  const { checkAuth } = useAuth();
+  const { mutateAsync: updateProfile, isPending: isSubmitting } = useUpdateProfile();
   const modalRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const { isClosing, handleClose, getModalStyle, getBackdropStyle } =
@@ -156,6 +158,7 @@ export default function ProfileEdit({
       formDataToSend.append("websiteUrl", formData.websiteUrl || "");
 
       await updateProfile(formDataToSend);
+      await checkAuth();
 
       // Notify parent component that profile was updated
       if (onProfileUpdated) {
@@ -189,9 +192,8 @@ export default function ProfileEdit({
     <div className={`fixed inset-0 z-50 flex items-center justify-center p-4`}>
       {/* Backdrop */}
       <div
-        className={`absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
-          getBackdropStyle().opacity === 0 ? "opacity-0" : "opacity-100"
-        }`}
+        className={`absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${getBackdropStyle().opacity === 0 ? "opacity-0" : "opacity-100"
+          }`}
         onClick={handleClose}
       />
 
@@ -202,7 +204,7 @@ export default function ProfileEdit({
         style={getModalStyle()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 shrink-0">
           <h2 className="text-2xl font-thai-bold text-gray-900 thai-text">
             {t("auth.editProfile")}
           </h2>
@@ -301,11 +303,10 @@ export default function ProfileEdit({
                   type="text"
                   value={formData.displayName}
                   onChange={handleInputChange}
-                  className={`block w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                    errors.displayName ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`block w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.displayName ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder={t("auth.displayName")}
-                  disabled={isLoading}
+                  disabled={isSubmitting}
                 />
                 {errors.displayName && (
                   <p className="mt-1 text-sm text-red-600 thai-text">
@@ -338,7 +339,7 @@ export default function ProfileEdit({
                     onChange={handleInputChange}
                     className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
                     placeholder="https://facebook.com/yourpage"
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -359,7 +360,7 @@ export default function ProfileEdit({
                     onChange={handleInputChange}
                     className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
                     placeholder="https://instagram.com/yourprofile"
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -380,7 +381,7 @@ export default function ProfileEdit({
                     onChange={handleInputChange}
                     className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
                     placeholder="https://twitter.com/yourhandle"
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -401,7 +402,7 @@ export default function ProfileEdit({
                     onChange={handleInputChange}
                     className="block w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
                     placeholder="https://yourwebsite.com"
-                    disabled={isLoading}
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
@@ -423,13 +424,13 @@ export default function ProfileEdit({
               type="button"
               onClick={handleClose}
               className="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 font-thai-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00C7A5] transition-colors duration-200 thai-text cursor-pointer"
-              disabled={isLoading}
+              disabled={isSubmitting}
             >
               {t("auth.cancel")}
             </button>
             <button
               type="button"
-              disabled={isLoading}
+              disabled={isSubmitting}
               onClick={async (e) => {
                 e.preventDefault();
                 if (formRef.current) {
@@ -445,7 +446,7 @@ export default function ProfileEdit({
               }}
               className="px-6 py-3 border border-transparent rounded-xl shadow-sm text-sm font-thai-bold text-white bg-[#00C7A5] hover:bg-[#00B595] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00C7A5] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 thai-text flex items-center cursor-pointer"
             >
-              {isLoading ? (
+              {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   {t("common.loading")}

@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { X, Save } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useModalAnimation } from "@/hooks/useModalAnimation";
-import { eventApiClient } from "@/lib/api/events";
 import { EventCreateRequest } from "@/types";
+import { useCreateEvent } from "@/hooks/useEvents";
 
 interface CreateEventModalProps {
   isOpen: boolean;
@@ -20,6 +20,9 @@ export default function CreateEventModal({
 }: CreateEventModalProps) {
   const { t } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
+
+  // React Query mutation
+  const { mutate: createEvent, isPending: isSubmitting } = useCreateEvent();
 
   // Use the modal animation hook
   const { isClosing, handleClose, getModalStyle, getBackdropStyle } = useModalAnimation({
@@ -40,7 +43,6 @@ export default function CreateEventModal({
 
   // Validation state
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Close modal when clicking outside
@@ -134,32 +136,17 @@ export default function CreateEventModal({
       return;
     }
 
-    setIsSubmitting(true);
     setSubmitError(null);
 
-    try {
-      const response = await eventApiClient.createEvent(formData);
-      if (response.success) {
+    createEvent(formData, {
+      onSuccess: () => {
         onEventCreated();
         handleClose();
-      } else {
-        setSubmitError("ไม่สามารถสร้างอีเวนต์ได้ กรุณาลองใหม่");
+      },
+      onError: (error) => {
+        setSubmitError(error.message || "ไม่สามารถสร้างอีเวนต์ได้ กรุณาลองใหม่");
       }
-    } catch (error: unknown) {
-      console.error("Error creating event:", error);
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as { response?: { data?: { message?: string } } };
-        if (axiosError.response?.data?.message) {
-          setSubmitError(axiosError.response.data.message);
-        } else {
-          setSubmitError("เกิดข้อผิดพลาดในการสร้างอีเวนต์ กรุณาลองใหม่");
-        }
-      } else {
-        setSubmitError("เกิดข้อผิดพลาดในการสร้างอีเวนต์ กรุณาลองใหม่");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   };
 
   const handleInputChange = (
@@ -214,7 +201,7 @@ export default function CreateEventModal({
         style={getModalStyle()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0 ">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 shrink-0 ">
           <h2 className="text-xl font-thai-semibold text-gray-900 thai-text">
             {t("events.create")}
           </h2>
@@ -230,143 +217,139 @@ export default function CreateEventModal({
         {/* Scrollable Form Content */}
         <div className="flex-1 overflow-y-auto">
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Event Date */}
-          <div className="mb-4">
-            <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-              {t("events.eventDate")} <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              name="eventDate"
-              value={formData.eventDate}
-              onChange={(e) => {
-                const dateValue = e.target.value;
-                setFormData(prev => ({
-                  ...prev,
-                  eventDate: dateValue
-                }));
-                if (errors.eventDate) {
-                  setErrors(prev => ({
+            {/* Event Date */}
+            <div className="mb-4">
+              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                {t("events.eventDate")} <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                name="eventDate"
+                value={formData.eventDate}
+                onChange={(e) => {
+                  const dateValue = e.target.value;
+                  setFormData(prev => ({
                     ...prev,
-                    eventDate: ''
+                    eventDate: dateValue
                   }));
-                }
-              }}
-              className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                errors.eventDate ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder={formData.defaultLanguage === 'th' ? 'วว/ดด/ปปปป' : ''}
-            />
-            {errors.eventDate && (
-              <p className="mt-1 text-sm text-red-500 thai-text">{errors.eventDate}</p>
-            )}
-          </div>
-
-          {/* Event Name */}
-          <div className="mb-4">
-            <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-              {t("events.eventName")} <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                errors.title ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="กรอกชื่องาน"
-            />
-            {errors.title && (
-              <p className="mt-1 text-sm text-red-500 thai-text">{errors.title}</p>
-            )}
-          </div>
-
-          {/* Event Subtitle (Optional) */}
-          <div className="mb-4">
-            <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-              {t("events.eventSubtitle")}
-            </label>
-            <input
-              type="text"
-              name="subtitle"
-              value={formData.subtitle}
-              onChange={handleInputChange}
-              className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
-              placeholder="กรอกชื่องานข้อความรอง (ถ้ามี)"
-              maxLength={200}
-            />
-          </div>
-
-          {/* Event Description (Optional) */}
-          <div className="mb-4">
-            <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-              {t("events.eventDescription")}
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text resize-none"
-              placeholder="กรอกรายละเอียดงาน (ถ้ามี)"
-              rows={3}
-              maxLength={5000}
-            />
-          </div>
-
-          {/* Folder Name */}
-          <div className="mb-4">
-            <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
-              {t("events.folderName")} <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="folderName"
-              value={formData.folderName}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${
-                errors.folderName ? "border-red-500" : "border-gray-300"
-              }`}
-              placeholder="ชื่อโฟลเดอร์ (ภาษาอังกฤษเท่านั้น)"
-            />
-            {errors.folderName && (
-              <p className="mt-1 text-sm text-red-500 thai-text">{errors.folderName}</p>
-            )}
-            <p className="mt-1 text-xs text-gray-500 thai-text">
-              ใช้ตัวอักษรภาษาอังกฤษ ตัวเลข ขีดกลาง (-) และขีดล่าง (_) เท่านั้น
-            </p>
-          </div>
-
-          {/* Default Language */}
-          <div className="mb-4">
-            <label className="block text-sm font-thai-medium text-gray-900 mb-2 thai-text">
-              {t("events.defaultLanguage")} <span className="text-red-500">*</span>
-            </label>
-            <select
-              name="defaultLanguage"
-              value={formData.defaultLanguage}
-              onChange={handleInputChange}
-              className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text text-gray-900 ${
-                errors.defaultLanguage ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-              <option value="th">ไทย</option>
-              <option value="en">English</option>
-              <option value="cn">中文</option>
-              <option value="vn">Tiếng Việt</option>
-            </select>
-            {errors.defaultLanguage && (
-              <p className="mt-1 text-sm text-red-500 thai-text">{errors.defaultLanguage}</p>
-            )}
-          </div>
-
-
-          {/* Submit Error */}
-          {submitError && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-xl">
-              <p className="text-sm text-red-700 thai-text">{submitError}</p>
+                  if (errors.eventDate) {
+                    setErrors(prev => ({
+                      ...prev,
+                      eventDate: ''
+                    }));
+                  }
+                }}
+                className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.eventDate ? "border-red-500" : "border-gray-300"
+                  }`}
+                placeholder={formData.defaultLanguage === 'th' ? 'วว/ดด/ปปปป' : ''}
+              />
+              {errors.eventDate && (
+                <p className="mt-1 text-sm text-red-500 thai-text">{errors.eventDate}</p>
+              )}
             </div>
-          )}
+
+            {/* Event Name */}
+            <div className="mb-4">
+              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                {t("events.eventName")} <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.title ? "border-red-500" : "border-gray-300"
+                  }`}
+                placeholder="กรอกชื่องาน"
+              />
+              {errors.title && (
+                <p className="mt-1 text-sm text-red-500 thai-text">{errors.title}</p>
+              )}
+            </div>
+
+            {/* Event Subtitle (Optional) */}
+            <div className="mb-4">
+              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                {t("events.eventSubtitle")}
+              </label>
+              <input
+                type="text"
+                name="subtitle"
+                value={formData.subtitle}
+                onChange={handleInputChange}
+                className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text"
+                placeholder="กรอกชื่องานข้อความรอง (ถ้ามี)"
+                maxLength={200}
+              />
+            </div>
+
+            {/* Event Description (Optional) */}
+            <div className="mb-4">
+              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                {t("events.eventDescription")}
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                className="w-full px-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text resize-none"
+                placeholder="กรอกรายละเอียดงาน (ถ้ามี)"
+                rows={3}
+                maxLength={5000}
+              />
+            </div>
+
+            {/* Folder Name */}
+            <div className="mb-4">
+              <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+                {t("events.folderName")} <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="folderName"
+                value={formData.folderName}
+                onChange={handleInputChange}
+                className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text ${errors.folderName ? "border-red-500" : "border-gray-300"
+                  }`}
+                placeholder="ชื่อโฟลเดอร์ (ภาษาอังกฤษเท่านั้น)"
+              />
+              {errors.folderName && (
+                <p className="mt-1 text-sm text-red-500 thai-text">{errors.folderName}</p>
+              )}
+              <p className="mt-1 text-xs text-gray-500 thai-text">
+                ใช้ตัวอักษรภาษาอังกฤษ ตัวเลข ขีดกลาง (-) และขีดล่าง (_) เท่านั้น
+              </p>
+            </div>
+
+            {/* Default Language */}
+            <div className="mb-4">
+              <label className="block text-sm font-thai-medium text-gray-900 mb-2 thai-text">
+                {t("events.defaultLanguage")} <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="defaultLanguage"
+                value={formData.defaultLanguage}
+                onChange={handleInputChange}
+                className={`w-full px-3 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C7A5] focus:border-transparent thai-text text-gray-900 ${errors.defaultLanguage ? "border-red-500" : "border-gray-300"
+                  }`}
+              >
+                <option value="th">ไทย</option>
+                <option value="en">English</option>
+                <option value="cn">中文</option>
+                <option value="vn">Tiếng Việt</option>
+              </select>
+              {errors.defaultLanguage && (
+                <p className="mt-1 text-sm text-red-500 thai-text">{errors.defaultLanguage}</p>
+              )}
+            </div>
+
+
+            {/* Submit Error */}
+            {submitError && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-xl">
+                <p className="text-sm text-red-700 thai-text">{submitError}</p>
+              </div>
+            )}
 
           </form>
         </div>

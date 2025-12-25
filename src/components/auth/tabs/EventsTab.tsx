@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useModalAnimation } from "@/hooks/useModalAnimation";
-import { EventInfo } from "@/types";
-import { eventApiClient } from "@/lib/api/events";
 import {
   Calendar,
   Plus,
@@ -17,12 +15,18 @@ import {
 import CreateEventModal from "@/components/auth/CreateEventModal";
 import ViewEditEventModal from "@/components/auth/ViewEditEventModal";
 import GalleryModal from "@/components/auth/GalleryModal";
+import { useEvents, useDeleteEvent } from "@/hooks/useEvents";
 
 export default function EventsTab() {
   const { t } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
-  const [events, setEvents] = useState<EventInfo[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  // React Query hooks
+  const { data: eventsData, isLoading: loading } = useEvents();
+  const { mutate: deleteEvent } = useDeleteEvent();
+
+  const events = eventsData?.events || [];
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isViewEditModalOpen, setIsViewEditModalOpen] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<string>("");
@@ -48,24 +52,6 @@ export default function EventsTab() {
       onClose: () => setDeleteModal({ isOpen: false, id: "", eventName: "" }),
     });
 
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
-  const loadEvents = async () => {
-    try {
-      setLoading(true);
-      const response = await eventApiClient.getEventsList();
-      if (response.success) {
-        setEvents(response.data.events);
-      }
-    } catch (error) {
-      console.error("Error loading events:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleDeleteEvent = async (id: string, eventName: string) => {
     setDeleteModal({
       isOpen: true,
@@ -75,19 +61,11 @@ export default function EventsTab() {
   };
 
   const confirmDeleteEvent = async () => {
-    try {
-      const response = await eventApiClient.deleteEvent(deleteModal.id);
-      if (response.success) {
-        setEvents(events.filter((event) => event.id !== deleteModal.id));
-        setDeleteModal({ isOpen: false, id: "", eventName: "" });
-      }
-    } catch (error) {
-      console.error("Error deleting event:", error);
-    }
-  };
-
-  const cancelDelete = () => {
-    handleClose();
+    deleteEvent(deleteModal.id, {
+      onSuccess: () => {
+        handleClose();
+      },
+    });
   };
 
   const formatDate = (dateString: string) => {
@@ -114,7 +92,7 @@ export default function EventsTab() {
         <h2 className="text-2xl font-thai-bold text-gray-900 thai-text">
           {t("auth.events")}
         </h2>
-        {events.length && (
+        {events.length > 0 && (
           <button
             onClick={() => setIsCreateModalOpen(true)}
             className="flex items-center px-4 py-2 bg-[#00C7A5] text-white rounded-xl hover:bg-[#00A687] transition-colors duration-200 thai-text cursor-pointer"
@@ -140,7 +118,7 @@ export default function EventsTab() {
                 setFolderName(event.folderName);
                 setPhotographerDisplayname(event.photographerName);
               }}
-              className="relative h-48 w-full bg-gradient-to-br from-[#00C7A5] to-[#A4ECEA] flex items-center justify-center hover:opacity-90 transition-opacity duration-200 cursor-pointer group"
+              className="relative h-48 w-full bg-linear-to-br from-[#00C7A5] to-[#A4ECEA] flex items-center justify-center hover:opacity-90 transition-opacity duration-200 cursor-pointer group"
             >
               <Images className="w-16 h-16 text-white opacity-50 group-hover:opacity-70 transition-opacity duration-200" />
               <div className="absolute inset-0 bg-black/0 bg-opacity-0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center">
@@ -170,11 +148,10 @@ export default function EventsTab() {
               {/* Status Badge */}
               <div className="mb-4">
                 <span
-                  className={`inline-flex px-3 py-1 text-xs rounded-full ${
-                    event.isPublished
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
+                  className={`inline-flex px-3 py-1 text-xs rounded-full ${event.isPublished
+                    ? "bg-green-100 text-green-800"
+                    : "bg-gray-100 text-gray-800"
+                    }`}
                 >
                   {event.isPublished
                     ? t("gallery.eventDetails.published")
@@ -218,7 +195,7 @@ export default function EventsTab() {
       </div>
 
       {/* Empty State */}
-      {events.length === 0 && (
+      {events.length === 0 && !loading && (
         <div className="text-center py-12">
           <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <h3 className="text-xl font-thai-medium text-gray-600 thai-text mb-2">
@@ -241,11 +218,8 @@ export default function EventsTab() {
       <CreateEventModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        onEventCreated={() =>
-          setTimeout(() => {
-            loadEvents();
-          }, 0)
-        }
+        // onEventCreated is no longer needed to reload events as react-query handles invalidation
+        onEventCreated={() => { }}
       />
 
       {/* View/Edit Event Modal */}
@@ -256,11 +230,8 @@ export default function EventsTab() {
           setSelectedEventId("");
         }}
         eventId={selectedEventId}
-        onEventUpdated={() =>
-          setTimeout(() => {
-            loadEvents();
-          }, 0)
-        }
+        // onEventUpdated is no longer needed to reload events as react-query handles invalidation
+        onEventUpdated={() => { }}
       />
 
       {/* Gallery Modal */}
