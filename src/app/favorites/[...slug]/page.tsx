@@ -7,6 +7,7 @@ import TabMenu from "@/components/TabMenu";
 import { EventInfo } from "@/types";
 import { useTranslation } from "@/hooks/useTranslation";
 import apiClient from "@/lib/api/client";
+import { useEventDetails } from "@/hooks/useGallery";
 
 export default function FavoritesRoute() {
   const params = useParams();
@@ -19,31 +20,15 @@ export default function FavoritesRoute() {
   const event = String(slug || "");
   const eventCode = event; // Server only uses event part
 
-  const [eventInfo, setEventInfo] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Use React Query hooks
+  const {
+    data: eventInfo,
+    isLoading,
+    error: eventError
+  } = useEventDetails(eventCode);
+
+  const error = eventError?.message || null;
   const [activeTab, setActiveTab] = useState("favorites");
-
-  // Load initial data
-  useEffect(() => {
-    loadEventData();
-  }, [eventCode]);
-
-  const loadEventData = async () => {
-    try {
-      const response = await apiClient.getGalleryEventDetails(eventCode);
-      if (response.success) {
-        setEventInfo(response.data);
-      } else {
-        setError("Failed to load event information");
-      }
-    } catch (err) {
-      console.error("Error loading event info:", err);
-      setError("Failed to load event information");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDownloadPhoto = async (photoId: string) => {
     try {
@@ -114,7 +99,7 @@ export default function FavoritesRoute() {
   return (
     <>
       <FavoritesPage
-        eventInfo={eventInfo}
+        eventInfo={eventInfo || null}
         eventCode={eventCode}
         onDownloadPhoto={handleDownloadPhoto}
       />

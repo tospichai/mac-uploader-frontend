@@ -18,11 +18,8 @@ import {
   Columns,
   Rows,
   CheckSquare,
-  Globe,
 } from "lucide-react";
-import { siFacebook, siInstagram, siX } from "simple-icons";
-import SimpleIcon from "./SimpleIcon";
-import Image from "next/image";
+import EventHeader from "./EventHeader";
 
 interface FavoritesPageProps {
   eventInfo: GalleryEventDetails | null;
@@ -188,87 +185,8 @@ export default function FavoritesPage({
     <div className="min-h-screen bg-linear-to-b from-[#F4F8FA] via-[#E8F1F4] to-[#A4ECEA] flex flex-col">
       <div className="flex-grow mx-auto px-2 sm:px-4 py-8">
         {/* Header */}
-        <header className="text-center mb-8">
-          <div className="mx-auto container flex flex-col sm:flex-row justify-center gap-4 items-center">
-            <div className="flex justify-center rounded-xl">
-              <Image
-                src={eventInfo?.photographer.logoUrl ? `${process.env.NEXT_PUBLIC_API_BASE_URL}${eventInfo.photographer.logoUrl}` : "/logo.png"}
-                alt="logo"
-                width={150}
-                height={150}
-                className={`${eventInfo?.photographer.logoUrl ? "" : "p-10"} rounded-full border-4 border-white shadow-md mb-4 sm:mb-0`}
-              />
-            </div>
-            <div>
-              <h1 className="text-2xl font-thai-bold text-gray-800 thai-text">
-                {eventInfo?.event.title || 'Event Name'}
-                <br />
-              </h1>
-              {eventInfo?.event.subtitle && (
-                <p className="text-gray-500 text-lg mt-1 thai-text">
-                  <span className="font-thai-semibold">{eventInfo.event.subtitle}</span>
-                </p>
-              )}
-              {eventInfo?.event.eventDate && (
-                <p className="text-gray-500 text-sm mt-1 thai-text">
-                  {t("gallery.eventDetails.date")}: {new Date(eventInfo.event.eventDate).toLocaleDateString('th-TH')}
-                </p>
-              )}
-              {eventInfo?.event.description && (
-                <p className="text-gray-600 text-sm mt-2 thai-text max-w-md">
-                  {eventInfo.event.description}
-                </p>
-              )}
-              {/* Social Media Icons */}
-              <div className="flex items-center gap-3 mt-3 justify-center">
-                {eventInfo?.photographer.facebookUrl && (
-                  <a
-                    href={eventInfo.photographer.facebookUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                    aria-label="Facebook"
-                  >
-                    <SimpleIcon icon={siFacebook} size={26} />
-                  </a>
-                )}
-                {eventInfo?.photographer.instagramUrl && (
-                  <a
-                    href={eventInfo.photographer.instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                    aria-label="Instagram"
-                  >
-                    <SimpleIcon icon={siInstagram} size={26} />
-                  </a>
-                )}
-                {eventInfo?.photographer.twitterUrl && (
-                  <a
-                    href={eventInfo.photographer.twitterUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                    aria-label="Twitter/X"
-                  >
-                    <SimpleIcon icon={siX} size={26} />
-                  </a>
-                )}
-                {eventInfo?.photographer.websiteUrl && (
-                  <a
-                    href={eventInfo.photographer.websiteUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                    aria-label="Website"
-                  >
-                    <Globe size={26} className="text-[#5ea9dd]" />
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
+        {/* Header */}
+        <EventHeader eventInfo={eventInfo} />
 
         {/* Main Content */}
         <main>

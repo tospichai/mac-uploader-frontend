@@ -6,6 +6,7 @@ import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { SelectionProvider } from "@/contexts/SelectionContext";
 import { GridViewProvider } from "@/contexts/GridViewContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import QueryProvider from "@/providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +38,9 @@ export default function RootLayout({
             <FavoritesProvider>
               <SelectionProvider>
                 <GridViewProvider>
-                  {children}
+                  <QueryProvider>
+                    {children}
+                  </QueryProvider>
                 </GridViewProvider>
               </SelectionProvider>
             </FavoritesProvider>

@@ -2,15 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import GalleryPage from "@/components/GalleryPage";
 import TabMenu from "@/components/TabMenu";
-import { Photo, GalleryEventDetails, Pagination } from "@/types";
+import { Photo } from "@/types";
 import apiClient from "@/lib/api/client";
 import { createWebSocketClient } from "@/lib/api/socket";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useEventDetails, usePhotos, galleryKeys } from "@/hooks/useGallery";
 
 export default function GalleryRoute() {
   const params = useParams();
+  const queryClient = useQueryClient();
   const slug = params.slug as string;
 
   // Parse slug to extract event
@@ -18,20 +21,27 @@ export default function GalleryRoute() {
   const event = String(slug || "");
   const eventCode = event; // Server only uses event part
 
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [eventInfo, setEventInfo] = useState<GalleryEventDetails | null>(null);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("gallery");
   const { t } = useTranslation();
 
-  // Load initial data
-  useEffect(() => {
-    loadEventData();
-    loadPhotos(currentPage);
-  }, [eventCode, currentPage]);
+  // Use React Query hooks
+  const {
+    data: eventInfo,
+    isLoading: isEventLoading,
+    error: eventError
+  } = useEventDetails(eventCode);
+
+  const {
+    data: photosData,
+    isLoading: isPhotosLoading,
+    error: photosError
+  } = usePhotos(eventCode, currentPage);
+
+  const photos = photosData?.photos || [];
+  const pagination = photosData?.pagination || null;
+  const loading = isEventLoading || isPhotosLoading;
+  const error = eventError?.message || photosError?.message || null;
 
   // Set up WebSocket connection
   useEffect(() => {
@@ -51,35 +61,37 @@ export default function GalleryRoute() {
         return;
       }
 
-      // Start: Add photo logic (same as before)
+      // Handle photo updates
       if (message.type === "photo_update" && (message as any).data?.photo) {
         const photoData = (message as any).data.photo;
+        const newPhoto: Photo = {
+          id: photoData.photoId,
+          originalName: photoData.originalName,
+          lastModified: photoData.lastModified,
+          originalUrl: photoData.downloadUrl,
+          thumbnailUrl: photoData.displayUrl,
+        };
 
-        // Add new photo to the beginning of the list
-        setPhotos((prevPhotos) => {
-          // Check if photo already exists to avoid duplicates
-          if (prevPhotos.some(p => p.id === photoData.photoId)) {
-            return prevPhotos;
-          }
+        // Update the query cache for the first page of photos
+        queryClient.setQueryData(
+          galleryKeys.photosPage(eventCode, 1),
+          (oldData: any) => {
+            if (!oldData) return oldData;
 
-          const newPhoto: Photo = {
-            id: photoData.photoId,
-            originalName: photoData.originalName,
-            lastModified: photoData.lastModified,
-            originalUrl: photoData.downloadUrl,
-            thumbnailUrl: photoData.displayUrl,
-          };
-          return [newPhoto, ...prevPhotos];
-        });
-
-        // Update pagination total count if available
-        setPagination((prev) =>
-          prev
-            ? {
-              ...prev,
-              totalPhotos: prev.totalPhotos + 1
+            // Check if photo already exists
+            if (oldData.photos.some((p: Photo) => p.id === newPhoto.id)) {
+              return oldData;
             }
-            : null
+
+            return {
+              ...oldData,
+              photos: [newPhoto, ...oldData.photos],
+              pagination: {
+                ...oldData.pagination,
+                totalPhotos: oldData.pagination.totalPhotos + 1
+              }
+            };
+          }
         );
       }
     });
@@ -97,51 +109,12 @@ export default function GalleryRoute() {
     return () => {
       socketClient.disconnect();
     };
-  }, [eventCode]);
-
-  const loadEventData = async () => {
-    try {
-      const response = await apiClient.getGalleryEventDetails(eventCode);
-      if (response.success) {
-        setEventInfo(response.data);
-      } else {
-        setError("Failed to load event information");
-      }
-    } catch (err) {
-      console.error("Error loading event info:", err);
-      setError("Failed to load event information");
-    }
-  };
-
-  const loadPhotos = async (page: number) => {
-    try {
-      setLoading(true);
-      const response = await apiClient.getPhotos(eventCode, page);
-
-      if (response.success) {
-        setPhotos(response.data.photos);
-        setPagination(response.data.pagination);
-
-        // Update total count in event info - REMOVED as GalleryEventDetails doesn't track totalPhotos
-        // and header doesn't display it.
-        /* 
-        if (eventInfo) {
-           // Logic separate if needed
-        }
-        */
-      } else {
-        setError("Failed to load photos");
-      }
-    } catch (err) {
-      console.error("Error loading photos:", err);
-      setError("Failed to load photos");
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [eventCode, queryClient]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDownloadPhoto = async (photoId: string) => {
@@ -210,7 +183,7 @@ export default function GalleryRoute() {
   return (
     <>
       <GalleryPage
-        eventInfo={eventInfo}
+        eventInfo={eventInfo || null}
         photos={photos}
         pagination={pagination}
         loading={loading}
