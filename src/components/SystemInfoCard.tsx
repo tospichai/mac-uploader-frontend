@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { Copy, Check, Server, Key, RefreshCw } from "lucide-react";
+import { Copy, Check, Server, Key, RefreshCw, Download } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSystemInfo, useGenerateApiKey } from "@/hooks/useSystem";
 
@@ -142,6 +142,22 @@ export default function SystemInfoCard() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Mac App Section */}
+      <div className="mt-4">
+        <label className="block text-sm font-thai-medium text-gray-700 mb-2 thai-text">
+          Application
+        </label>
+        <a
+          href="https://drive.google.com/file/d/1PLVjqR11xZCVIRkPN_kZZhuxoblObuF3/view?usp=sharing"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-[#00C7A5] hover:bg-[#00B595] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00C7A5] transition-colors duration-200 cursor-pointer"
+        >
+          <Download className="h-5 w-5 mr-2" />
+          Download Mac App
+        </a>
       </div>
     </div>
   );
