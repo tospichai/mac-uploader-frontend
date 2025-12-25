@@ -43,6 +43,8 @@ export default function GalleryRoute() {
   const loading = isEventLoading || isPhotosLoading;
   const error = eventError?.message || photosError?.message || null;
 
+  const [newPhotoIds, setNewPhotoIds] = useState<Set<string>>(new Set());
+
   // Set up WebSocket connection
   useEffect(() => {
     if (!eventCode) return;
@@ -71,6 +73,13 @@ export default function GalleryRoute() {
           originalUrl: photoData.downloadUrl,
           thumbnailUrl: photoData.displayUrl,
         };
+
+        // Add to newPhotoIds
+        setNewPhotoIds(prev => {
+          const newSet = new Set(prev);
+          newSet.add(newPhoto.id);
+          return newSet;
+        });
 
         // Update the query cache for the first page of photos
         queryClient.setQueryData(
@@ -190,6 +199,7 @@ export default function GalleryRoute() {
         onPageChange={handlePageChange}
         onDownloadPhoto={handleDownloadPhoto}
         eventCode={eventCode}
+        newPhotoIds={newPhotoIds}
       />
       <TabMenu
         activeTab={activeTab}

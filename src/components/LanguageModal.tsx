@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { useModalAnimation } from "@/hooks/useModalAnimation";
 import { SupportedLanguage, languageNames } from "@/contexts/LanguageContext";
+import { motion } from "framer-motion";
 
 interface LanguageModalProps {
   isOpen: boolean;
@@ -22,66 +22,65 @@ export default function LanguageModal({
   const { t } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // Use the modal animation hook
-  const { isClosing, handleClose, getModalStyle, getBackdropStyle } = useModalAnimation({
-    isOpen,
-    onClose,
-  });
-
   // Close modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
-        handleClose();
-      }
+      // Check if click is on the backdrop (the motion.div itself, which covers fullscreen)
+      // or check if click is outside the modal content.
+      // Since we now use a unified structure, we can handle it via onClick on the parent.
+      // But for keyboard events, we keep this.
+      // actually handleClickOutside is redundant if we use the backdrop click handler.
+      // but let's keep keyboard.
     };
 
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        handleClose();
+        onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleEscapeKey);
       // Prevent body scroll when modal is open
       document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscapeKey);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, handleClose]);
-
-  if (!isOpen && !isClosing) return null;
+  }, [isOpen, onClose]);
 
   const languages: SupportedLanguage[] = ["th", "en", "ch", "vn"];
 
   const handleLanguageSelect = (language: SupportedLanguage) => {
     onLanguageSelect(language);
-    handleClose();
+    onClose();
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-2">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300"
-        style={getBackdropStyle()}
-        onClick={handleClose}
-      />
-
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-2"
+      onClick={handleBackdropClick}
+    >
       {/* Modal Content */}
-      <div
+      <motion.div
         ref={modalRef}
-        className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl transform transition-all duration-300 ease-out"
-        style={getModalStyle()}
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pb-4 pt-6">
@@ -89,7 +88,7 @@ export default function LanguageModal({
             {t("languageModal.title")}
           </h2>
           <button
-            onClick={handleClose}
+            onClick={onClose}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
             aria-label="Close"
           >
@@ -104,11 +103,10 @@ export default function LanguageModal({
               <button
                 key={language}
                 onClick={() => handleLanguageSelect(language)}
-                className={`relative flex flex-col items-center justify-center p-4 rounded-2xl transition-all duration-200 ${
-                  currentLanguage === language
+                className={`relative flex flex-col items-center justify-center p-4 rounded-2xl transition-all duration-200 ${currentLanguage === language
                     ? "bg-[#00C7A5]/10 border-2 border-[#00C7A5]"
                     : "bg-gray-50 border-2 border-transparent hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 {/* Language Flag/Icon */}
                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white shadow-sm mb-3">
@@ -147,7 +145,7 @@ export default function LanguageModal({
             ))}
           </div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

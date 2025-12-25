@@ -5,6 +5,7 @@ import { Globe } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 import LanguageModal from "./LanguageModal";
 import { SupportedLanguage } from "@/contexts/LanguageContext";
+import { AnimatePresence } from "framer-motion";
 
 interface LanguageButtonProps {
   className?: string;
@@ -25,12 +26,16 @@ export default function LanguageButton({ className = "" }: LanguageButtonProps) 
   return (
     <>
       {/* Language Modal */}
-      <LanguageModal
-        isOpen={isLanguageModalOpen}
-        onClose={handleCloseLanguageModal}
-        onLanguageSelect={handleLanguageSelect}
-        currentLanguage={currentLanguage}
-      />
+      <AnimatePresence>
+        {isLanguageModalOpen && (
+          <LanguageModal
+            isOpen={isLanguageModalOpen}
+            onClose={handleCloseLanguageModal}
+            onLanguageSelect={handleLanguageSelect}
+            currentLanguage={currentLanguage}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Language Button - Fixed in top right corner */}
       <button

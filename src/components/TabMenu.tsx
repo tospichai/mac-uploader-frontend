@@ -7,6 +7,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useSelection } from "@/contexts/SelectionContext";
 import LanguageModal from "./LanguageModal";
 import { SupportedLanguage } from "@/contexts/LanguageContext";
+import { AnimatePresence } from "framer-motion";
 
 interface TabItem {
   id: string;
@@ -94,12 +95,16 @@ export default function TabMenu({
   return (
     <>
       {/* Language Modal - rendered outside the positioned nav */}
-      <LanguageModal
-        isOpen={isLanguageModalOpen}
-        onClose={handleCloseLanguageModal}
-        onLanguageSelect={handleLanguageSelect}
-        currentLanguage={currentLanguage}
-      />
+      <AnimatePresence>
+        {isLanguageModalOpen && (
+          <LanguageModal
+            isOpen={isLanguageModalOpen}
+            onClose={handleCloseLanguageModal}
+            onLanguageSelect={handleLanguageSelect}
+            currentLanguage={currentLanguage}
+          />
+        )}
+      </AnimatePresence>
 
       <nav className="fixed bottom-6 left-1/2 z-10 w-full -translate-x-1/2 px-4 sm:px-0">
         <div

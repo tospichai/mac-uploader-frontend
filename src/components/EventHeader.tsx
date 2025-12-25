@@ -18,7 +18,7 @@ export default function EventHeader({ eventInfo }: EventHeaderProps) {
     return (
         <header className="w-full mb-8">
             <div className="container mx-auto max-w-4xl">
-                <div className="bg-[#E8F1F4]/50 rounded-3xl p-6 sm:p-10 flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12">
+                <div className="bg-[#E8F1F4]/50 rounded-3xl p-6 flex flex-col md:flex-row items-center md:items-start gap-8 md:gap-12">
                     {/* Left Column: Photographer Logo */}
                     <div className="shrink-0 flex flex-col items-center gap-4">
                         <div className="relative w-32 h-32 sm:w-40 sm:h-40">

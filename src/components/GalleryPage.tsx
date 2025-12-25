@@ -9,7 +9,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { useSelection } from "@/contexts/SelectionContext";
 import { useGridView } from "@/contexts/GridViewContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
-import Image from "next/image";
 import Footer from "./Footer";
 import {
   Images,
@@ -19,6 +18,7 @@ import {
   Rows,
 } from "lucide-react";
 import EventHeader from "./EventHeader";
+import { AnimatePresence } from "framer-motion";
 
 interface GalleryPageProps {
   eventInfo: GalleryEventDetails | null;
@@ -28,6 +28,7 @@ interface GalleryPageProps {
   onPageChange: (page: number) => void;
   onDownloadPhoto: (photoId: string) => void;
   eventCode: string;
+  newPhotoIds: Set<string>;
 }
 
 export default function GalleryPage({
@@ -38,6 +39,7 @@ export default function GalleryPage({
   onPageChange,
   onDownloadPhoto,
   eventCode,
+  newPhotoIds,
 }: GalleryPageProps) {
   const { t } = useTranslation();
   const {
@@ -115,6 +117,7 @@ export default function GalleryPage({
             onDownloadPhoto={onDownloadPhoto}
             onNewPhoto={handleNewPhoto}
             eventCode={eventCode}
+            newPhotoIds={newPhotoIds}
           />
 
           {/* Pagination */}
@@ -229,20 +232,22 @@ export default function GalleryPage({
       </div>
 
       {/* Footer */}
-      <Footer className="mt-4 mb-24" />
+      <Footer className="mt-4 mb-32" />
 
       {/* Image Modal */}
-      {selectedImage && (
-        <ImageModal
-          photos={photos}
-          currentIndex={selectedImageIndex}
-          onClose={closeModal}
-          onDownloadPhoto={onDownloadPhoto}
-          onToggleFavorite={(photo) => toggleFavorite(eventCode, photo)}
-          isFavorite={(photo) => isFavorite(eventCode, photo.id)}
-          eventCode={eventCode}
-        />
-      )}
+      <AnimatePresence>
+        {selectedImage && (
+          <ImageModal
+            photos={photos}
+            currentIndex={selectedImageIndex}
+            onClose={closeModal}
+            onDownloadPhoto={onDownloadPhoto}
+            onToggleFavorite={(photo) => toggleFavorite(eventCode, photo)}
+            isFavorite={(photo) => isFavorite(eventCode, photo.id)}
+            eventCode={eventCode}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Notification */}
       {notification && (

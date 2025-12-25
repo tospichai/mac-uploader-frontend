@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { Photo } from "@/types";
-import Image from "next/image";
 import { Heart, Check } from "lucide-react";
 import { useFavorites } from "@/contexts/FavoritesContext";
 import { useSelection } from "@/contexts/SelectionContext";
@@ -14,6 +13,7 @@ interface PhotoGridProps {
   onDownloadPhoto: (photoId: string) => void;
   onNewPhoto: () => void;
   eventCode: string;
+  newPhotoIds: Set<string>;
 }
 
 export default function PhotoGrid({
@@ -22,6 +22,7 @@ export default function PhotoGrid({
   onDownloadPhoto,
   onNewPhoto,
   eventCode,
+  newPhotoIds
 }: PhotoGridProps) {
   const newPhotoRef = useRef<HTMLDivElement>(null);
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -38,26 +39,6 @@ export default function PhotoGrid({
     // We'll use a simple notification here since we don't have access to showNotification
     console.warn("Selection limit reached");
   };
-
-  // Highlight new photos
-  // useEffect(() => {
-  //   if (newPhotoRef.current && photos.length > 0) {
-  //     newPhotoRef.current.classList.add(
-  //       "ring-4",
-  //       "ring-blue-400",
-  //       "ring-opacity-75"
-  //     );
-  //     setTimeout(() => {
-  //       if (newPhotoRef.current) {
-  //         newPhotoRef.current.classList.remove(
-  //           "ring-4",
-  //           "ring-blue-400",
-  //           "ring-opacity-75"
-  //         );
-  //       }
-  //     }, 3000);
-  //   }
-  // }, [photos.length]);
 
   const imageUrl = (photo: Photo) => photo.thumbnailUrl || photo.originalUrl;
 
@@ -94,6 +75,19 @@ export default function PhotoGrid({
               }
             }}
           >
+            {newPhotoIds.has(photo.id) && (
+              <div
+                className="absolute top-2 left-2 z-20 bg-[#00C7A5] text-white text-xs font-bold px-2 py-1 rounded-md animate-[badge-fade_2s_ease-out_forwards]"
+                onAnimationEnd={(e) => {
+                  // Optional: You could remove it from state here if you wanted it to disappear strictly after animation
+                  // But CSS 'forwards' keeps it at 0 opacity, effectively hidden.
+                  // To strictly clean up, we'd need a callback to parent.
+                  // For now, visual hiding is sufficient.
+                }}
+              >
+                New
+              </div>
+            )}
             {(() => {
               const url = imageUrl(photo);
               if (!url) {
@@ -108,13 +102,6 @@ export default function PhotoGrid({
 
               return (
                 <>
-                  {/* <Image
-                    src={url}
-                    alt={`Photo ${photo.id}`}
-                    className="w-full h-full object-cover"
-                    fill
-                    loading="lazy"
-                  /> */}
                   <img
                     src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${url}`}
                     alt={`Photo ${photo.id}`}

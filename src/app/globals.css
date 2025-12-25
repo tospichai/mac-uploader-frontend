@@ -173,3 +173,12 @@ input:focus {
 .animate-slideDown {
   animation: slideDown 0.3s ease-in;
 }
+
+@keyframes badge-fade {
+  0%, 50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

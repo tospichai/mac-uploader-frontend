@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Photo } from '@/types';
 import { Heart, Download } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface ImageModalProps {
   photos: Photo[];
@@ -128,7 +129,11 @@ export default function ImageModal({
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
       onClick={handleBackdropClick}
     >
@@ -171,8 +176,8 @@ export default function ImageModal({
             <Heart
               size={20}
               className={`transition-colors duration-200 ${checkIsFavorite()
-                  ? "fill-red-500 text-red-500"
-                  : "text-white"
+                ? "fill-red-500 text-red-500"
+                : "text-white"
                 }`}
             />
           </button>
@@ -216,7 +221,11 @@ export default function ImageModal({
       )}
 
       {/* Image container with touch support */}
-      <div
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
         className="relative flex items-center justify-center"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -233,7 +242,7 @@ export default function ImageModal({
           }}
           draggable={false}
         />
-      </div>
+      </motion.div>
 
       {/* Image indicators */}
       {photos.length > 1 && (
@@ -243,8 +252,8 @@ export default function ImageModal({
               key={index}
               onClick={() => setCurrentImageIndex(index)}
               className={`w-2 h-2 rounded-full transition-all duration-200 ${index === currentImageIndex
-                  ? 'bg-white w-8'
-                  : 'bg-white/50 hover:bg-white/70'
+                ? 'bg-white w-8'
+                : 'bg-white/50 hover:bg-white/70'
                 }`}
               aria-label={`Go to image ${index + 1}`}
             />
@@ -258,6 +267,6 @@ export default function ImageModal({
           {currentImageIndex + 1} / {photos.length}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

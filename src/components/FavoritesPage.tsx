@@ -20,6 +20,7 @@ import {
   CheckSquare,
 } from "lucide-react";
 import EventHeader from "./EventHeader";
+import { AnimatePresence } from "framer-motion";
 
 interface FavoritesPageProps {
   eventInfo: GalleryEventDetails | null;
@@ -68,7 +69,7 @@ export default function FavoritesPage({
     originalUrl: fav.originalUrl,
     thumbnailUrl: fav.thumbnailUrl,
   }));
-  console.log('favoritePhotos', favoritePhotos)
+
   // Set the download function in the context when component mounts or when onDownloadPhoto changes
   useEffect(() => {
     setDownloadFunction(async (id: string) => {
@@ -164,6 +165,7 @@ export default function FavoritesPage({
           onDownloadPhoto={onDownloadPhoto}
           onNewPhoto={handleNewPhoto}
           eventCode={eventCode}
+          newPhotoIds={new Set()}
         />
       );
     } else {
@@ -352,20 +354,22 @@ export default function FavoritesPage({
       </div>
 
       {/* Footer */}
-      <Footer className="mt-4 mb-24" />
+      <Footer className="mt-4 mb-32" />
 
       {/* Image Modal */}
-      {selectedImage && (
-        <ImageModal
-          photos={favoritePhotos}
-          currentIndex={selectedImageIndex}
-          onClose={closeModal}
-          onDownloadPhoto={onDownloadPhoto}
-          onToggleFavorite={(photo) => toggleFavorite(eventCode, photo)}
-          isFavorite={(photo) => isFavorite(eventCode, photo.id)}
-          eventCode={eventCode}
-        />
-      )}
+      <AnimatePresence>
+        {selectedImage && (
+          <ImageModal
+            photos={favoritePhotos}
+            currentIndex={selectedImageIndex}
+            onClose={closeModal}
+            onDownloadPhoto={onDownloadPhoto}
+            onToggleFavorite={(photo) => toggleFavorite(eventCode, photo)}
+            isFavorite={(photo) => isFavorite(eventCode, photo.id)}
+            eventCode={eventCode}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Notification */}
       {notification && (
