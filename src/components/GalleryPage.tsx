@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import EventHeader from "./EventHeader";
 import { AnimatePresence } from "framer-motion";
+import SmartPagination from "./SmartPagination";
 
 interface GalleryPageProps {
   eventInfo: GalleryEventDetails | null;
@@ -122,37 +123,37 @@ export default function GalleryPage({
 
           {/* Pagination */}
           {pagination && pagination.hasMultiplePages && (
-            <div className="flex justify-center items-center space-x-2 mt-8">
+            <div className="flex justify-center items-center space-x-2 mt-8 pb-4">
               {pagination.hasPrevPage && (
                 <button
                   onClick={() => onPageChange(pagination.prevPage!)}
-                  className="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 text-sm font-thai-medium text-gray-700 thai-text"
+                  className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 transition-all duration-200 cursor-pointer"
+                  aria-label="Previous page"
                 >
-                  {t("gallery.previous")}
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                  </svg>
                 </button>
               )}
 
               <div className="flex space-x-1">
-                {pagination.pages.map((p) => (
-                  <button
-                    key={p.number}
-                    onClick={() => onPageChange(p.number)}
-                    className={`px-3 py-2 rounded-md text-sm font-thai-medium ${p.active
-                      ? "bg-blue-500 text-white"
-                      : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-                      }`}
-                  >
-                    {p.number}
-                  </button>
-                ))}
+                {/* Use smart pagination logic */}
+                <SmartPagination
+                  currentPage={pagination.currentPage}
+                  totalPages={pagination.totalPages}
+                  onPageChange={onPageChange}
+                />
               </div>
 
               {pagination.hasNextPage && (
                 <button
                   onClick={() => onPageChange(pagination.nextPage!)}
-                  className="px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 text-sm font-thai-medium text-gray-700 thai-text"
+                  className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 transition-all duration-200 cursor-pointer"
+                  aria-label="Next page"
                 >
-                  {t("gallery.next")}
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
                 </button>
               )}
             </div>

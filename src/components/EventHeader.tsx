@@ -88,7 +88,7 @@ export default function EventHeader({ eventInfo }: EventHeaderProps) {
                     </div>
 
                     {/* Right Column: Event Details */}
-                    <div className="flex-1 text-center md:text-left flex flex-col items-center md:items-start bg-[#E8F1F4]/50 p-6 rounded-xl">
+                    <div className="flex-1 text-center md:text-left flex flex-col items-center md:items-start md:bg-[#E8F1F4]/50 p-4 lg:p-6 rounded-xl">
                         <h1 className="text-2xl sm:text-3xl font-thai-bold text-gray-900 mb-2 leading-tight">
                             {eventInfo.event.title}
                         </h1>
@@ -115,7 +115,7 @@ export default function EventHeader({ eventInfo }: EventHeaderProps) {
             */}
 
                         {eventInfo.event.description && (
-                            <p className="text-gray-600 font-thai-regular mt-4 max-w-lg leading-relaxed text-sm sm:text-base">
+                            <p className="text-gray-600 font-thai-regular max-w-lg leading-relaxed text-sm sm:text-base">
                                 {eventInfo.event.description}
                             </p>
                         )}
