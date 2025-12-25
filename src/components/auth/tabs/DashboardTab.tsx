@@ -20,7 +20,9 @@ export default function DashboardTab() {
     return formatted.endsWith(".00") ? gb.toFixed(0) : formatted;
   };
 
-  const storagePercentage = (user.storageUsedMb / user.storageQuotaMb) * 100;
+  const storageUsedMb = user.storageUsedMb || 0;
+  const storageQuotaMb = user.storageQuotaMb || 1000; // Default to 1GB to avoid division by zero if undefined
+  const storagePercentage = (storageUsedMb / storageQuotaMb) * 100;
 
   return (
     <div className="space-y-8">
@@ -39,10 +41,10 @@ export default function DashboardTab() {
         <div className="mb-4">
           <div className="flex justify-between text-sm text-gray-600 mb-2 thai-text">
             <span>
-              {t("auth.storageUsed")}: {formatStorage(user.storageUsedMb)} GB
+              {t("auth.storageUsed")}: {formatStorage(storageUsedMb)} GB
             </span>
             <span>
-              {t("auth.storageQuota")}: {formatStorage(user.storageQuotaMb)} GB
+              {t("auth.storageQuota")}: {formatStorage(storageQuotaMb)} GB
             </span>
           </div>
 
